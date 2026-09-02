@@ -1,0 +1,14 @@
+[
+  {
+    "id": "1788352854481",
+    "name": "Sana",
+    "role": "Nurse",
+    "maxHours": 40
+  },
+  {
+    "id": "1788353892084",
+    "name": "Summer",
+    "role": "Advance Nurse",
+    "maxHours": 30
+  }
+]
