@@ -1,0 +1,16 @@
+[
+  {
+    "id": "1",
+    "name": "Lars Olsson",
+    "careLevel": "Standard Care",
+    "location": "Stockholm",
+    "requiredHours": 10
+  },
+  {
+    "id": "1788785909293",
+    "name": "Sana",
+    "careLevel": "High Dependency",
+    "requiredHours": 2,
+    "location": "Södertälje"
+  }
+]

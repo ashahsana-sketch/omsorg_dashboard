@@ -14,7 +14,7 @@ export default function Header() {
   <nav className="hidden md:flex items-center gap-1 bg-amber-50/50 p-1 rounded-xl border border-amber-100">
     <NavLink href="/roster" >Roster</NavLink>
     <NavLink href="/employees">Employees</NavLink>
-    <NavLink href="/customers">Customers</NavLink>
+    <NavLink href="/clients">Clients</NavLink>
     <NavLink href="/locations">Locations</NavLink>
   </nav>
 

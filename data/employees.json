@@ -10,5 +10,12 @@
     "name": "Summer",
     "role": "Advance Nurse",
     "maxHours": 30
+  },
+  {
+    "id": "1788363518127",
+    "name": "Zakwan",
+    "role": "Serving food",
+    "maxHours": 40,
+    "location": "Solna"
   }
 ]

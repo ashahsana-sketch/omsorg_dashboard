@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 
-interface Customer {
+interface Client {
   id: string;
   name: string;
   careLevel: string;
@@ -10,50 +10,63 @@ interface Customer {
   requiredHours: number;
 }
 
-interface CustomerManagerFormProps {
-  onSuccess?: () => void;
-}
-
-export default function CustomerManagerForm({ onSuccess }: CustomerManagerFormProps) {
-  const [customers, setCustomers] = useState<Customer[]>([]);
+export default function ClientManagerForm() {
+  const [clients, setClients] = useState<Client[]>([]);
   const [name, setName] = useState("");
   const [careLevel, setCareLevel] = useState("Standard Care");
   const [location, setLocation] = useState("Stockholm");
   const [requiredHours, setRequiredHours] = useState(10);
 
   useEffect(() => {
-    fetch("/api/customers")
+    fetch("/api/clients")
       .then((res) => res.json())
-      .then((data) => setCustomers(data))
-      .catch(() => setCustomers([]));
+      .then((data) => setClients(data))
+      .catch(() => setClients([]));
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name) return;
 
-    const res = await fetch("/api/customers", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, careLevel, location, requiredHours }),
-    });
+    try {
+      const res = await fetch("/api/clients", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          careLevel,
+          requiredHours: Number(requiredHours),
+          location,
+        }),
+      });
 
-    if (res.ok) {
       const data = await res.json();
-      setCustomers([...customers, data.customer]);
-      setName("");
-      setCareLevel("Standard Care");
-      setLocation("Stockholm");
-      setRequiredHours(10);
 
-      // Close modal on success
-      if (onSuccess) onSuccess();
+      if (res.ok) {
+        setClients([...clients, data.client]);
+        setName("");
+        setCareLevel("Standard Care");
+        setLocation("Stockholm");
+        setRequiredHours(10);
+      } else {
+        console.error("Failed to save:", data);
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
     }
   };
 
   return (
-    <div className="space-y-6 text-left">
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {/* Input Form */}
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white p-6 rounded-xl border border-teal-100 shadow-sm space-y-4 h-fit"
+      >
+        <h3 className="text-base font-bold text-stone-800 border-b border-teal-100 pb-2">
+          Add New Care Client
+        </h3>
+
         <div>
           <label className="block text-xs font-bold text-stone-700 uppercase mb-1">
             Client Name
@@ -84,22 +97,6 @@ export default function CustomerManagerForm({ onSuccess }: CustomerManagerFormPr
 
         <div>
           <label className="block text-xs font-bold text-stone-700 uppercase mb-1">
-            Location
-          </label>
-          <select
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            className="w-full p-2 border border-stone-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
-          >
-            <option value="Stockholm">Stockholm</option>
-            <option value="Solna">Solna</option>
-            <option value="Kista">Kista</option>
-            <option value="Täby">Täby</option>
-          </select>
-        </div>
-
-        <div>
-          <label className="block text-xs font-bold text-stone-700 uppercase mb-1">
             Required Hours / Week
           </label>
           <input
@@ -110,33 +107,55 @@ export default function CustomerManagerForm({ onSuccess }: CustomerManagerFormPr
           />
         </div>
 
+        <div>
+          <label className="block text-xs font-bold text-stone-700 uppercase mb-1">
+            Location / Service Area
+          </label>
+          <select
+            value={location}
+            onChange={(e) => setLocation(e.target.value)}
+            className="w-full p-2 border border-stone-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
+          >
+            <option value="Stockholm">Stockholm</option>
+            <option value="Solna">Solna</option>
+            <option value="Kista">Kista</option>
+            <option value="Täby">Täby</option>
+            <option value="Södertälje">Södertälje</option>
+            <option value="Haninge">Haninge</option>
+            <option value="Nacka">Nacka</option>
+          </select>
+        </div>
+
         <button
           type="submit"
-          className="w-full bg-amber-400 hover:bg-amber-500 text-stone-900 font-bold py-2 rounded-lg text-xs transition-colors shadow-sm cursor-pointer"
+          className="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 rounded-lg text-xs transition-colors shadow-sm cursor-pointer"
         >
-          Save Client to JSON
+          Save to JSON
         </button>
       </form>
 
       {/* Saved Clients List */}
-      <div className="pt-4 border-t border-stone-200">
-        <h4 className="text-xs font-bold text-stone-800 mb-2">
-          Saved Clients ({customers.length})
-        </h4>
-        {customers.length === 0 ? (
-          <p className="text-xs text-stone-400">No clients added yet.</p>
+      <div className="bg-white p-6 rounded-xl border border-teal-100 shadow-sm space-y-4">
+        <h3 className="text-base font-bold text-stone-800 border-b border-teal-100 pb-2">
+          Saved Clients ({clients.length})
+        </h3>
+
+        {clients.length === 0 ? (
+          <p className="text-xs text-stone-400 py-4 text-center">
+            No clients saved yet. Add your first client using the form.
+          </p>
         ) : (
-          <ul className="divide-y divide-stone-100 text-xs max-h-40 overflow-y-auto pr-1">
-            {customers.map((cli) => (
-              <li key={cli.id} className="py-2 flex items-center justify-between">
+          <ul className="divide-y divide-stone-100 text-xs space-y-2 max-h-100 overflow-y-auto pr-1">
+            {clients.map((cli) => (
+              <li key={cli.id} className="pt-2 flex items-center justify-between">
                 <div>
                   <div className="font-semibold text-stone-800">{cli.name}</div>
                   <div className="text-[11px] text-stone-500">
                     {cli.careLevel} • <span className="text-teal-700 font-medium">{cli.location}</span>
                   </div>
                 </div>
-                <span className="bg-teal-50 text-teal-900 border border-teal-200/80 px-2 py-0.5 rounded text-[11px] font-bold">
-                  {cli.requiredHours}h/wk
+                <span className="bg-teal-50 text-teal-900 border border-teal-200/80 px-2 py-1 rounded text-[11px] font-bold">
+                  {cli.requiredHours}h / wk
                 </span>
               </li>
             ))}

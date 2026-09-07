@@ -2,8 +2,8 @@ import Header from "./Components/Header/Header";
 import Footer from "./Components/footer/Footer";
 import EmployeeModal from "./employees/EmployerModal";
 import EmployeeManagerForm from "./employees/EmployeeManagerForm";
-import CustomerManagerForm from "./Components/CustomerManagerForm";
-import CustomerModal from "./Components/CustomerModal";
+import CustomerManagerForm from "./client/ClientManagerForm";
+import CustomerModal from "./client/ClientModal";
 export default function Home() {
   return (
     <div className="min-h-screen flex flex-col justify-between bg-amber-50/30">
