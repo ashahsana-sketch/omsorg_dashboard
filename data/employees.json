@@ -17,5 +17,12 @@
     "role": "Serving food",
     "maxHours": 40,
     "location": "Solna"
+  },
+  {
+    "id": "1788792513049",
+    "name": "Emma",
+    "role": "Care Assistant",
+    "maxHours": 40,
+    "location": "Stockholm"
   }
 ]
