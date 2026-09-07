@@ -12,8 +12,10 @@ interface NavLinkProps {
 
 export default function NavLink({ href, children, active }: NavLinkProps) {
   const pathname = usePathname();
-  // Automatically detects if the current page matches the link destination
-  const isActive = active ?? pathname === href;
+
+  // Checks exact match OR sub-route match (e.g. /clients/123)
+  const isActive =
+    active ?? (pathname === href || (href !== "/" && pathname.startsWith(href)));
 
   return (
     <Link

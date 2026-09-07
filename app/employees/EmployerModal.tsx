@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import Button from "./Components/Button/Button";
-import EmployeeManager from "./Components/EmployeeManagerForm";
+import Button from "../Components/Button/Button";
+import EmployeeManager from "./EmployeeManagerForm";
 
 
 export default function EmployeeModal() {
