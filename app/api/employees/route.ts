@@ -28,17 +28,32 @@ export async function GET() {
 export async function POST(request: Request) {
   try {
     ensureFileExists();
-    const { name, role, maxHours, location } = await request.json();
+    
+    const { name, role, maxHours, location, isFixedTime, shiftStart, shiftEnd } = await request.json();
 
     const fileData = fs.readFileSync(filePath, "utf8");
     const employees = JSON.parse(fileData || "[]");
 
+    // Generate sequential EMP- ID (e.g., EMP-1001, EMP-1002)
+    let nextId = "EMP-1001";
+    if (employees.length > 0) {
+      const numbers = employees.map((emp: any) => {
+        const match = emp.id?.match(/\d+/);
+        return match ? parseInt(match[0], 10) : 1000;
+      });
+      const maxId = Math.max(...numbers, 1000);
+      nextId = `EMP-${maxId + 1}`;
+    }
+
     const newEmployee = {
-      id: Date.now().toString(),
+      id: nextId,
       name,
       role,
       maxHours,
-      location: location || "Stockholm", // Default location fallback
+      location: location || "Stockholm",
+      isFixedTime: Boolean(isFixedTime),
+      shiftStart: isFixedTime ? shiftStart : null,
+      shiftEnd: isFixedTime ? shiftEnd : null,
     };
 
     employees.push(newEmployee);
@@ -47,5 +62,34 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: "Employee saved!", employee: newEmployee }, { status: 201 });
   } catch (error) {
     return NextResponse.json({ error: "Failed to write data" }, { status: 500 });
+  }
+}
+
+export async function DELETE(request: Request) {
+  try {
+    ensureFileExists();
+
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get("id");
+
+    if (!id) {
+      return NextResponse.json({ error: "Employee ID is required" }, { status: 400 });
+    }
+
+    const fileData = fs.readFileSync(filePath, "utf8");
+    let employees = JSON.parse(fileData || "[]");
+
+    const employeeExists = employees.some((emp: any) => emp.id === id);
+    if (!employeeExists) {
+      return NextResponse.json({ error: "Employee not found" }, { status: 404 });
+    }
+
+    employees = employees.filter((emp: any) => emp.id !== id);
+
+    fs.writeFileSync(filePath, JSON.stringify(employees, null, 2), "utf8");
+
+    return NextResponse.json({ message: "Employee deleted successfully!" }, { status: 200 });
+  } catch (error) {
+    return NextResponse.json({ error: "Failed to delete data" }, { status: 500 });
   }
 }

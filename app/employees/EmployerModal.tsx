@@ -4,7 +4,6 @@ import { useState } from "react";
 import Button from "../Components/Button/Button";
 import EmployeeManager from "./EmployeeManagerForm";
 
-
 export default function EmployeeModal() {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -29,7 +28,7 @@ export default function EmployeeModal() {
               </h3>
               <button
                 onClick={() => setIsOpen(false)}
-                className="text-stone-400 hover:text-stone-600 font-bold p-1 rounded-lg text-sm"
+                className="text-stone-400 hover:text-stone-600 font-bold p-1 rounded-lg text-sm cursor-pointer"
               >
                 ✕ Close
               </button>
