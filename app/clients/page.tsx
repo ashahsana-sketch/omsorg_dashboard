@@ -1,131 +1,145 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface Client {
   id: string;
   name: string;
   careLevel: string;
-  location?: string;
-  shiftStart?: string;
-  shiftEnd?: string;
-  requiredHours?: number;
-}
-
-// Automatically calculate shift hours (e.g. 09:00 to 15:00 = 6 Hours)
-function calculateHours(startTime: string = "09:00", endTime: string = "15:00"): number {
-  const [startH] = startTime.split(":").map(Number);
-  const [endH] = endTime.split(":").map(Number);
-
-  if (endH >= startH) {
-    return endH - startH;
-  } else {
-    return 24 - startH + endH;
-  }
+  location: string;
+  isFixedTime: boolean;
+  preferredStart?: string;
+  preferredEnd?: string;
+  requiredHours: number;
 }
 
 export default function ClientsPage() {
-  const [clients, setClients] = useState<Client[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
+  const [currentView, setCurrentView] = useState<"directory" | "add">("directory");
 
-  // Form State
+  const [clients, setClients] = useState<Client[]>([]);
+  const [loading, setLoading] = useState(true);
+
   const [name, setName] = useState("");
   const [careLevel, setCareLevel] = useState("Standard Care");
   const [location, setLocation] = useState("Stockholm");
-  const [shiftStart, setShiftStart] = useState("09:00");
-  const [shiftEnd, setShiftEnd] = useState("15:00");
-  const [isSaving, setIsSaving] = useState(false);
+  const [scheduleType, setScheduleType] = useState<"fixed" | "flexible">("fixed");
+  const [preferredStart, setPreferredStart] = useState("09:00");
+  const [preferredEnd, setPreferredEnd] = useState("12:00");
+  const [requiredHours, setRequiredHours] = useState(10);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Fetch Clients API
   const fetchClients = async () => {
     try {
+      setLoading(true);
       const res = await fetch("/api/clients");
       if (res.ok) {
         const data = await res.json();
         setClients(data);
       }
-    } catch (err) {
-      console.error("Error fetching clients:", err);
+    } catch (error) {
+      console.error("Failed to fetch clients:", error);
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchClients();
-  }, []);
+    if (currentView === "directory") {
+      fetchClients();
+    }
+  }, [currentView]);
 
-  // Save Client
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!name) return;
-
-    setIsSaving(true);
+  const handleDelete = async (id: string, clientName: string) => {
+    if (!confirm(`Are you sure you want to delete ${clientName}?`)) return;
 
     try {
-      const computedHours = calculateHours(shiftStart, shiftEnd);
+      const res = await fetch(`/api/clients?id=${id}`, {
+        method: "DELETE",
+      });
 
+      if (res.ok) {
+        setClients((prev) => prev.filter((client) => client.id !== id));
+      } else {
+        alert("Failed to delete client.");
+      }
+    } catch (error) {
+      console.error("Error deleting client:", error);
+      alert("Network Error: Could not delete client.");
+    }
+  };
+
+  const handleSaveClient = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!name.trim()) {
+      alert("Please enter Client Name first!");
+      return;
+    }
+
+    const isFixed = scheduleType === "fixed";
+    const payload = {
+      name,
+      careLevel,
+      location,
+      isFixedTime: isFixed,
+      preferredStart: isFixed ? preferredStart : null,
+      preferredEnd: isFixed ? preferredEnd : null,
+      requiredHours: Number(requiredHours),
+    };
+
+    setIsSubmitting(true);
+
+    try {
       const res = await fetch("/api/clients", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name,
-          careLevel,
-          location,
-          shiftStart,
-          shiftEnd,
-          requiredHours: computedHours,
-        }),
+        body: JSON.stringify(payload),
       });
 
       if (res.ok) {
         setName("");
         setCareLevel("Standard Care");
         setLocation("Stockholm");
-        setShiftStart("09:00");
-        setShiftEnd("15:00");
-        await fetchClients(); // Auto refresh list
+        setScheduleType("fixed");
+        setCurrentView("directory");
+      } else {
+        alert("API Error: Data save nahi ho saka.");
       }
     } catch (error) {
-      console.error("Error saving client:", error);
+      console.error("Error submitting form:", error);
+      alert("Network Error: API connect nahi ho saki.");
     } finally {
-      setIsSaving(false);
+      setIsSubmitting(false);
     }
   };
 
-  // SABSE LATEST CLIENT PEHLE DIKHAYEGA
-  const latestClientsFirst = [...clients].reverse();
-
   return (
-    <div className="min-h-screen bg-stone-50 p-4 sm:p-6 md:p-10">
-      <div className="max-w-4xl mx-auto space-y-6">
-        
-        {/* Header */}
-        <div className="flex items-center justify-between bg-white p-5 rounded-2xl border border-stone-200 shadow-xs">
-          <div>
-            <h1 className="text-xl sm:text-2xl font-bold text-stone-800">
-              Clients Management
-            </h1>
-            <p className="text-xs text-stone-500">
-              Add new client details & view registered client directory
-            </p>
-          </div>
+    <div className="max-w-4xl mx-auto p-4 space-y-6">
+      {/* ADD CLIENT VIEW */}
+      {currentView === "add" ? (
+        <div className="max-w-xl mx-auto space-y-4">
+          {/* Main Page Button */}
+          <button
+            type="button"
+            onClick={() => router.push("/")}
+            className="bg-stone-200 hover:bg-stone-300 text-stone-800 font-bold px-3 py-1.5 rounded-lg text-xs transition-colors cursor-pointer flex items-center gap-1.5 shadow-sm"
+          >
+            ← Go to Main Page
+          </button>
 
-          <span className="bg-teal-50 text-teal-800 text-xs font-semibold px-3 py-1.5 rounded-full border border-teal-200/60">
-            Total Clients: {clients.length}
-          </span>
-        </div>
+          <form
+            onSubmit={handleSaveClient}
+            className="bg-gray-100 p-6 rounded-xl border border-teal-100 shadow-sm space-y-4"
+          >
+            <h3 className="text-base font-bold text-stone-800 border-b border-teal-800 rounded-2xl bg-teal-400 p-2.5 text-center">
+              Add New Care Client
+            </h3>
 
-        {/* Form Section */}
-        <form onSubmit={handleSubmit} className="bg-white p-5 rounded-2xl border border-stone-200 shadow-xs space-y-4">
-          <h4 className="text-sm font-bold text-stone-800 border-b border-stone-100 pb-2">
-            Add New Client
-          </h4>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div>
-              <label className="block text-[11px] font-bold text-stone-700 uppercase mb-1">
+            {/* Client Name */}
+            <div className="text-left space-y-2">
+              <label className="block text-xs font-bold text-stone-700 uppercase mb-1">
                 Client Name
               </label>
               <input
@@ -133,19 +147,20 @@ export default function ClientsPage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="e.g. Lars Olsson"
-                className="w-full p-2 border border-stone-300 rounded-lg text-xs bg-white focus:outline-none focus:ring-2 focus:ring-teal-500"
+                className="w-full p-2 border border-stone-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
                 required
               />
             </div>
 
-            <div>
-              <label className="block text-[11px] font-bold text-stone-700 uppercase mb-1">
+            {/* Care Level */}
+            <div className="text-left space-y-2">
+              <label className="block text-xs font-bold text-stone-700 uppercase mb-1">
                 Care Need Level
               </label>
               <select
                 value={careLevel}
                 onChange={(e) => setCareLevel(e.target.value)}
-                className="w-full p-2 border border-stone-300 rounded-lg text-xs bg-white focus:outline-none focus:ring-2 focus:ring-teal-500"
+                className="w-full p-2 border border-stone-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
               >
                 <option value="Basic Assistance">Basic Assistance</option>
                 <option value="Standard Care">Standard Care</option>
@@ -153,14 +168,15 @@ export default function ClientsPage() {
               </select>
             </div>
 
-            <div>
-              <label className="block text-[11px] font-bold text-stone-700 uppercase mb-1">
+            {/* Location */}
+            <div className="text-left space-y-2">
+              <label className="block text-xs font-bold text-stone-700 uppercase mb-1">
                 Location
               </label>
               <select
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
-                className="w-full p-2 border border-stone-300 rounded-lg text-xs bg-white focus:outline-none focus:ring-2 focus:ring-teal-500"
+                className="w-full p-2 border border-stone-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
               >
                 <option value="Stockholm">Stockholm</option>
                 <option value="Solna">Solna</option>
@@ -169,103 +185,178 @@ export default function ClientsPage() {
               </select>
             </div>
 
-            <div className="grid grid-cols-2 gap-2">
-              <div>
-                <label className="block text-[11px] font-bold text-stone-700 uppercase mb-1">
-                  Start Time
-                </label>
-                <input
-                  type="time"
-                  value={shiftStart}
-                  onChange={(e) => setShiftStart(e.target.value)}
-                  className="w-full p-2 border border-stone-300 rounded-lg text-xs bg-white focus:outline-none focus:ring-2 focus:ring-teal-500"
-                />
+            {/* Schedule Type Selection */}
+            <div className="text-left space-y-2">
+              <label className="block text-xs font-bold text-stone-700 uppercase mb-1">
+                Schedule Type
+              </label>
+              <select
+                value={scheduleType}
+                onChange={(e) => setScheduleType(e.target.value as "fixed" | "flexible")}
+                className="w-full p-2 border border-stone-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
+              >
+                <option value="fixed">Fixed Time Window (Specific Start & End Time)</option>
+                <option value="flexible">Flexible Visit Hours</option>
+              </select>
+            </div>
+
+            {/* Time Window Fields */}
+            {scheduleType === "fixed" ? (
+              <div className="grid grid-cols-2 gap-2 text-left bg-stone-50 p-3 rounded-lg border border-stone-200">
+                <div>
+                  <label className="block text-xs font-bold text-stone-700 uppercase mb-1">
+                    Preferred Start
+                  </label>
+                  <input
+                    type="time"
+                    value={preferredStart}
+                    onChange={(e) => setPreferredStart(e.target.value)}
+                    className="w-full p-2 border border-stone-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-stone-700 uppercase mb-1">
+                    Preferred End
+                  </label>
+                  <input
+                    type="time"
+                    value={preferredEnd}
+                    onChange={(e) => setPreferredEnd(e.target.value)}
+                    className="w-full p-2 border border-stone-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
+                  />
+                </div>
               </div>
-              <div>
-                <label className="block text-[11px] font-bold text-stone-700 uppercase mb-1">
-                  End Time
-                </label>
-                <input
-                  type="time"
-                  value={shiftEnd}
-                  onChange={(e) => setShiftEnd(e.target.value)}
-                  className="w-full p-2 border border-stone-300 rounded-lg text-xs bg-white focus:outline-none focus:ring-2 focus:ring-teal-500"
-                />
-              </div>
+            ) : (
+              <p className="text-[11px] text-stone-500 italic text-left pl-1">
+                * Client is set to Flexible Schedule without fixed time window constraint.
+              </p>
+            )}
+
+            {/* Required Hours / Week */}
+            <div className="text-left space-y-2">
+              <label className="block text-xs font-bold text-stone-700 uppercase mb-1">
+                Required Hours / Week
+              </label>
+              <input
+                type="number"
+                value={requiredHours}
+                onChange={(e) => setRequiredHours(Number(e.target.value))}
+                className="w-full p-2 border border-stone-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
+              />
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row gap-2 pt-2">
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="flex-1 bg-stone-100 hover:bg-stone-200 text-stone-800 font-bold py-2 rounded-lg text-xs transition-colors border border-stone-300 cursor-pointer disabled:opacity-50"
+              >
+                {isSubmitting ? "Saving..." : "Save Client Detail"}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setCurrentView("directory")}
+                className="flex-1 bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 rounded-lg text-xs transition-colors shadow-sm cursor-pointer"
+              >
+                Go to Clients
+              </button>
+            </div>
+          </form>
+        </div>
+      ) : (
+        /* DIRECTORY VIEW */
+        <div className="space-y-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-teal-600 text-white p-5 rounded-xl shadow-md gap-4">
+            <div>
+              <h2 className="text-lg font-bold">Clients Directory</h2>
+              <p className="text-xs text-teal-100 mt-0.5">Manage registered care clients</p>
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => router.push("/")}
+                className="bg-teal-700 hover:bg-teal-800 text-white font-bold text-xs px-3 py-2 rounded-lg transition cursor-pointer border border-teal-500 shadow-sm"
+              >
+                ← Go to Main Page
+              </button>
+
+              <button
+                onClick={() => setCurrentView("add")}
+                className="bg-white text-teal-900 font-bold text-xs px-4 py-2 rounded-lg hover:bg-teal-50 transition cursor-pointer shadow-sm"
+              >
+                + Add New Client
+              </button>
             </div>
           </div>
 
-          <button
-            type="submit"
-            disabled={isSaving}
-            className="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-2.5 rounded-xl text-xs transition-colors shadow-xs cursor-pointer disabled:opacity-50"
-          >
-            {isSaving ? "Saving Client..." : "💾 Save Client Details"}
-          </button>
-        </form>
+          <div className="bg-white p-4 rounded-xl border border-stone-200 shadow-sm space-y-3">
+            <h4 className="text-xs font-bold text-stone-800 uppercase tracking-wider border-b pb-2">
+              Current Clients Directory ({clients.length})
+            </h4>
 
-        {/* Render Clients List */}
-        <div className="bg-white p-5 rounded-2xl border border-stone-200 shadow-xs space-y-3">
-          <h4 className="text-sm font-bold text-stone-800 border-b border-stone-100 pb-2">
-            Clients List ({clients.length})
-          </h4>
+            {loading ? (
+              <p className="text-xs text-stone-500 text-center py-6">Loading clients...</p>
+            ) : clients.length === 0 ? (
+              <p className="text-xs text-stone-500 text-center py-6">No clients found.</p>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs">
+                  <thead className="bg-stone-50 text-stone-600 font-bold uppercase border-b border-stone-200">
+                    <tr>
+                      <th className="p-2 w-16 text-center">ID</th>
+                      <th className="p-2">Name</th>
+                      <th className="p-2">Care Level</th>
+                      <th className="p-2">Schedule / Hours</th>
+                      <th className="p-2">Location</th>
+                      <th className="p-2 text-right">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-stone-100 text-stone-700">
+                    {clients.map((client) => {
+                      const isFixed = client.isFixedTime ?? Boolean(client.preferredStart && client.preferredEnd);
 
-          {isLoading ? (
-            <p className="text-xs text-stone-400 text-center py-6">Loading clients...</p>
-          ) : latestClientsFirst.length === 0 ? (
-            <p className="text-xs text-stone-400 text-center py-6">No clients added yet.</p>
-          ) : (
-            <div className="space-y-2.5 max-h-100px overflow-y-auto pr-1">
-              {latestClientsFirst.map((cli) => {
-                const start = cli.shiftStart || "09:00";
-                const end = cli.shiftEnd || "15:00";
-                const shiftHours = calculateHours(start, end);
-
-                return (
-                  <div
-                    key={cli.id}
-                    className="bg-stone-50/60 p-3.5 rounded-xl border border-stone-200/80 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-teal-200 transition-colors"
-                  >
-                    {/* Left Column */}
-                    <div className="space-y-0.5">
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-stone-800 text-sm">{cli.name}</span>
-                        <span className="bg-white text-stone-600 text-[10px] font-semibold px-2 py-0.5 rounded border border-stone-200">
-                          {cli.careLevel}
-                        </span>
-                      </div>
-                      <p className="text-xs text-stone-500">
-                        📍 Location: <span className="font-medium text-stone-700">{cli.location || "Stockholm"}</span>
-                      </p>
-                    </div>
-
-                    {/* Right Column (Time & Calculated Hours) */}
-                    <div className="flex items-center justify-between sm:justify-end gap-4 border-t sm:border-t-0 border-stone-200/60 pt-2 sm:pt-0">
-                      <div className="text-left sm:text-right">
-                        <span className="text-stone-400 block text-[9px] uppercase font-bold">
-                          Preferred Time
-                        </span>
-                        <span className="inline-flex items-center gap-1 text-xs font-bold text-teal-800 bg-teal-50 px-2 py-0.5 rounded border border-teal-200/50">
-                          ⏰ {start} – {end}
-                        </span>
-                      </div>
-
-                      <div className="text-right">
-                        <span className="text-stone-400 block text-[9px] uppercase font-bold">
-                          Required Hours
-                        </span>
-                        <span className="font-extrabold text-teal-700 text-xs block">
-                          {shiftHours} Hours / Day
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
+                      return (
+                        <tr key={client.id} className="hover:bg-teal-50/40 transition-colors">
+                          <td className="p-2 font-mono text-teal-700 font-bold text-center">
+                            {client.id}
+                          </td>
+                          <td className="p-2 font-semibold text-stone-900">{client.name}</td>
+                          <td className="p-2">{client.careLevel}</td>
+                          <td className="p-2">
+                            {isFixed && client.preferredStart && client.preferredEnd ? (
+                              <span className="inline-flex items-center gap-1 bg-amber-50 text-amber-800 border border-amber-200 px-2 py-0.5 rounded-md font-mono text-[11px]">
+                                <span className="font-sans font-bold text-[10px] uppercase">Fixed:</span>
+                                {client.preferredStart} - {client.preferredEnd} ({client.requiredHours}h/wk)
+                              </span>
+                            ) : (
+                              <span className="inline-block bg-teal-50 text-teal-700 border border-teal-200 px-2 py-0.5 rounded-md font-mono text-[11px]">
+                                Flexible ({client.requiredHours}h/wk)
+                              </span>
+                            )}
+                          </td>
+                          <td className="p-2">{client.location}</td>
+                          <td className="p-2 text-right">
+                            <button
+                              type="button"
+                              onClick={() => handleDelete(client.id, client.name)}
+                              className="bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 px-2 py-1 rounded-md text-[11px] font-bold transition-colors cursor-pointer"
+                            >
+                              Delete
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

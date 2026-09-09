@@ -25,35 +25,34 @@ export default function Header() {
             priority
             className="w-16 sm:w-20 md:w-24 h-auto"
           />
-          <h1 className="text-xs sm:text-sm font-extrabold uppercase tracking-wide leading-tight bg-linear-to-tr from-teal-600 to-amber-400 bg-clip-text text-transparent border-l pl-2 border-stone-200 flex flex-col md:block">
-            <span>Elderly Care</span>
-            <span className="text-[10px] sm:text-xs text-amber-600 block md:inline md:ml-1 font-semibold">
-              Dashboard
+          <h1 className="text-xs sm:text-sm font-extrabold uppercase tracking-wide leading-tight bg-linear-to-tr from-teal-800 to-amber-00 bg-clip-text text-transparent border-l pl-2 border-stone-200 flex flex-col md:block">
+            <span>Elderly Care Dashboard
             </span>
           </h1>
         </Link>
 
         {/* Center: Separate Navigation Buttons (No Shared Card) */}
         <nav className="hidden lg:flex items-center gap-2">
-          <div className="bg-amber-50/60 border border-amber-200/60 rounded-lg p-0.5 hover:border-amber-300 transition-colors shadow-2xs">
-            <NavLink href="/employees">Employees</NavLink>
+          <div className="bg-teal-500 border border-teal-900 rounded-lg p-0.5 hover:border-teal-400 transition-colors shadow-2">
+            <NavLink href="/employees">Employees List</NavLink>
           </div>
-          <div className="bg-amber-50/60 border border-amber-200/60 rounded-lg p-0.5 hover:border-amber-300 transition-colors shadow-2xs">
-            <NavLink href="/clients">Clients</NavLink>
+          <div className="bg-teal-500
+           border border-teal-900 rounded-lg p-0.5 hover:border-teal-400 transition-colors shadow-2xs text-white">
+            <NavLink href="/clients">Clients List</NavLink>
           </div>
-          <div className="bg-amber-50/60 border border-amber-200/60 rounded-lg p-0.5 hover:border-amber-300 transition-colors shadow-2xs">
-            <NavLink href="/reports">Reports</NavLink>
+          <div className="bg-teal-500
+           border border-teal-900 rounded-lg p-0.5 hover:border-teal-400 transition-colors shadow-2xs text-white">
+            <NavLink href="/reports">Salary Report</NavLink>
           </div>
-          <div className="bg-amber-50/60 border border-amber-200/60 rounded-lg p-0.5 hover:border-amber-300 transition-colors shadow-2xs">
+          <div className="bg-teal-500
+           border border-teal-900  rounded-lg p-0.5 hover:border-teal-400 transition-colors shadow-2xs text-white">
             <NavLink href="/shifts">Shifts</NavLink>
           </div>
         </nav>
 
         {/* Right Actions & Mobile/Tablet Controls */}
         <div className="flex items-center gap-2 shrink-0">
-          <button className="bg-amber-100 hover:bg-amber-200 text-stone-900 px-2.5 sm:px-3 py-1.5 rounded-lg font-semibold text-xs transition-colors shadow-sm whitespace-nowrap">
-            + Assign Task
-          </button>
+          
 
           {/* Hamburger Toggle */}
           <button
@@ -90,16 +89,16 @@ export default function Header() {
       {/* Mobile/Tablet Dropdown */}
       {isMenuOpen && (
         <nav className="lg:hidden absolute top-full left-0 w-full bg-white border-b border-amber-100 shadow-lg p-3 flex flex-col gap-2 z-50">
-          <div onClick={() => setIsMenuOpen(false)} className="bg-amber-50/60 p-1 rounded-lg border border-amber-100">
+          <div onClick={() => setIsMenuOpen(false)} className="bg-teal-50/60 p-1 rounded-lg border border-amber-100">
             <NavLink href="/employees">Employees</NavLink>
           </div>
-          <div onClick={() => setIsMenuOpen(false)} className="bg-amber-50/60 p-1 rounded-lg border border-amber-100">
+          <div onClick={() => setIsMenuOpen(false)} className="bg-teal-50/60 p-1 rounded-lg border border-amber-100">
             <NavLink href="/clients">Clients</NavLink>
           </div>
-          <div onClick={() => setIsMenuOpen(false)} className="bg-amber-50/60 p-1 rounded-lg border border-amber-100">
+          <div onClick={() => setIsMenuOpen(false)} className="bg-teal-50/60 p-1 rounded-lg border border-amber-100">
             <NavLink href="/reports">Reports</NavLink>
           </div>
-          <div onClick={() => setIsMenuOpen(false)} className="bg-amber-50/60 p-1 rounded-lg border border-amber-100">
+          <div onClick={() => setIsMenuOpen(false)} className="bg-teal-50/60 p-1 rounded-lg border border-amber-100">
             <NavLink href="/locations">Locations</NavLink>
           </div>
         </nav>

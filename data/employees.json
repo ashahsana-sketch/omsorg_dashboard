@@ -1,28 +1,130 @@
 [
   {
-    "id": "1788352854481",
-    "name": "Sana",
-    "role": "Nurse",
-    "maxHours": 40
+    "id": "EMP-1001",
+    "name": "Emily Carter",
+    "role": "Registered Nurse (RN)",
+    "maxHours": 30,
+    "location": "Stockholm",
+    "isFixedTime": false
   },
   {
-    "id": "1788353892084",
-    "name": "Summer",
-    "role": "Advance Nurse",
-    "maxHours": 30
-  },
-  {
-    "id": "1788363518127",
-    "name": "Zakwan",
-    "role": "Serving food",
+    "id": "EMP-1002",
+    "name": "Daniel Walker",
+    "role": "Registered Nurse (RN)",
     "maxHours": 40,
-    "location": "Solna"
+    "location": "Stockholm",
+    "isFixedTime": false
   },
   {
-    "id": "1788792513049",
-    "name": "Emma",
+    "id": "EMP-1003",
+    "name": "Sophie Bennett",
     "role": "Care Assistant",
     "maxHours": 40,
-    "location": "Stockholm"
+    "location": "Stockholm",
+    "isFixedTime": false
+  },
+  {
+    "id": "EMP-1004",
+    "name": "James Cooper",
+    "role": "Care Assistant",
+    "maxHours": 40,
+    "location": "Stockholm",
+    "isFixedTime": false
+  },
+  {
+    "id": "EMP-1005",
+    "name": "Olivia Harris",
+    "role": "Home Care Worker",
+    "maxHours": 40,
+    "location": "Stockholm",
+    "isFixedTime": false
+  },
+  {
+    "id": "EMP-1006",
+    "name": "George Evans",
+    "role": "Home Care Worker",
+    "maxHours": 35,
+    "location": "Solna",
+    "isFixedTime": false
+  },
+  {
+    "id": "EMP-1007",
+    "name": "Charlotte Morgan",
+    "role": "Support Worker",
+    "maxHours": 40,
+    "location": "Stockholm",
+    "isFixedTime": true,
+    "shiftStart": "08:00",
+    "shiftEnd": "16:00"
+  },
+  {
+    "id": "EMP-1008",
+    "name": "William Turner",
+    "role": "Support Worker",
+    "maxHours": 30,
+    "location": "Stockholm",
+    "isFixedTime": true,
+    "shiftStart": "14:00",
+    "shiftEnd": "20:00"
+  },
+  {
+    "id": "EMP-1009",
+    "name": "Lithium",
+    "role": "Care Assistant",
+    "maxHours": 40,
+    "location": "Stockholm",
+    "isFixedTime": true,
+    "shiftStart": "03:00",
+    "shiftEnd": "22:00"
+  },
+  {
+    "id": "EMP-1010",
+    "name": "Limph dampa",
+    "role": "Care Assistant",
+    "maxHours": 40,
+    "location": "Stockholm",
+    "isFixedTime": false,
+    "shiftStart": null,
+    "shiftEnd": null
+  },
+  {
+    "id": "EMP-1011",
+    "name": "Amilya Karton",
+    "role": "Senior Care Worker",
+    "maxHours": 40,
+    "location": "Stockholm",
+    "isFixedTime": false,
+    "shiftStart": null,
+    "shiftEnd": null
+  },
+  {
+    "id": "EMP-1012",
+    "name": "Rida Ramp",
+    "role": "Registered Nurse (RN)",
+    "maxHours": 40,
+    "location": "Stockholm",
+    "isFixedTime": true,
+    "shiftStart": "00:00",
+    "shiftEnd": "19:00"
+  },
+  {
+    "id": "EMP-1013",
+    "name": "Kuli bula",
+    "role": "Registered Nurse (RN)",
+    "maxHours": 40,
+    "location": "Stockholm",
+    "isFixedTime": true,
+    "shiftStart": "07:00",
+    "shiftEnd": "15:00"
+  },
+  {
+    "id": "EMP-1014",
+    "name": "Amma jani",
+    "role": "Registered Nurse (RN)",
+    "maxHours": 40,
+    "location": "Stockholm",
+    "isFixedTime": false,
+    "shiftStart": null,
+    "shiftEnd": null
   }
 ]

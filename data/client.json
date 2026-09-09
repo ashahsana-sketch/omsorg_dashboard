@@ -1,86 +1,253 @@
 [
   {
-    "id": "1",
-    "name": "Lars Olsson",
+    "id": "CL-1001",
+    "name": "James Anderson",
     "careLevel": "Standard Care",
+    "requiredHours": 8,
     "location": "Stockholm",
-    "requiredHours": 10
+    "isFixedTime": false,
+    "services": [
+      "Morning Care",
+      "Personal Care",
+      "Meal Assistance",
+      "Evening Care"
+    ]
   },
   {
-    "id": "1788785909293",
-    "name": "Sana",
+    "id": "CL-1002",
+    "name": "Oliver Smith",
+    "careLevel": "Standard Care",
+    "requiredHours": 6,
+    "location": "Stockholm",
+    "isFixedTime": false,
+    "services": [
+      "Morning Care",
+      "Medication Support",
+      "Household Support",
+      "Evening Care"
+    ]
+  },
+  {
+    "id": "CL-1003",
+    "name": "William Johnson",
+    "careLevel": "High Care",
+    "requiredHours": 10,
+    "location": "Stockholm",
+    "isFixedTime": false,
+    "services": [
+      "Personal Care",
+      "Meal Assistance",
+      "Medication Support",
+      "Mobility Support",
+      "Evening Care"
+    ]
+  },
+  {
+    "id": "CL-1004",
+    "name": "Henry Williams",
+    "careLevel": "Standard Care",
+    "requiredHours": 7,
+    "location": "Stockholm",
+    "isFixedTime": false,
+    "services": [
+      "Morning Care",
+      "Household Support",
+      "Personal Care",
+      "Medication Support"
+    ]
+  },
+  {
+    "id": "CL-1005",
+    "name": "George Brown",
+    "careLevel": "High Care",
+    "requiredHours": 9,
+    "location": "Stockholm",
+    "isFixedTime": false,
+    "services": [
+      "Morning Care",
+      "Personal Care",
+      "Meal Assistance",
+      "Medication Support",
+      "Evening Care"
+    ]
+  },
+  {
+    "id": "CL-1006",
+    "name": "Thomas Davis",
+    "careLevel": "Standard Care",
+    "requiredHours": 6,
+    "location": "Stockholm",
+    "isFixedTime": false,
+    "services": [
+      "Breakfast Assistance",
+      "Household Support",
+      "Personal Care",
+      "Evening Check"
+    ]
+  },
+  {
+    "id": "CL-1007",
+    "name": "Daniel Miller",
+    "careLevel": "High Care",
+    "requiredHours": 10,
+    "location": "Stockholm",
+    "isFixedTime": false,
+    "services": [
+      "Personal Care",
+      "Meal Assistance",
+      "Medication Support",
+      "Mobility Support",
+      "Evening Care"
+    ]
+  },
+  {
+    "id": "CL-1008",
+    "name": "Michael Wilson",
+    "careLevel": "Standard Care",
+    "requiredHours": 7,
+    "location": "Stockholm",
+    "isFixedTime": false,
+    "services": [
+      "Morning Care",
+      "Medication Support",
+      "Meal Assistance",
+      "Personal Care"
+    ]
+  },
+  {
+    "id": "CL-1009",
+    "name": "David Taylor",
+    "careLevel": "High Care",
+    "requiredHours": 9,
+    "location": "Stockholm",
+    "isFixedTime": false,
+    "services": [
+      "Morning Care",
+      "Personal Care",
+      "Medication Support",
+      "Mobility Support",
+      "Evening Care"
+    ]
+  },
+  {
+    "id": "CL-1010",
+    "name": "Robert Thomas",
+    "careLevel": "Standard Care",
+    "requiredHours": 8,
+    "location": "Stockholm",
+    "isFixedTime": false,
+    "services": [
+      "Morning Care",
+      "Household Support",
+      "Mobility Support",
+      "Meal Assistance",
+      "Evening Care"
+    ]
+  },
+  {
+    "id": "CL-1011",
+    "name": "Edward Martin",
+    "careLevel": "Standard Care",
+    "requiredHours": 6,
+    "location": "Stockholm",
+    "isFixedTime": true,
+    "preferredStart": "08:00",
+    "preferredEnd": "10:00",
+    "services": [
+      {
+        "service": "Morning Care",
+        "start": "08:00",
+        "end": "10:00"
+      },
+      {
+        "service": "Meal Assistance",
+        "start": "13:00",
+        "end": "15:00"
+      },
+      {
+        "service": "Evening Care",
+        "start": "19:00",
+        "end": "21:00"
+      }
+    ]
+  },
+  {
+    "id": "CL-1012",
+    "name": "Charles Thompson",
+    "careLevel": "High Care",
+    "requiredHours": 7,
+    "location": "Stockholm",
+    "isFixedTime": true,
+    "preferredStart": "07:00",
+    "preferredEnd": "09:00",
+    "services": [
+      {
+        "service": "Personal Care",
+        "start": "07:00",
+        "end": "09:00"
+      },
+      {
+        "service": "Medication Support",
+        "start": "12:00",
+        "end": "13:00"
+      },
+      {
+        "service": "Mobility Support",
+        "start": "16:00",
+        "end": "18:00"
+      },
+      {
+        "service": "Evening Care",
+        "start": "21:00",
+        "end": "22:00"
+      }
+    ]
+  },
+  {
+    "id": "CL-1013",
+    "name": "Andrew Wilson",
+    "careLevel": "Standard Care",
+    "requiredHours": 5,
+    "location": "Stockholm",
+    "isFixedTime": true,
+    "preferredStart": "06:30",
+    "preferredEnd": "07:30",
+    "services": [
+      {
+        "service": "Breakfast Assistance",
+        "start": "06:30",
+        "end": "07:30"
+      },
+      {
+        "service": "Household Support",
+        "start": "11:00",
+        "end": "13:00"
+      },
+      {
+        "service": "Evening Care",
+        "start": "18:00",
+        "end": "20:00"
+      }
+    ]
+  },
+  {
+    "id": "CL-1014",
+    "name": "Eddie",
     "careLevel": "High Dependency",
-    "requiredHours": 2,
-    "location": "Södertälje"
+    "requiredHours": 5,
+    "location": "Solna",
+    "isFixedTime": true,
+    "preferredStart": "13:00",
+    "preferredEnd": "16:00"
   },
   {
-    "id": "1788787856160",
-    "name": "summer",
-    "careLevel": "Standard Care",
-    "requiredHours": 10,
-    "location": "Stockholm"
-  },
-  {
-    "id": "1788788587276",
-    "name": "Alex",
-    "careLevel": "Standard Care",
-    "requiredHours": 10,
-    "location": "Stockholm"
-  },
-  {
-    "id": "1788788615169",
-    "name": "Alex",
-    "careLevel": "Standard Care",
-    "requiredHours": 10,
-    "location": "Stockholm"
-  },
-  {
-    "id": "1788788757002",
-    "name": "Alex",
-    "careLevel": "Standard Care",
-    "requiredHours": 10,
-    "location": "Stockholm"
-  },
-  {
-    "id": "1788789324650",
-    "name": "Rex",
-    "careLevel": "Standard Care",
-    "requiredHours": 10,
-    "location": "Stockholm"
-  },
-  {
-    "id": "1788790016952",
-    "name": "Tabi",
-    "careLevel": "Standard Care",
-    "requiredHours": 10,
-    "location": "Stockholm"
-  },
-  {
-    "id": "1788791448925",
-    "name": "Ameer",
-    "careLevel": "Standard Care",
-    "requiredHours": 10,
-    "location": "Stockholm"
-  },
-  {
-    "id": "1788791599260",
-    "name": "hyu",
-    "careLevel": "Standard Care",
-    "requiredHours": 10,
-    "location": "Stockholm"
-  },
-  {
-    "id": "1788792276271",
-    "name": "Karl",
-    "careLevel": "Standard Care",
-    "requiredHours": 4,
-    "location": "Stockholm"
-  },
-  {
-    "id": "1788792419509",
-    "name": "Eriksson",
-    "careLevel": "Standard Care",
-    "requiredHours": 10,
-    "location": "Stockholm"
+    "id": "1788942907244",
+    "name": "Lars",
+    "careLevel": "Basic Assistance",
+    "requiredHours": 5,
+    "location": "Stockholm",
+    "isFixedTime": false,
+    "preferredStart": null,
+    "preferredEnd": null
   }
 ]

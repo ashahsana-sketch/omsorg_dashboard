@@ -4,6 +4,7 @@ import EmployeeModal from "./employees/EmployerModal";
 import EmployeeManagerForm from "./employees/EmployeeManagerForm";
 import ClientManagerForm from "./clients/ClientManagerForm";
 import ClientModal from "./clients/ClientModal";
+import RosterView from "./Components/Roster/RosterView";
 export default function Home() {
   return (
     <div className="min-h-screen flex flex-col justify-between bg-amber-50/30">
@@ -29,7 +30,9 @@ export default function Home() {
             <ClientModal />
           </div>
         </div>
-
+      <div className="min-h-screen bg-stone-50 py-8">
+      <RosterView />
+    </div>
       </main>
 
       <Footer />
