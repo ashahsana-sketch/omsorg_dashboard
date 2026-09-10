@@ -95,7 +95,7 @@ export default function ClientManagerForm() {
         setName("");
         setCareLevel("Standard Care");
         setLocation("Stockholm");
-        setRequiredHours(10);
+        setRequiredHours(5);
         setScheduleType("fixed");
         setPreferredStart("09:00");
         setPreferredEnd("12:00");

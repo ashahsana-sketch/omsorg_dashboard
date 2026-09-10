@@ -19,7 +19,7 @@ export default function ShiftsPage() {
       {/* Header */}
       <div className="bg-white p-5 rounded-xl border border-amber-100 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-xl font-bold text-stone-900">Weekly Shift Rota</h1>
+          <h1 className="text-xl font-bold text-stone-900">Daily Shift Roster</h1>
           <p className="text-xs text-stone-500">Active carer allocations and task schedules generated from system data.</p>
         </div>
       </div>

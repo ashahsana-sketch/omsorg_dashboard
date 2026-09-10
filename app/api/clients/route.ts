@@ -1,107 +1,99 @@
 import { NextResponse } from "next/server";
-import fs from "fs/promises";
+import fs from "fs";
 import path from "path";
 
-const dirPath = path.join(process.cwd(), "data");
-const filePath = path.join(dirPath, "client.json");
+// Sahi root-level path: data/client.json
+const filePath = path.join(process.cwd(), "data", "client.json");
 
-async function readClients() {
+function getNextClientId(clients: any[]): string {
+  if (!clients || clients.length === 0) return "CL-1001";
+  
+  let maxNum = 1000;
+  clients.forEach((c) => {
+    if (c.id && typeof c.id === "string" && c.id.startsWith("CL-")) {
+      const num = parseInt(c.id.replace("CL-", ""), 10);
+      if (!isNaN(num) && num > maxNum) {
+        maxNum = num;
+      }
+    }
+  });
+  return `CL-${maxNum + 1}`;
+}
+
+// GET: Sabhi clients fetch karne ke liye
+export async function GET() {
   try {
-    const fileData = await fs.readFile(filePath, "utf-8");
-    return JSON.parse(fileData);
+    if (!fs.existsSync(filePath)) {
+      return NextResponse.json([], { status: 200 });
+    }
+    const fileData = fs.readFileSync(filePath, "utf-8");
+    const clients = JSON.parse(fileData);
+    return NextResponse.json(clients, { status: 200 });
   } catch (error) {
-    return [];
+    console.error("Fetch error:", error);
+    return NextResponse.json({ error: "Failed to fetch clients" }, { status: 500 });
   }
 }
 
-export async function GET() {
-  const clients = await readClients();
-  return NextResponse.json(clients);
-}
-
+// POST: Naya client add karne ke liye (Sequential ID e.g. CL-1014)
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const {
-      name,
-      careLevel,
-      requiredHours,
-      location,
-      isFixedTime,
-      preferredStart,
-      preferredEnd,
-    } = body;
-
-    if (!name) {
-      return NextResponse.json(
-        { error: "Client name is required" },
-        { status: 400 }
-      );
+    
+    let clients = [];
+    if (fs.existsSync(filePath)) {
+      const fileData = fs.readFileSync(filePath, "utf-8");
+      clients = JSON.parse(fileData);
     }
 
-    const clients = await readClients();
-
-    const isFixed = Boolean(isFixedTime);
+    const newId = getNextClientId(clients);
 
     const newClient = {
-      id: Date.now().toString(),
-      name,
-      careLevel: careLevel || "Standard Care",
-      requiredHours: Number(requiredHours) || 10,
-      location: location || "Stockholm",
-      isFixedTime: isFixed,
-      preferredStart: isFixed ? preferredStart : null,
-      preferredEnd: isFixed ? preferredEnd : null,
+      id: newId,
+      ...body,
     };
 
     clients.push(newClient);
 
-    await fs.mkdir(dirPath, { recursive: true });
-    await fs.writeFile(filePath, JSON.stringify(clients, null, 2));
+    // Ensure directory exists if needed, then write file
+    const dir = path.dirname(filePath);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
 
-    return NextResponse.json({ client: newClient }, { status: 201 });
+    fs.writeFileSync(filePath, JSON.stringify(clients, null, 2), "utf-8");
+
+    return NextResponse.json({ success: true, client: newClient }, { status: 201 });
   } catch (error) {
-    console.error("API Error saving client:", error);
-    return NextResponse.json(
-      { error: "Failed to write client data" },
-      { status: 500 }
-    );
+    console.error("Save error:", error);
+    return NextResponse.json({ error: "Failed to save client" }, { status: 500 });
   }
 }
 
+// DELETE: Client delete karne ke liye
 export async function DELETE(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
 
     if (!id) {
-      return NextResponse.json(
-        { error: "Client ID is required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Client ID required" }, { status: 400 });
     }
 
-    let clients = await readClients();
-
-    const clientExists = clients.some((client: any) => client.id === id);
-    if (!clientExists) {
-      return NextResponse.json({ error: "Client not found" }, { status: 404 });
+    if (!fs.existsSync(filePath)) {
+      return NextResponse.json({ error: "File not found" }, { status: 404 });
     }
 
-    clients = clients.filter((client: any) => client.id !== id);
+    const fileData = fs.readFileSync(filePath, "utf-8");
+    let clients = JSON.parse(fileData);
 
-    await fs.mkdir(dirPath, { recursive: true });
-    await fs.writeFile(filePath, JSON.stringify(clients, null, 2));
+    const filteredClients = clients.filter((c: any) => c.id !== id);
 
-    return NextResponse.json(
-      { message: "Client deleted successfully!" },
-      { status: 200 }
-    );
+    fs.writeFileSync(filePath, JSON.stringify(filteredClients, null, 2), "utf-8");
+
+    return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
-    console.error("API Error deleting client:", error);
-    return NextResponse.json(
-      { error: "Failed to delete client data" },
-      { status: 500 }
-    );
+    console.error("Delete error:", error);
+    return NextResponse.json({ error: "Failed to delete client" }, { status: 500 });
   }
 }

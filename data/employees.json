@@ -118,16 +118,6 @@
     "shiftEnd": "15:00"
   },
   {
-    "id": "EMP-1014",
-    "name": "Amma jani",
-    "role": "Registered Nurse (RN)",
-    "maxHours": 40,
-    "location": "Stockholm",
-    "isFixedTime": false,
-    "shiftStart": null,
-    "shiftEnd": null
-  },
-  {
     "id": "EMP-1015",
     "name": "Christer",
     "role": "Senior Care Worker",
