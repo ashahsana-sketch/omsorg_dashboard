@@ -15,6 +15,9 @@
 This is a [Next.js](https://nextjs.org) project built with Tailwind CSS and the help of AI (Antigravity), bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ---
+## 📄 Project Link
+
+[ Project link ](https://github.com/ashahsana-sketch/omsorg_dashboard)
 
 ## 📖 About the Project
 
@@ -28,6 +31,8 @@ The application aims to simplify the complex process of matching:
 * 👤 Client care requirements
 * 📅 Preferred visit windows
 * ⚖️ Weekly workload and capacity
+
+https://github.com/ashahsana-sketch/omsorg_dashboard
 
 The project was developed using **Next.js, TypeScript, and Tailwind CSS**, with assistance from **AI (Antigravity)** during development.
 
