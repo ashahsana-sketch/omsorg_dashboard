@@ -32,6 +32,11 @@ The application aims to simplify the complex process of matching:
 The project was developed using **Next.js, TypeScript, and Tailwind CSS**, with assistance from **AI (Antigravity)** during development.
 
 ---
+<div align="center">
+
+<img src="./public/main_page.png" alt="CareStaff Dashboard" width="900"/>
+
+</div>
 
 ## 🎯 Problem & Target Users
 
@@ -57,6 +62,19 @@ This can become:
 | 👩‍⚕️ **Care Administrators** | Maintain staff information and client care requirements |
 
 ---
+<div align="center">
+
+<img src="./public/Client_list.png" alt="Client list" width="900"/>
+
+</div>
+
+<div align="center">
+
+<img src="./public/Employees_list.png" alt="employee list" width="900"/>
+
+</div>
+
+
 
 ## ✨ Key Features
 
@@ -68,6 +86,12 @@ This can become:
 * Configure flexible or fixed shifts
 * View staff information in a centralized directory
 
+<div align="center">
+
+<img src="./public/Add_new_client.png" alt="Add new client" width="900"/>
+
+</div>
+
 ### 👤 Client Management
 * Add and manage care recipients
 * Define care dependency levels
@@ -76,6 +100,12 @@ This can become:
 * Configure fixed or flexible visit windows
 * Maintain client care requirements
 
+<div align="center">
+
+<img src="./public/Add_new_employ.png" alt="Add new employee" width="900"/>
+
+</div>
+
 ### 🤖 Automated Scheduling
 The scheduling engine is designed to match staff and clients based on:
 * 📍 Location compatibility
@@ -83,6 +113,11 @@ The scheduling engine is designed to match staff and clients based on:
 * ⏱️ Working-hour limits
 * 📅 Client visit requirements
 * 👩‍⚕️ Staff capacity
+<div align="center">
+
+<img src="./public/reschdule roster.png" alt="Reschdule Roster" width="900"/>
+
+</div>
 
 ### 📱 Responsive Dashboard
 * Modern dashboard interface
@@ -91,7 +126,11 @@ The scheduling engine is designed to match staff and clients based on:
 * Accessible UI components
 * Easy navigation between staff and client directories
 * Integrated creation and management forms
+<div align="center">
 
+<img src="./public/responsive.png" alt="Responsive behaviour" width="900"/>
+
+</div>
 
 
 **Dynamic Client Invoicing:** Automatically calculates billable hours and total revenue based on client care levels and actual rostered delivery.
@@ -102,9 +141,11 @@ The scheduling engine is designed to match staff and clients based on:
 - **One-Click CSV Export:** Export detailed financial and operational data for clients or staff directly to CSV format.
 
 ---
-# Care Management & Reports Dashboard
+<div align="center">
 
-A responsive Next.js dashboard component (`ReportsPage`) built for home-care and healthcare service providers to manage client invoicing, staff payroll, work schedules, and financial reporting in a single interface.
+<img src="./public/Billing_report.png" alt="Billing Report" width="900"/>
+
+</div>
 
 
 
@@ -113,16 +154,16 @@ A responsive Next.js dashboard component (`ReportsPage`) built for home-care and
 ### Client Invoicing Rates
 | Care Level | Hourly Rate (SEK) |
 | :--- | :--- |
-| **High Care** | 450 SEK |
-| **Standard Care** | 350 SEK |
-| **Basic Care** | 300 SEK |
+| **High Care** | 160 SEK |
+| **Standard Care** | 150 SEK |
+| **Basic Care** | 130 SEK |
 
 ### Staff Payroll Rates
 | Employee Role | Hourly Pay (SEK) |
 | :--- | :--- |
-| **Registered Nurse (RN)** | 300 SEK |
-| **Senior Care Worker** | 275 SEK |
-| **Support Worker** | 250 SEK |
+| **Registered Nurse (RN)** | 180 SEK |
+| **Senior Care Worker** | 170 SEK |
+| **Support Worker** | 165 SEK |
 | **Care Assistant** | 200 SEK |
 
 ---
