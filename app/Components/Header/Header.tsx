@@ -19,38 +19,36 @@ export default function Header() {
         >
           <Image
             src="/logo.png"
-            alt="Logo"
+            alt="Logo of Elderly Care Dashboard"
             width={100}
             height={32}
             priority
             className="w-16 sm:w-20 md:w-24 h-auto"
           />
-          <h1 className="text-xs sm:text-sm font-extrabold uppercase tracking-wide leading-tight bg-linear-to-tr from-teal-800 to-amber-00 bg-clip-text text-transparent border-l pl-2 border-stone-200 flex flex-col md:block">
-            <span>Elderly Care Dashboard
+          <h1 className="text-xs sm:text-sm font-extrabold uppercase tracking-wide leading-tight border-l pl-2 border-stone-200 flex flex-col md:block">
+            <span className="bg-linear-to-tr from-teal-700 to-amber-600 bg-clip-text text-transparent">
+              Elderly Care Dashboard
             </span>
           </h1>
         </Link>
 
-        {/* Center: Separate Navigation Buttons (No Shared Card) */}
+        {/* Center: Desktop Navigation */}
         <nav className="hidden lg:flex items-center gap-2">
-          <div className="bg-teal-500 border border-teal-900 rounded-lg p-0.5 hover:border-teal-400 transition-colors shadow-2">
+          <div className="bg-teal-500 border border-teal-900 rounded-lg p-0.5 hover:border-teal-400 transition-colors shadow-sm">
             <NavLink href="/employees">Employees List</NavLink>
           </div>
-          <div className="bg-teal-500
-           border border-teal-900 rounded-lg p-0.5 hover:border-teal-400 transition-colors shadow-2xs text-white">
+          <div className="bg-teal-500 border border-teal-900 rounded-lg p-0.5 hover:border-teal-400 transition-colors shadow-sm text-white">
             <NavLink href="/clients">Clients List</NavLink>
           </div>
-          <div className="bg-teal-500
-           border border-teal-900 rounded-lg p-0.5 hover:border-teal-400 transition-colors shadow-2xs text-white">
-            <NavLink href="/reports">Salary Report</NavLink>
+          <div className="bg-teal-500 border border-teal-900 rounded-lg p-0.5 hover:border-teal-400 transition-colors shadow-sm text-white">
+            <NavLink href="/BillingReports">Billing Report</NavLink>
           </div>
-          <div className="bg-teal-500
-           border border-teal-900  rounded-lg p-0.5 hover:border-teal-400 transition-colors shadow-2xs text-white">
-            <NavLink href="/shifts">Shifts</NavLink>
+          <div className="bg-teal-500 border border-teal-900 rounded-lg p-0.5 hover:border-teal-400 transition-colors shadow-sm text-white">
+            <NavLink href="/shifts">Shifts/Roaster</NavLink>
           </div>
         </nav>
 
-        {/* Right Actions & Mobile/Tablet Controls */}
+        {/* Right Actions & Mobile Toggle */}
         <div className="flex items-center gap-2 shrink-0">
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -86,17 +84,17 @@ export default function Header() {
       {/* Mobile/Tablet Dropdown */}
       {isMenuOpen && (
         <nav className="lg:hidden absolute top-full left-0 w-full bg-white border-b border-amber-100 shadow-lg p-3 flex flex-col gap-2 z-50">
-          <div onClick={() => setIsMenuOpen(false)} className="bg-teal-50/60 p-1 rounded-lg border border-amber-100">
+          <div onClick={() => setIsMenuOpen(false)} className="bg-amber-50/60 p-1 rounded-lg border border-amber-100">
             <NavLink href="/employees">Employees</NavLink>
           </div>
-          <div onClick={() => setIsMenuOpen(false)} className="bg-teal-50/60 p-1 rounded-lg border border-amber-100">
+          <div onClick={() => setIsMenuOpen(false)} className="bg-amber-50/60 p-1 rounded-lg border border-amber-100">
             <NavLink href="/clients">Clients</NavLink>
           </div>
-          <div onClick={() => setIsMenuOpen(false)} className="bg-teal-50/60 p-1 rounded-lg border border-amber-100">
-            <NavLink href="/reports">Reports</NavLink>
+          <div onClick={() => setIsMenuOpen(false)} className="bg-amber-50/60 p-1 rounded-lg border border-amber-100">
+            <NavLink href="/BillingReports">Billing Reports</NavLink>
           </div>
-          <div onClick={() => setIsMenuOpen(false)} className="bg-teal-50/60 p-1 rounded-lg border border-amber-100">
-            <NavLink href="/locations">Locations</NavLink>
+          <div onClick={() => setIsMenuOpen(false)} className="bg-amber-50/60 p-1 rounded-lg border border-amber-100">
+            <NavLink href="/shifts">Shifts/Roaster</NavLink>
           </div>
         </nav>
       )}
