@@ -52,12 +52,9 @@ export default function Header() {
 
         {/* Right Actions & Mobile/Tablet Controls */}
         <div className="flex items-center gap-2 shrink-0">
-          
-
-          {/* Hamburger Toggle */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="lg:hidden p-1.5 rounded-lg text-stone-700 hover:bg-amber-50 focus:outline-none border border-stone-200"
+            className="lg:hidden p-1.5 rounded-lg text-stone-700 hover:bg-amber-50 focus:outline-none border border-stone-200 cursor-pointer"
             aria-label="Toggle Navigation Menu"
           >
             <svg
