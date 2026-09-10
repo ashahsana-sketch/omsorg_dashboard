@@ -34,7 +34,7 @@ The project was developed using **Next.js, TypeScript, and Tailwind CSS**, with 
 ---
 <div align="center">
 
-<img src="./public/main_page.png" alt="CareStaff Dashboard" width="600"/>
+<img src="./public/main_page.png" alt="CareStaff Dashboard" width="500"/>
 
 </div>
 
@@ -64,17 +64,17 @@ This can become:
 ---
 <div align="center">
 
-<img src="./public/Client_list.png" alt="Client list" width="600"/>
+<img src="./public/Client_list.png" alt="Client list" width="500"/>
 
 </div>
 
 
-Employees List
+Employees List will be shown in a tab
 
 
 <div align="center">
 
-<img src="./public/Employees_list.png" alt="employee list" width="900"/>
+<img src="./public/Employees_list.png" alt="employee list" width="600"/>
 
 </div>
 
@@ -92,7 +92,7 @@ Employees List
 
 <div align="center">
 
-<img src="./public/Add_care_client.png" alt="Add new client" width="600"/>
+<img src="./public/Add_care_client.png" alt="Add new client" width="500"/>
 
 </div>
 
@@ -106,7 +106,7 @@ Employees List
 
 <div align="center">
 
-<img src="./public/Add_new_employ.png" alt="Add new employee" width="900"/>
+<img src="./public/Add_new_employ.png" alt="Add new employee" width="600"/>
 
 </div>
 
@@ -117,6 +117,8 @@ The scheduling engine is designed to match staff and clients based on:
 * ⏱️ Working-hour limits
 * 📅 Client visit requirements
 * 👩‍⚕️ Staff capacity
+
+  
 <div align="center">
 
 <img src="./public/reschdule roster.png" alt="Reschdule Roster" width="600"/>
@@ -129,7 +131,7 @@ If it doesnot assign to all clients than we can assign manually
 
 <div align="center">
 
-<img src="./public/Assign_manually.png" alt="Assign_manually" width="600"/>
+<img src="./public/Assign_manually.png" alt="Assign_manually" width="500"/>
 
 </div>
 
@@ -148,6 +150,9 @@ The form will open
 * Accessible UI components
 * Easy navigation between staff and client directories
 * Integrated creation and management forms
+
+
+
 <div align="center">
 
 <img src="./public/responsive.png" alt="Responsive behaviour" width="600"/>
@@ -201,13 +206,25 @@ The form will open
 
 </div>
 
-
 ---
 
 ## Data Exports
 
 The built-in `exportToCSV` utility generates dynamic CSV files depending on the active view:
+
+One can download the  billing statement
+
+
+[📥 View Project Report](./public/billing.csv)
+
 - **Client Report:** Includes Client ID, Name, Location, Care Level, Contract Hours, Delivered Hours, Hourly Rate, and Total Billable amount.
+
+<div align="center">
+
+<img src="./public/payroll.png" alt="payroll Report" width="600"/>
+
+</div> 
+
 - **Staff Report:** Includes Employee ID, Name, Role, Hourly Pay, Regular Hours, Overtime Hours, and Total Payable amount.
 ## 🛠️ Technology Stack
 
@@ -218,10 +235,7 @@ The built-in `exportToCSV` utility generates dynamic CSV files depending on the 
 
 </div>
 
-One can download the  billing statement
 
-
-[📥 View Project Report](./public/billing.csv)
 
 <div align="center">
 
