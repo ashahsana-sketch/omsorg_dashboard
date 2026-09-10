@@ -92,8 +92,50 @@ The scheduling engine is designed to match staff and clients based on:
 * Easy navigation between staff and client directories
 * Integrated creation and management forms
 
+
+
+**Dynamic Client Invoicing:** Automatically calculates billable hours and total revenue based on client care levels and actual rostered delivery.
+- **Role-Based Staff Payroll:** Computes regular and overtime pay dynamically according to employee qualifications and role-based hourly pay rates.
+- **Overtime Calculation:** Automatically isolates overtime hours (hours exceeding 8 hours) and applies a **1.5x multiplier** to the hourly rate.
+- **Tabbed Interface:** Easily toggle between **Client Invoicing Data** and **Payroll & Staff Hours**.
+- **Overview Metrics:** High-level summary cards displaying total estimated client billing, total payroll cost, active client count, and active caregiver count.
+- **One-Click CSV Export:** Export detailed financial and operational data for clients or staff directly to CSV format.
+
+---
+# Care Management & Reports Dashboard
+
+A responsive Next.js dashboard component (`ReportsPage`) built for home-care and healthcare service providers to manage client invoicing, staff payroll, work schedules, and financial reporting in a single interface.
+
+
+
+## Rate Structures
+
+### Client Invoicing Rates
+| Care Level | Hourly Rate (SEK) |
+| :--- | :--- |
+| **High Care** | 450 SEK |
+| **Standard Care** | 350 SEK |
+| **Basic Care** | 300 SEK |
+
+### Staff Payroll Rates
+| Employee Role | Hourly Pay (SEK) |
+| :--- | :--- |
+| **Registered Nurse (RN)** | 300 SEK |
+| **Senior Care Worker** | 275 SEK |
+| **Support Worker** | 250 SEK |
+| **Care Assistant** | 200 SEK |
+
 ---
 
+
+
+---
+
+## Data Exports
+
+The built-in `exportToCSV` utility generates dynamic CSV files depending on the active view:
+- **Client Report:** Includes Client ID, Name, Location, Care Level, Contract Hours, Delivered Hours, Hourly Rate, and Total Billable amount.
+- **Staff Report:** Includes Employee ID, Name, Role, Hourly Pay, Regular Hours, Overtime Hours, and Total Payable amount.
 ## 🛠️ Technology Stack
 
 <div align="center">
@@ -106,6 +148,8 @@ The scheduling engine is designed to match staff and clients based on:
 | ⚛️ **React** | Interactive user interfaces and state management |
 | 🔌 **REST API** | Communication between frontend and backend |
 | 🤖 **Antigravity AI** | AI-assisted development and coding support |
+| **State & Memoization:**| React `useState`, `useMemo` for high-performance data processing.|
+| **Roster Engine:**| Integrates with `@/lib/rosterEngine` to parse JSON datasets (`employees.json`, `client.json`) and calculate task allocations and workloads.|
 
 </div>
 
