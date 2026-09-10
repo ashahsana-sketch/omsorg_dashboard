@@ -260,7 +260,7 @@ export default function RosterView() {
                   <span className="text-xs font-bold text-stone-800">
                     {req.careLevel}
                   </span>
-                  <span className="text-[10px] bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded font-bold">
+                  <span className="text-[11px] bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded font-bold">
                     {req.unassignedClientsCount} Clients
                   </span>
                 </div>
@@ -319,12 +319,12 @@ export default function RosterView() {
                   {/* Client Details */}
                   <td className="p-3 align-top">
                     <div className="font-bold text-stone-900">{item.client.name}</div>
-                    <div className="text-[10px] text-stone-700 font-mono">
+                    <div className="text-[12px] text-stone-700 font-mono">
                       {item.client.id} | {item.client.location}
                     </div>
                     <div className="mt-1 flex gap-2 flex-wrap">
                       <span
-                        className={`px-1.5 py-0.5 rounded text-[9px] font-bold ${
+                        className={`px-1.5 py-0.5 rounded text-[11px] font-bold ${
                           item.client.careLevel === "High Care"
                             ? "bg-rose-100 text-rose-700 outline-1"
                             : "bg-blue-100 text-blue-700 outline-1"
@@ -333,7 +333,7 @@ export default function RosterView() {
                         {item.client.careLevel}
                       </span>
                       <span
-                        className={`px-1.5 py-0.5 rounded text-[9px] font-bold ${
+                        className={`px-1.5 py-0.5 rounded text-[12px] font-bold ${
                           item.client.isFixedTime
                             ? "bg-amber-100 text-amber-800 outline-1"
                             : "bg-purple-100 text-purple-800 outline-1 "
@@ -352,7 +352,7 @@ export default function RosterView() {
                           <span className="bg-teal-600 text-white font-mono text-[11px] px-2.5 py-1 rounded-r-2xl font-bold shadow-xs">
                             Shift {idx + 1}: {task.start} - {task.end}
                           </span>
-                          <span className="text-[10px] bg-stone-100 outline-1 text-stone-600 px-1.5 py-0.5 rounded font-bold">
+                          <span className="text-[11px] bg-stone-100 outline-1 text-stone-600 px-1.5 py-0.5 rounded font-bold">
                             {(task.durationMinutes / 60).toFixed(1)}h
                           </span>
                         </div>
@@ -372,7 +372,7 @@ export default function RosterView() {
                           <div className="text-[11px] font-bold text-teal-900 ">
                             {idx + 1}. {task.assignedStaffName}
                           </div>
-                          <div className="text-[10px] text-stone-500">
+                          <div className="text-[11px] text-stone-500">
                             ID: {task.assignedStaffId}
                           </div>
                         </div>
@@ -391,7 +391,7 @@ export default function RosterView() {
                   <td className="p-3 text-center align-top space-y-2 ">
                     <div>
                       <span
-                        className={`px-2 py-0.5 rounded-full text-[10px]  font-bold ${
+                        className={`px-0.5 py-0.5 rounded-full text-[11px]  font-bold ${
                           item.status === "Fully Assigned"
                             ? "bg-emerald-100 text-emerald-800  outline-1 p-3"
                             : item.status === "Partially Assigned"
@@ -430,7 +430,7 @@ export default function RosterView() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
           {Object.entries(workloads).map(([name, hours]) => (
             <div key={name} className="bg-white p-2.5 rounded border border-stone-200 shadow-sm">
-              <div className="text-stone-500 text-[10px] font-semibold">{name}</div>
+              <div className="text-stone-500 text-[11px] font-semibold">{name}</div>
               <div className="font-bold text-stone-800">{hours} / 8.0 hrs allocated</div>
             </div>
           ))}

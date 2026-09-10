@@ -126,5 +126,25 @@
     "isFixedTime": false,
     "shiftStart": null,
     "shiftEnd": null
+  },
+  {
+    "id": "EMP-1015",
+    "name": "Christer",
+    "role": "Senior Care Worker",
+    "maxHours": 40,
+    "location": "Stockholm",
+    "isFixedTime": false,
+    "shiftStart": null,
+    "shiftEnd": null
+  },
+  {
+    "id": "EMP-1016",
+    "name": "Christine stenberg",
+    "role": "Registered Nurse (RN)",
+    "maxHours": 40,
+    "location": "Stockholm",
+    "isFixedTime": false,
+    "shiftStart": null,
+    "shiftEnd": null
   }
 ]

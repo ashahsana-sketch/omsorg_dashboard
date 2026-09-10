@@ -70,7 +70,7 @@ export default function Footer() {
           Elderly Care Dashboard © {new Date().getFullYear()} — All rights reserved.
         </div>
         <div className="pt-2">
-            <span className="text-[10px] uppercase font-bold text-rose-700 tracking-wider block">
+            <span className="text-[11px] uppercase font-bold text-rose-700 tracking-wider block">
               24/7 Care Support Hotline
             </span>
             <a href="tel:+468000000" className="text-sm font-bold text-stone-800 hover:text-teal-600">
