@@ -184,7 +184,7 @@ The form will open
 | **High Care** | 160 SEK |
 | **Standard Care** | 150 SEK |
 | **Basic Care** | 130 SEK |
-
+**Client Report:** Includes Client ID, Name, Location, Care Level, Contract Hours, Delivered Hours, Hourly Rate, and Total Billable amount.
 <div align="center">
 
 <img src="./public/payroll.png" alt="payroll" width="600"/>
@@ -198,7 +198,7 @@ The form will open
 | **Senior Care Worker** | 170 SEK |
 | **Support Worker** | 165 SEK |
 | **Care Assistant** | 200 SEK |
-
+ **Staff Report:** Includes Employee ID, Name, Role, Hourly Pay, Regular Hours, Overtime Hours, and Total Payable amount.
 ---
 <div align="center">
 
@@ -217,15 +217,6 @@ One can download the  billing statement
 
 [📥 View Project Report](./public/billing.csv)
 
-- **Client Report:** Includes Client ID, Name, Location, Care Level, Contract Hours, Delivered Hours, Hourly Rate, and Total Billable amount.
-
-<div align="center">
-
-<img src="./public/payroll.png" alt="payroll Report" width="600"/>
-
-</div> 
-
-- **Staff Report:** Includes Employee ID, Name, Role, Hourly Pay, Regular Hours, Overtime Hours, and Total Payable amount.
 ## 🛠️ Technology Stack
 
 
