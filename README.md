@@ -119,6 +119,14 @@ The scheduling engine is designed to match staff and clients based on:
 
 </div>
 
+If it doesnot assign to all clients than we can assign manually
+
+<div align="center">
+
+<img src="./public/assign_manually.png" alt="Assign_manually" width="900"/>
+
+</div>
+
 ### 📱 Responsive Dashboard
 * Modern dashboard interface
 * Responsive layout
@@ -141,12 +149,12 @@ The scheduling engine is designed to match staff and clients based on:
 - **One-Click CSV Export:** Export detailed financial and operational data for clients or staff directly to CSV format.
 
 ---
+
 <div align="center">
 
-<img src="./public/Billing_report.png" alt="Billing Report" width="900"/>
+<img src="./public/export.png" alt="export" width="600"/>
 
 </div>
-
 
 
 ## Rate Structures
@@ -158,6 +166,12 @@ The scheduling engine is designed to match staff and clients based on:
 | **Standard Care** | 150 SEK |
 | **Basic Care** | 130 SEK |
 
+<div align="center">
+
+<img src="./public/payroll.png" alt="payroll" width="900"/>
+
+</div>
+
 ### Staff Payroll Rates
 | Employee Role | Hourly Pay (SEK) |
 | :--- | :--- |
@@ -167,7 +181,11 @@ The scheduling engine is designed to match staff and clients based on:
 | **Care Assistant** | 200 SEK |
 
 ---
+<div align="center">
 
+<img src="./public/Billing_report.png" alt="Billing Report" width="900"/>
+
+</div>
 
 
 ---
@@ -179,7 +197,18 @@ The built-in `exportToCSV` utility generates dynamic CSV files depending on the 
 - **Staff Report:** Includes Employee ID, Name, Role, Hourly Pay, Regular Hours, Overtime Hours, and Total Payable amount.
 ## 🛠️ Technology Stack
 
+
 <div align="center">
+
+<img src="./public/export.png" alt="Export Report" width="900"/>
+
+</div>
+
+
+<div align="center">
+
+
+[📥 View Project Report](./public/billing.csv)
 
 | Technology | Purpose |
 | :--- | :--- |
