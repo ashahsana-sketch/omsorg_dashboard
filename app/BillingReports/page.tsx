@@ -44,17 +44,17 @@ export default function ReportsPage() {
       const overtimeHours = Math.max(0, assignedHours - 8);
 
       // Role ke mutabiq hourly pay assign karna
-      let payRate = 200; // Default Care Assistant rate
+      let payRate = 130; // Default Care Assistant rate
       const roleLower = emp.role?.toLowerCase() || "";
       
       if (roleLower.includes("registered nurse") || roleLower.includes("rn")) {
-        payRate = 300;
+        payRate = 160;
       } else if (roleLower.includes("support worker")) {
-        payRate = 275;
+        payRate = 150;
       } else if (roleLower.includes("senior care")) {
-        payRate = 250;
+        payRate = 140;
       } else if (roleLower.includes("care assistant")) {
-        payRate = 200;
+        payRate = 130;
       }
 
       return {
@@ -76,12 +76,12 @@ export default function ReportsPage() {
         ? rosterItem.tasks.reduce((sum, t) => sum + t.durationMinutes / 60, 0)
         : 0;
 
-      let rate = 350; // Default Standard Care
+      let rate = 150; // Default Standard Care
       const care = client.careLevel?.toLowerCase() || "";
       if (care.includes("high")) {
-        rate = 450;
+        rate = 170;
       } else if (care.includes("basic")) {
-        rate = 300;
+        rate = 140;
       }
 
       return {
@@ -174,8 +174,8 @@ export default function ReportsPage() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-xl border border-teal-100 shadow-sm">
         <div>
           <h1 className="text-xl font-bold text-stone-800">
-            Billing & Hours Summary For The Current Week
-          </h1>
+            Billing & Hours Summary For The Day
+                      </h1>
           <p className="text-xs text-stone-500 mt-1">
             Manage Client Invoicing and Staff Payroll metrics in one place.
           </p>

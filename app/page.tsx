@@ -1,5 +1,5 @@
 import Header from "./Components/Header/Header";
-import Footer from "./Components/footer/Footer";
+import Footer from "./Components/footer/footer";
 import EmployeeModal from "./employees/EmployerModal";
 import EmployeeManagerForm from "./employees/EmployeeManagerForm";
 import ClientManagerForm from "./clients/ClientManagerForm";

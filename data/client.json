@@ -241,13 +241,23 @@
     "preferredEnd": "16:00"
   },
   {
-    "id": "1788942907244",
-    "name": "Lars",
-    "careLevel": "Basic Assistance",
-    "requiredHours": 5,
-    "location": "Stockholm",
+    "id": "CL-1015",
+    "name": "Adam",
+    "careLevel": "Standard Care",
+    "location": "Solna",
     "isFixedTime": false,
     "preferredStart": null,
-    "preferredEnd": null
+    "preferredEnd": null,
+    "requiredHours": 5
+  },
+  {
+    "id": "CL-1016",
+    "name": "abc",
+    "careLevel": "Standard Care",
+    "location": "Stockholm",
+    "isFixedTime": true,
+    "preferredStart": "09:00",
+    "preferredEnd": "12:00",
+    "requiredHours": 5
   }
 ]
