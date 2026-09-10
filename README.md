@@ -34,7 +34,7 @@ The project was developed using **Next.js, TypeScript, and Tailwind CSS**, with 
 ---
 <div align="center">
 
-<img src="./public/main_page.png" alt="CareStaff Dashboard" width="900"/>
+<img src="./public/main_page.png" alt="CareStaff Dashboard" width="600"/>
 
 </div>
 
@@ -64,9 +64,13 @@ This can become:
 ---
 <div align="center">
 
-<img src="./public/Client_list.png" alt="Client list" width="900"/>
+<img src="./public/Client_list.png" alt="Client list" width="600"/>
 
 </div>
+
+
+Employees List
+
 
 <div align="center">
 
@@ -88,7 +92,7 @@ This can become:
 
 <div align="center">
 
-<img src="./public/Add_new_client.png" alt="Add new client" width="900"/>
+<img src="./public/Add_care_client.png" alt="Add new client" width="600"/>
 
 </div>
 
@@ -115,15 +119,25 @@ The scheduling engine is designed to match staff and clients based on:
 * 👩‍⚕️ Staff capacity
 <div align="center">
 
-<img src="./public/reschdule roster.png" alt="Reschdule Roster" width="900"/>
+<img src="./public/reschdule roster.png" alt="Reschdule Roster" width="600"/>
 
 </div>
 
+
 If it doesnot assign to all clients than we can assign manually
+
 
 <div align="center">
 
-<img src="./public/assign_manually.png" alt="Assign_manually" width="900"/>
+<img src="./public/Assign_manually.png" alt="Assign_manually" width="600"/>
+
+</div>
+
+The form will open
+
+<div align="center">
+
+<img src="./public/assign_manually_2.png" alt="Assign_manually" width="600"/>
 
 </div>
 
@@ -136,7 +150,7 @@ If it doesnot assign to all clients than we can assign manually
 * Integrated creation and management forms
 <div align="center">
 
-<img src="./public/responsive.png" alt="Responsive behaviour" width="900"/>
+<img src="./public/responsive.png" alt="Responsive behaviour" width="600"/>
 
 </div>
 
@@ -168,7 +182,7 @@ If it doesnot assign to all clients than we can assign manually
 
 <div align="center">
 
-<img src="./public/payroll.png" alt="payroll" width="900"/>
+<img src="./public/payroll.png" alt="payroll" width="600"/>
 
 </div>
 
@@ -183,7 +197,7 @@ If it doesnot assign to all clients than we can assign manually
 ---
 <div align="center">
 
-<img src="./public/Billing_report.png" alt="Billing Report" width="900"/>
+<img src="./public/Billing_report.png" alt="Billing Report" width="600"/>
 
 </div>
 
@@ -200,15 +214,17 @@ The built-in `exportToCSV` utility generates dynamic CSV files depending on the 
 
 <div align="center">
 
-<img src="./public/export.png" alt="Export Report" width="900"/>
+<img src="./public/export.png" alt="Export Report" width="600"/>
 
 </div>
 
-
-<div align="center">
+One can download the  billing statement
 
 
 [📥 View Project Report](./public/billing.csv)
+
+<div align="center">
+
 
 | Technology | Purpose |
 | :--- | :--- |
