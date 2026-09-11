@@ -136,11 +136,11 @@ export default function ClientsDirectoryPage() {
                         {isFixed && client.preferredStart && client.preferredEnd ? (
                           <span className="inline-flex items-center gap-1 bg-blue-50 text-blue-900 border border-blue-100 px-2 py-0.5 rounded-md font-mono text-[11px]">
                             <span className="font-sans font-bold text-[10px] uppercase">Fixed:</span>
-                            {client.preferredStart} - {client.preferredEnd} ({client.requiredHours}h/wk)
+                            {client.preferredStart} - {client.preferredEnd} ({client.requiredHours}h/day)
                           </span>
                         ) : (
                           <span className="inline-block bg-emerald-50 text-emerald-700 border border-emerald-100 px-2 py-0.5 rounded-md font-mono text-[11px]">
-                            Flexible ({client.requiredHours}h/wk)
+                            Flexible ({client.requiredHours}h/day)
                           </span>
                         )}
                       </td>

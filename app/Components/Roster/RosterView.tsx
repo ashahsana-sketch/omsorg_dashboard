@@ -60,6 +60,26 @@ export default function RosterView() {
 
   const employeesList = rawEmployees as unknown as Employee[];
 
+  // Helper function to update state and persist to localStorage simultaneously
+  const persistAndSetState = (
+    newRoster: FinalRosterItem[],
+    newWorkloads: Record<string, number>,
+    newMissingReqs: MissingStaffRequirement[]
+  ) => {
+    setRosterData(newRoster);
+    setWorkloads(newWorkloads);
+    setMissingReqs(newMissingReqs);
+
+    localStorage.setItem(
+      storageKey,
+      JSON.stringify({
+        roster: newRoster,
+        workloads: newWorkloads,
+        missingReqs: newMissingReqs,
+      })
+    );
+  };
+
   const runCalculationAndRender = () => {
     setLoading(true);
     setErrorMsg("");
@@ -77,7 +97,7 @@ export default function RosterView() {
       }
 
       const clients = rawClients as unknown as Client[];
-      const shuffledClients = [...clients].sort(() => Math.sin(selectedWeek) - 0.5);
+      const shuffledClients = [...clients].sort(() => Math.random() - 0.5);
 
       const { roster, employeeWorkloads, missingRequirements } = computeRoster(
         shuffledClients,
@@ -100,26 +120,6 @@ export default function RosterView() {
     runCalculationAndRender();
   }, [selectedDate, selectedWeek]);
 
-  // Helper function to update state and persist to localStorage simultaneously
-  const persistAndSetState = (
-    newRoster: FinalRosterItem[],
-    newWorkloads: Record<string, number>,
-    newMissingReqs: MissingStaffRequirement[]
-  ) => {
-    setRosterData(newRoster);
-    setWorkloads(newWorkloads);
-    setMissingReqs(newMissingReqs);
-
-    localStorage.setItem(
-      storageKey,
-      JSON.stringify({
-        roster: newRoster,
-        workloads: newWorkloads,
-        missingReqs: newMissingReqs,
-      })
-    );
-  };
-
   const handlePrevDay = () =>
     setSelectedDate((previous) => {
       const date = new Date(previous);
@@ -136,7 +136,16 @@ export default function RosterView() {
 
   const handleResetAndRecalculate = () => {
     localStorage.removeItem(storageKey);
-    runCalculationAndRender();
+    
+    const clients = rawClients as unknown as Client[];
+    const shuffledClients = [...clients].sort(() => Math.random() - 0.5);
+
+    const { roster, employeeWorkloads, missingRequirements } = computeRoster(
+      shuffledClients,
+      employeesList
+    );
+
+    persistAndSetState(roster, employeeWorkloads, missingRequirements);
   };
 
   // Updated Manual Assignment Handling with Remaining Slot Allocation & Persistence
@@ -316,7 +325,6 @@ export default function RosterView() {
             <span className="bg-red-700 hover:bg-red-800 text-white font-bold text-sm p-2 rounded-md shadow-xs">
               Extra Staff Needed: <span className="font-extrabold">{totalExtraStaffNeeded}</span>
             </span>
-
           </div>
         </div>
 
@@ -425,7 +433,7 @@ export default function RosterView() {
             </thead>
             <tbody className="divide-y divide-stone-100 text-stone-700">
               {rosterData.map((item, index) => (
-                <tr key={`${item.client.id}-${selectedWeek}`} className="hover:bg-teal-50 border-2 border-stone-200 transition-colors">
+                <tr key={`${item.client.id}-${index}`} className="hover:bg-teal-50 border-2 border-stone-200 transition-colors">
                   <td className="p-3  font-bold text-stone-400 text-center">
                     {index + 1}
                   </td>
@@ -438,18 +446,18 @@ export default function RosterView() {
                     </div>
                     <div className="mt-1 grid grid-cols-1 gap-2">
                     <span
-  className={`px-1.5 py-0.5 block-inline rounded text-[11px] font-bold ${
-    item.client.careLevel === "High Care"
-      ? "bg-red-50 text-red-700 outline-1"
-      : item.client.careLevel === "Standard Care"
-      ? "bg-blue-50 text-blue-700 outline-1"
-      : item.client.careLevel === "Low Care"
-      ? "bg-emerald-50 text-emerald-800 outline-1"
-      : "bg-teal-50 text-teal-800 outline-1"
-  }`}
->
-  {item.client.careLevel}
-</span>
+                      className={`px-1.5 py-0.5 block-inline rounded text-[11px] font-bold ${
+                        item.client.careLevel === "High Care"
+                          ? "bg-red-50 text-red-700 outline-1"
+                          : item.client.careLevel === "Standard Care"
+                          ? "bg-blue-50 text-blue-700 outline-1"
+                          : item.client.careLevel === "Low Care"
+                          ? "bg-emerald-50 text-emerald-800 outline-1"
+                          : "bg-teal-50 text-teal-800 outline-1"
+                      }`}
+                    >
+                      {item.client.careLevel}
+                    </span>
 
                       <span
                         className={`px-1.5 py-0.5 rounded text-[12px] font-bold ${
@@ -460,7 +468,6 @@ export default function RosterView() {
                       >
                         {item.client.isFixedTime ? "Fixed Time" : " Flexible Time"}
                       </span>
-                    
                     </div>
                   </td>
 
@@ -468,22 +475,20 @@ export default function RosterView() {
                   <td className="p-3 align-middle space-y-1.5">
                     {item.tasks.length > 0 ? (
                       item.tasks.map((task, idx) => (
-  <div
-  key={task.id}
-  className="grid grid-cols-1 items-center gap-2 bg-teal-700 text-white text-[11px] p-2 rounded-2xl"
->
-  <span className="w-fit rounded-md bg-teal-50 px-2 py-0.5 font-bold text-teal-800">
-    Shift {idx + 1}:
-  </span>
-
-  <span>
-    Time: {task.start} - {task.end}
-  </span>
-
-  <span>
-    Total hours: {(task.durationMinutes / 60).toFixed(1)}h
-  </span>
-</div>
+                        <div
+                          key={task.id}
+                          className="grid grid-cols-1 items-center gap-2 bg-teal-700 text-white text-[11px] p-2 rounded-2xl"
+                        >
+                          <span className="w-fit rounded-md bg-teal-50 px-2 py-0.5 font-bold text-teal-800">
+                            Shift {idx + 1}:
+                          </span>
+                          <span>
+                            Time: {task.start} - {task.end}
+                          </span>
+                          <span>
+                            Total hours: {(task.durationMinutes / 60).toFixed(1)}h
+                          </span>
+                        </div>
                       ))
                     ) : (
                       <span className="bg-red-50 text-red-700 font-bold text-xs px-2.5 py-1 rounded-md inline-block">
@@ -497,16 +502,16 @@ export default function RosterView() {
                     {item.tasks.length > 0 ? (
                       item.tasks.map((task, idx) => (
                         <div key={task.id} className="bg-stone-50 p-1.5 rounded border border-stone-200 outline-1">
-                          <div className="text-[11px] font-bold text-emerald-950">
+                          <div className="text-[12px] font-bold text-emerald-950">
                             {idx + 1}. {task.assignedStaffName}
                           </div>
-                          <div className="text-[11px] text-stone-500">
+                          <div className="text-[11px] text-stone-600">
                             ID: {task.assignedStaffId}
                           </div>
                         </div>
                       ))
                     ) : (
-                      <div className="text-stone-400 font-bold text-xs outline-1">Unassigned</div>
+                      <div className="text-stone-600 font-bold text-xs outline-1">Unassigned</div>
                     )}
                   </td>
 
@@ -519,16 +524,16 @@ export default function RosterView() {
                   <td className="p-3 text-center align-middle space-y-2">
                     <div>
                       <span
-  className={`px-1.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold whitespace-nowrap ${
-    item.status === "Fully Assigned"
-      ? "bg-emerald-100 text-emerald-800"
-      : item.status === "Partially Assigned"
-      ? "bg-amber-100 text-amber-900"
-      : "bg-red-50 text-red-700"
-  }`}
->
-  {item.status}
-</span>
+                        className={`px-1.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold whitespace-nowrap ${
+                          item.status === "Fully Assigned"
+                            ? "bg-emerald-100 text-emerald-800 border border-emerald-600"
+                            : item.status === "Partially Assigned"
+                            ? "bg-amber-100 text-amber-900 border border-amber-700"
+                            : "bg-red-50 text-red-700"
+                        }`}
+                      >
+                        {item.status}
+                      </span>
                     </div>
 
                     {item.status !== "Fully Assigned" && (

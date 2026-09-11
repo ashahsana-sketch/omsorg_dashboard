@@ -73,14 +73,14 @@ export default function AddEmployeePage() {
 
         <form
           onSubmit={handleSaveEmployee}
-          className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4"
+          className="bg-teal-50 p-6 rounded-xl border border-slate-200 shadow-sm space-y-4"
         >
-          <h3 className="text-base font-bold text-teal-700 border-b border-slate-200 rounded-2xl bg-slate-50 p-2.5 text-center">
+          <h3 className="text-base font-bold bg-teal-50 text-teal-700 border-b border-slate-200 rounded-2xl p-2.5 text-center">
             Add New Employee
           </h3>
 
           {/* Employee Name */}
-          <div className="text-left space-y-2">
+          <div className="text-left  space-y-2">
             <label className="block text-xs font-bold text-emerald-950 uppercase mb-1">
               Employee Name
             </label>
