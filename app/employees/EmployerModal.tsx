@@ -19,16 +19,16 @@ export default function EmployeeModal() {
       {/* Modal Overlay */}
       {isOpen && (
         <div className="fixed inset-0 bg-stone-900/50 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl border border-amber-100 shadow-xl max-w-3xl w-full p-6 relative max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-xl max-w-3xl w-full p-6 relative max-h-[90vh] overflow-y-auto">
             
             {/* Close Header */}
-            <div className="flex items-center justify-between pb-4 mb-4 border-b border-amber-100">
-              <h3 className="text-lg font-bold text-stone-900">
+            <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-200">
+              <h3 className="text-lg font-bold text-slate-800">
                 Employee Management
               </h3>
               <button
                 onClick={() => setIsOpen(false)}
-                className="text-stone-400 hover:text-stone-600 font-bold p-1 rounded-lg text-sm cursor-pointer"
+                className="text-slate-500 hover:text-slate-800 font-bold p-1 rounded-lg text-sm cursor-pointer"
               >
                 ✕ Close
               </button>

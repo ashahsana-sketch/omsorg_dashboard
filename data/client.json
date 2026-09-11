@@ -89,7 +89,7 @@
     "id": "CL-1007",
     "name": "Daniel Miller",
     "careLevel": "High Care",
-    "requiredHours": 10,
+    "requiredHours": 5,
     "location": "Stockholm",
     "isFixedTime": false,
     "services": [
@@ -117,8 +117,8 @@
   {
     "id": "CL-1009",
     "name": "David Taylor",
-    "careLevel": "High Care",
-    "requiredHours": 9,
+    "careLevel": "Standard Care",
+    "requiredHours": 8,
     "location": "Stockholm",
     "isFixedTime": false,
     "services": [
@@ -132,7 +132,7 @@
   {
     "id": "CL-1010",
     "name": "Robert Thomas",
-    "careLevel": "Standard Care",
+    "careLevel": "Basic Care",
     "requiredHours": 8,
     "location": "Stockholm",
     "isFixedTime": false,
@@ -233,7 +233,7 @@
   {
     "id": "CL-1014",
     "name": "Eddie",
-    "careLevel": "High Dependency",
+    "careLevel": "High Care",
     "requiredHours": 5,
     "location": "Solna",
     "isFixedTime": true,
@@ -243,7 +243,7 @@
   {
     "id": "CL-1015",
     "name": "Adam",
-    "careLevel": "Standard Care",
+    "careLevel": "Basic Care",
     "location": "Solna",
     "isFixedTime": false,
     "preferredStart": null,
@@ -259,5 +259,15 @@
     "preferredStart": "09:00",
     "preferredEnd": "12:00",
     "requiredHours": 5
+  },
+  {
+    "id": "CL-1017",
+    "name": "Asma",
+    "careLevel": "Basic Care",
+    "requiredHours": 5,
+    "location": "Stockholm",
+    "isFixedTime": true,
+    "preferredStart": "09:00",
+    "preferredEnd": "12:00"
   }
 ]

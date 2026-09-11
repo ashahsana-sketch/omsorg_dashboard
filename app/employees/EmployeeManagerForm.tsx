@@ -75,15 +75,15 @@ export default function EmployeeManagerForm() {
       {/* 1. Add Employee Form */}
       <form
         onSubmit={(e) => e.preventDefault()}
-        className="bg-gray-100 p-6 rounded-xl border border-teal-100 shadow-sm space-y-4"
+        className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4"
       >
-        <h3 className="text-base font-bold text-stone-800 border-b border-teal-800 rounded-2xl bg-teal-400 p-2.5 text-center">
+        <h3 className="text-base font-bold text-teal-700 border-b border-slate-200 rounded-2xl bg-slate-50 p-2.5 text-center">
           Add New Employee
         </h3>
 
         {/* Employee Name */}
         <div className="text-left space-y-2">
-          <label className="block text-xs font-bold text-stone-700 uppercase mb-1">
+          <label className="block text-xs font-bold text-slate-800 uppercase mb-1">
             Employee Name
           </label>
           <input
@@ -91,20 +91,20 @@ export default function EmployeeManagerForm() {
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="e.g. Anna Lindqvist"
-            className="w-full p-2 border border-stone-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
+            className="w-full p-2 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-600 bg-white"
             required
           />
         </div>
 
         {/* Role: Exactly 4 Categories */}
         <div className="text-left space-y-2">
-          <label className="block text-xs font-bold text-stone-700 uppercase mb-1">
+          <label className="block text-xs font-bold text-slate-800 uppercase mb-1">
             Role
           </label>
           <select
             value={role}
             onChange={(e) => setRole(e.target.value)}
-            className="w-full p-2 border border-stone-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
+            className="w-full p-2 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-600 bg-white"
           >
             <option value="Care Assistant">Care Assistant</option>
             <option value="Senior Care Worker">Senior Care Worker</option>
@@ -115,13 +115,13 @@ export default function EmployeeManagerForm() {
 
         {/* Location */}
         <div className="text-left space-y-2">
-          <label className="block text-xs font-bold text-stone-700 uppercase mb-1">
+          <label className="block text-xs font-bold text-slate-800 uppercase mb-1">
             Location
           </label>
           <select
             value={location}
             onChange={(e) => setLocation(e.target.value)}
-            className="w-full p-2 border border-stone-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
+            className="w-full p-2 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-600 bg-white"
           >
             <option value="Stockholm">Stockholm</option>
             <option value="Solna">Solna</option>
@@ -132,13 +132,13 @@ export default function EmployeeManagerForm() {
 
         {/* Schedule Type Selection */}
         <div className="text-left space-y-2">
-          <label className="block text-xs font-bold text-stone-700 uppercase mb-1">
+          <label className="block text-xs font-bold text-slate-800 uppercase mb-1">
             Schedule Type
           </label>
           <select
             value={scheduleType}
             onChange={(e) => setScheduleType(e.target.value as "fixed" | "flexible")}
-            className="w-full p-2 border border-stone-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
+            className="w-full p-2 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-600 bg-white"
           >
             <option value="fixed">Fixed Shift (Specific Start & End Time)</option>
             <option value="flexible">Flexible Hours</option>
@@ -149,45 +149,45 @@ export default function EmployeeManagerForm() {
         {scheduleType === "fixed" ? (
           <div className="grid grid-cols-2 gap-2 text-left bg-stone-50 p-3 rounded-lg border border-stone-200">
             <div>
-              <label className="block text-xs font-bold text-stone-700 uppercase mb-1">
+              <label className="block text-xs font-bold text-slate-800 uppercase mb-1">
                 Shift Start
               </label>
               <input
                 type="time"
                 value={shiftStart}
                 onChange={(e) => setShiftStart(e.target.value)}
-                className="w-full p-2 border border-stone-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
+                className="w-full p-2 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-600 bg-white"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-stone-700 uppercase mb-1">
+              <label className="block text-xs font-bold text-slate-800 uppercase mb-1">
                 Shift End
               </label>
               <input
                 type="time"
                 value={shiftEnd}
                 onChange={(e) => setShiftEnd(e.target.value)}
-                className="w-full p-2 border border-stone-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
+                className="w-full p-2 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-600 bg-white"
               />
             </div>
           </div>
         ) : (
-          <p className="text-[11px] text-stone-500 italic text-left pl-1">
+          <p className="text-[11px] text-slate-500 italic text-left pl-1">
             * Employee is set to Flexible Schedule without fixed timing constraint.
           </p>
         )}
 
         {/* Max Weekly Hours */}
         <div className="text-left space-y-2">
-          <label className="block text-xs font-bold text-stone-700 uppercase mb-1">
+          <label className="block text-xs font-bold text-slate-800 uppercase mb-1">
             Max Hours / Week
           </label>
           <input
             type="number"
             value={maxHours}
             onChange={(e) => setMaxHours(Number(e.target.value))}
-            className="w-full p-2 border border-stone-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
+            className="w-full p-2 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-600 bg-white"
           />
         </div>
 
@@ -197,7 +197,7 @@ export default function EmployeeManagerForm() {
             type="button"
             onClick={(e) => saveEmployeeData(e, true)}
             disabled={isSubmitting}
-            className="flex-1 bg-stone-100 hover:bg-stone-200 text-stone-800 font-bold py-2 rounded-lg text-xs transition-colors border border-stone-300 cursor-pointer disabled:opacity-50"
+            className="flex-1 bg-white hover:bg-slate-50 text-slate-800 font-bold py-2 rounded-lg text-xs transition-colors border border-slate-200 cursor-pointer disabled:opacity-50"
           >
             {isSubmitting ? "Saving..." : "Save Employee Detail"}
           </button>

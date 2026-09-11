@@ -1,5 +1,4 @@
 "use client";
-import link from "next/link";
 import { useState, useEffect, useMemo } from "react";
 import {
   computeRoster,
@@ -21,6 +20,15 @@ function getISOWeekNumber(date: Date): number {
   return Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
 }
 
+function formatRosterDate(date: Date): string {
+  return new Intl.DateTimeFormat("en-GB", {
+    weekday: "long",
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  }).format(date);
+}
+
 export default function RosterView() {
   const [rosterData, setRosterData] = useState<FinalRosterItem[]>([]);
   const [workloads, setWorkloads] = useState<Record<string, number>>({});
@@ -28,8 +36,24 @@ export default function RosterView() {
   const [loading, setLoading] = useState<boolean>(true);
   const [errorMsg, setErrorMsg] = useState<string>("");
 
-  const currentWeekNumber = useMemo(() => getISOWeekNumber(new Date()), []);
-  const [selectedWeek, setSelectedWeek] = useState<number>(currentWeekNumber);
+  const today = useMemo(() => new Date(), []);
+  const [selectedDate, setSelectedDate] = useState<Date>(today);
+  const selectedWeek = useMemo(() => getISOWeekNumber(selectedDate), [selectedDate]);
+  
+  // Unique storage key based on the selected date string to persist overrides per day
+  const dateKey = selectedDate.toISOString().split("T")[0];
+  const storageKey = `roster_state_${dateKey}`;
+
+  const isToday = selectedDate.toDateString() === today.toDateString();
+  const selectedDateLabel = useMemo(() => {
+    if (isToday) return "Today";
+    const dayOffset = Math.round(
+      (selectedDate.getTime() - today.getTime()) / 86400000
+    );
+    if (dayOffset === -1) return "Yesterday";
+    if (dayOffset === 1) return "Tomorrow";
+    return formatRosterDate(selectedDate);
+  }, [isToday, selectedDate, today]);
 
   const [selectedClientItem, setSelectedClientItem] = useState<FinalRosterItem | null>(null);
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<string>("");
@@ -41,6 +65,17 @@ export default function RosterView() {
     setErrorMsg("");
 
     try {
+      // Check if saved manual state exists for this specific date in localStorage
+      const savedState = localStorage.getItem(storageKey);
+      if (savedState) {
+        const parsed = JSON.parse(savedState);
+        setRosterData(parsed.roster);
+        setWorkloads(parsed.workloads);
+        setMissingReqs(parsed.missingReqs);
+        setLoading(false);
+        return;
+      }
+
       const clients = rawClients as unknown as Client[];
       const shuffledClients = [...clients].sort(() => Math.sin(selectedWeek) - 0.5);
 
@@ -63,13 +98,48 @@ export default function RosterView() {
 
   useEffect(() => {
     runCalculationAndRender();
-  }, [selectedWeek]);
+  }, [selectedDate, selectedWeek]);
 
-  const handlePrevWeek = () => setSelectedWeek((prev) => (prev > 1 ? prev - 1 : 52));
-  const handleNextWeek = () => setSelectedWeek((prev) => (prev < 52 ? prev + 1 : 1));
-  const handleCurrentWeek = () => setSelectedWeek(currentWeekNumber);
+  // Helper function to update state and persist to localStorage simultaneously
+  const persistAndSetState = (
+    newRoster: FinalRosterItem[],
+    newWorkloads: Record<string, number>,
+    newMissingReqs: MissingStaffRequirement[]
+  ) => {
+    setRosterData(newRoster);
+    setWorkloads(newWorkloads);
+    setMissingReqs(newMissingReqs);
 
-  // Updated Manual Assignment Handling with Remaining Slot Allocation
+    localStorage.setItem(
+      storageKey,
+      JSON.stringify({
+        roster: newRoster,
+        workloads: newWorkloads,
+        missingReqs: newMissingReqs,
+      })
+    );
+  };
+
+  const handlePrevDay = () =>
+    setSelectedDate((previous) => {
+      const date = new Date(previous);
+      date.setDate(date.getDate() - 1);
+      return date;
+    });
+  const handleNextDay = () =>
+    setSelectedDate((previous) => {
+      const date = new Date(previous);
+      date.setDate(date.getDate() + 1);
+      return date;
+    });
+  const handleToday = () => setSelectedDate(today);
+
+  const handleResetAndRecalculate = () => {
+    localStorage.removeItem(storageKey);
+    runCalculationAndRender();
+  };
+
+  // Updated Manual Assignment Handling with Remaining Slot Allocation & Persistence
   const handleManualAssign = () => {
     if (!selectedClientItem || !selectedEmployeeId) return;
 
@@ -79,19 +149,16 @@ export default function RosterView() {
     const client = selectedClientItem.client;
     const totalRequiredHours = client.requiredHours || 1;
     
-    // Check if there are already existing tasks (e.g., partial assignments)
     const existingTasks = selectedClientItem.tasks || [];
     const alreadyAssignedHours = existingTasks.reduce(
       (sum, t) => sum + t.durationMinutes / 60,
       0
     );
 
-    // Calculate remaining hours to cover
     const remainingHours = Math.max(0, totalRequiredHours - alreadyAssignedHours);
     const addedHours = remainingHours > 0 ? remainingHours : totalRequiredHours;
     const reqMins = addedHours * 60;
 
-    // Determine start and end based on staff shifts or remaining slots
     const startHour = chosenStaff.shiftStart || "08:00";
     const [sHour, sMin] = startHour.split(":").map(Number);
     const calculatedEndHour = Math.min(22, sHour + Math.ceil(addedHours));
@@ -107,7 +174,6 @@ export default function RosterView() {
       assignedStaffName: chosenStaff.name,
     };
 
-    // Combine existing tasks with the newly assigned slot
     const updatedTasks = [...existingTasks, newManualTask];
     const totalAssignedMins = updatedTasks.reduce((sum, t) => sum + t.durationMinutes, 0);
     const totalAssignedHours = totalAssignedMins / 60;
@@ -117,7 +183,6 @@ export default function RosterView() {
         ? ("Fully Assigned" as const)
         : ("Partially Assigned" as const);
 
-    // 1. Update Roster State
     const updatedRoster = rosterData.map((item) => {
       if (item.client.id === client.id) {
         return {
@@ -132,13 +197,11 @@ export default function RosterView() {
       return item;
     });
 
-    // 2. Update Workloads State dynamically
     const updatedWorkloads = { ...workloads };
     updatedWorkloads[chosenStaff.name] = Number(
       ((updatedWorkloads[chosenStaff.name] || 0) + addedHours).toFixed(1)
     );
 
-    // 3. Recalculate Gap Summary
     const unassignedOrPartial = updatedRoster.filter((item) => item.status !== "Fully Assigned");
     const missingSummary: Record<string, { totalHours: number; count: number; roleNeeded: string }> = {};
 
@@ -148,7 +211,12 @@ export default function RosterView() {
       const assignedH = item.tasks.reduce((sum, t) => sum + t.durationMinutes / 60, 0);
       const unassignedH = Math.max(0, totalH - assignedH);
 
-      const roleNeeded = level === "High Care" ? "Registered Nurse (RN)" : "Care Assistant / Carer";
+      let roleNeeded = "Support worker";
+      if (level === "High Care") {
+        roleNeeded = "Registered Nurse (RN)/ Senior Care Worker";
+      } else if (level === "Standard Care") {
+        roleNeeded = "Care Assistant / Support Worker";
+      }
 
       if (!missingSummary[level]) {
         missingSummary[level] = { totalHours: 0, count: 0, roleNeeded };
@@ -168,11 +236,8 @@ export default function RosterView() {
       })
     );
 
-    setRosterData(updatedRoster);
-    setWorkloads(updatedWorkloads);
-    setMissingReqs(updatedMissingReqs);
+    persistAndSetState(updatedRoster, updatedWorkloads, updatedMissingReqs);
 
-    // Reset Modal
     setSelectedClientItem(null);
     setSelectedEmployeeId("");
   };
@@ -180,14 +245,14 @@ export default function RosterView() {
   if (loading) {
     return (
       <div className="bg-white p-8 rounded-xl shadow-sm text-center border border-stone-200 text-stone-600 font-semibold text-xs my-6">
-        Calculating Multi-Shift Roster & Staff Assignments for Week {selectedWeek}...
+        Calculating Multi-Shift Roster & Staff Assignments for {selectedDateLabel}...
       </div>
     );
   }
 
   if (errorMsg) {
     return (
-      <div className="bg-rose-50 border border-rose-200 text-rose-800 p-4 rounded-xl text-xs font-semibold my-6">
+      <div className="bg-red-50 border border-red-200 text-red-700 p-4 rounded-xl text-xs font-semibold my-6">
         {errorMsg}
       </div>
     );
@@ -198,108 +263,157 @@ export default function RosterView() {
 
   return (
     <div className="max-w-6xl mx-auto p-4 space-y-6">
-     
-
-      {/* Week Navigation Controls */}
-      <div className="flex items-center justify-between bg-stone-100 p-3 rounded-xl border border-stone-200">
-        <span className="text-xs font-bold text-stone-700 uppercase">Current Week {selectedWeek} {selectedWeek === currentWeekNumber ? "(Current)" : ""} </span>
+      {/* Day Navigation Controls */}
+      <div className="flex flex-col gap-3 rounded-xl border border-slate-200 bg-teal-50/60 p-3 shadow-sm sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <span className="flex gap-1 text-sm font-bold uppercase text-teal-700">
+            Care roster: 
+            <span className="ml-2 text-sm capitalize text-slate-700">
+              {formatRosterDate(selectedDate)}
+            </span>
+          </span>
+        </div>
         <div className="flex items-center gap-2">
-          <button onClick={handlePrevWeek}
-            className="bg-white hover:bg-stone-50 text-stone-700 font-bold text-xs px-3 py-2 rounded-lg border border-stone-300 transition cursor-pointer shadow-xs"
+          <button onClick={handlePrevDay}
+            className="bg-teal-400 hover:bg-teal-300 text-slate-700 font-bold text-xs px-3 py-2 rounded-lg border border-slate-200 transition cursor-pointer shadow-xs"
           >
-            ← Prev Week
+            ← Yesterday
           </button>
           <button
-            onClick={handleCurrentWeek}
+            onClick={handleToday}
             className={`font-bold text-xs px-3 py-2 rounded-lg border transition cursor-pointer ${
-              selectedWeek === currentWeekNumber
-                ? "bg-amber-500 text-white border-amber-600 shadow-sm"
-                : "bg-white hover:bg-stone-50 text-stone-700 border-stone-300"
+              isToday
+                ? "bg-teal-600 text-white border-teal-700 shadow-sm"
+                : "bg-teal-50 hover:bg-slate-50 text-slate-700 border-slate-200"
             }`}
           >
-            Current Week ({currentWeekNumber})
+            Today
           </button>
           <button
-            onClick={handleNextWeek}
-            className="bg-teal-800 hover:bg-teal-900 text-white font-bold text-xs px-3 py-2 rounded-lg transition cursor-pointer shadow-xs"
+            onClick={handleNextDay}
+            className="bg-teal-400 hover:bg-teal-700 text-slate-700 font-bold text-xs px-3 py-2 rounded-lg transition cursor-pointer shadow-xs"
           >
-            Next Week →
+            Tomorrow →
           </button>
         </div>
       </div>
 
       {/* Capacity Gap Section */}
-      <div className="bg-amber-50 border border-amber-400 p-5 rounded-xl shadow-sm space-y-3">
-        <div className="flex items-center justify-between">
+      <div className="bg-teal-50/60 border border-slate-200 p-5 rounded-xl shadow-sm space-y-4">
+        <div className="flex items-center justify-between gap-2 flex-wrap">
           <div>
-            <h3 className="text-sm font-bold text-amber-900 uppercase">
-              Staff Shortage & Gap Analysis (Week {selectedWeek})
+            <h3 className="text-lg text-left font-bold text-teal-700 pb-3">
+              Staff Shortage & Gap Analysis ({selectedDateLabel})
             </h3>
-            <p className="text-xs text-amber-700 mt-0.5">
+            <p className="text-sm text-stone-600 mt-0.5">
               Summary of unassigned hours categorized by care level.
             </p>
           </div>
           <div className="flex gap-2">
-            <span className="bg-amber-200 text-amber-900 font-bold text-xs px-3 py-1 rounded-md">
-              Uncovered Hours: {totalUnassignedHours}h
+            <span className="bg-amber-50/60 hover:bg-amber-100 text-slate-800 pt-1.5 font-bold text-sm rounded-md border border-amber-300 shadow-sm">
+              Uncovered Hours:<span className="font-extrabold p-2">{totalUnassignedHours}h</span>
             </span>
-            <span className="bg-rose-700 text-white font-bold text-xs px-3 py-1 rounded-md">
-            Extra Staff Needed: {totalExtraStaffNeeded}
+            <span className="bg-red-700 hover:bg-red-800 text-white font-bold text-sm p-2 rounded-md shadow-xs">
+              Extra Staff Needed: <span className="font-extrabold">{totalExtraStaffNeeded}</span>
             </span>
+
           </div>
         </div>
 
-        {missingReqs.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
-            {missingReqs.map((req, idx) => (
-              <div
-                key={idx}
-                className="bg-white border border-amber-200 p-3 rounded-lg shadow-xs space-y-1"
-              >
-                <div className="flex justify-between items-center">
-                  <span className="text-xs font-bold text-stone-800">
-                    {req.careLevel}
-                  </span>
-                  <span className="text-[11px] bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded font-bold">
-                    {req.unassignedClientsCount} Clients
-                  </span>
-                </div>
-                <div className="text-xs text-teal-800 font-semibold">
-                  Role: {req.roleNeeded}
-                </div>
-                <div className="text-xs text-stone-600">
-                  Required: <strong className="text-stone-900">{req.totalHoursNeeded} Hours</strong>
-                </div>
-                <div className="text-[11px] font-bold bg-teal-500 inline-block p-3 text-rose-700 rounded-2xl border-t border-stone-100">
-                  Needs ={req.estimatedStaffCount} Staff Shift(s)
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="bg-emerald-100 border border-emerald-300 text-emerald-800 p-3 rounded-lg text-xs font-bold text-center">
-            All client hours are fully covered for Week {selectedWeek}! No unassigned clients remaining.
-          </div>
-        )}
+        {(() => {
+          const allCareLevels = [
+            { careLevel: "High Care", roleNeeded: "Registered Nurse (RN)/ Senior Care Worker" },
+            { careLevel: "Standard Care", roleNeeded: "Care Assistant / Support Worker" },
+            { careLevel: "Basic Care", roleNeeded: "Support worker" }
+          ];
+
+          return (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2">
+              {allCareLevels.map((levelMeta, idx) => {
+                const req = missingReqs.find((r) => r.careLevel === levelMeta.careLevel) || {
+                  careLevel: levelMeta.careLevel,
+                  roleNeeded: levelMeta.roleNeeded,
+                  unassignedClientsCount: 0,
+                  totalHoursNeeded: 0,
+                  estimatedStaffCount: 0,
+                };
+
+                return (
+                  <div
+                    key={idx}
+                    className="bg-white border border-slate-200 p-4 rounded-xl shadow-xs space-y-2.5 hover:shadow-md transition"
+                  >
+                    <div className="flex justify-between items-center underline">
+                      <h2 className={`text-md font-bold p-2 rounded-2xl ${
+                        req.careLevel === "High Care"
+                          ? "text-red-800"
+                          : req.careLevel === "Basic Care"
+                          ? "text-emerald-800"
+                          : "text-amber-800"
+                      }`}>
+                        {req.careLevel}
+                      </h2>
+                    </div>
+
+                    <div className="text-xs text-teal-700 font-semibold">
+                      Role: {req.roleNeeded}
+                    </div>
+
+                    <div className="text-sm text-stone-800">
+                      Required Hours: <strong className="text-stone-900">{req.totalHoursNeeded}h</strong>
+                    </div>
+
+                    <div>
+                      <div className={`text-[11px] font-bold inline-block px-3 py-1.5 rounded-xl border ${
+                        req.estimatedStaffCount > 3
+                          ? "bg-red-50 text-red-700 border-red-300"
+                          : req.estimatedStaffCount >= 1
+                          ? "bg-amber-50 text-amber-700 border-amber-300"
+                          : "bg-emerald-50 text-emerald-700 border-emerald-300"
+                      }`}>
+                        Need:<span className="font-extrabold text-slate-900">{req.estimatedStaffCount}</span> Staff Member(s)
+                      </div>
+                    </div>
+                    <span className={`text-[12px] px-2 py-0.5 rounded font-bold underline ${
+                        req.unassignedClientsCount > 3
+                          ? "text-red-700"
+                          : req.unassignedClientsCount >= 1
+                          ? "text-amber-600"
+                          : "text-emerald-700"
+                      }`}>
+                      <span className="text-black">{req.unassignedClientsCount}</span> unserved Client(s)
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          );
+        })()}
       </div>
- {/* Header */}
-      <div className="bg-teal-600 text-white p-5 rounded-xl flex items-center justify-between shadow-md">
+
+      {/* Header */}
+      <div className="bg-teal-50/60 text-teal-700 p-5 rounded-xl flex items-center justify-between shadow-md">
         <div>
-          <h2 className="text-lg font-bold">Dynamic Care Roster Engine</h2>
-          <p className="text-xs text-white mt-0.5">
+          <h2 className="text-lg text-left px-2 font-bold">Dynamic Care Roster Engine</h2>
+          <p className="text-sm p-3 text-stone-600">
             Automated Allocation with Manual Assignment Fallback
           </p>
         </div>
-        <button
-          onClick={runCalculationAndRender}
-          className="bg-white text-teal-900 font-bold text-xs px-4 py-2 rounded-lg hover:bg-teal-50 transition cursor-pointer shadow-sm"
-        > Recalculate Roster</button>
+        <div className="flex gap-2">
+          <button
+            onClick={handleResetAndRecalculate}
+            className="bg-amber-600 text-white font-bold px-4 py-2 rounded-lg hover:bg-amber-700 transition cursor-pointer shadow-sm text-xs"
+          >
+            Reset & Recalculate
+          </button>
+        </div>
       </div>
+
       {/* Main Roster Table */}
       <div className="bg-white border border-stone-200 rounded-xl shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-stone-100 text-stone-900 font-bold uppercase border-b border-stone-200">
+            <thead className="bg-teal-50/60 text-teal-800 font-bold uppercase border-b border-stone-200">
               <tr>
                 <th className="p-3 text-center">#</th>
                 <th className="p-3">Client Info</th>
@@ -311,65 +425,74 @@ export default function RosterView() {
             </thead>
             <tbody className="divide-y divide-stone-100 text-stone-700">
               {rosterData.map((item, index) => (
-                <tr key={`${item.client.id}-${selectedWeek}`} className="hover:bg-stone-50 transition-colors">
-                  <td className="p-3 font-mono font-bold text-stone-400 text-center ">
+                <tr key={`${item.client.id}-${selectedWeek}`} className="hover:bg-stone-100 border-2 border-stone-200 transition-colors">
+                  <td className="p-3 font-mono font-bold text-stone-400 text-center">
                     {index + 1}
                   </td>
 
                   {/* Client Details */}
-                  <td className="p-3 align-top">
-                    <div className="font-bold text-stone-900">{item.client.name}</div>
+                  <td className="p-3 align-middle space-y-1.5">
+                    <h2 className="underline font-bold text-[15px] text-stone-900">{item.client.name}</h2>
                     <div className="text-[12px] text-stone-700 font-mono">
-                      {item.client.id} | {item.client.location}
+                     ID:{item.client.id} | {item.client.location}
                     </div>
-                    <div className="mt-1 flex gap-2 flex-wrap">
-                      <span
-                        className={`px-1.5 py-0.5 rounded text-[11px] font-bold ${
-                          item.client.careLevel === "High Care"
-                            ? "bg-rose-100 text-rose-700 outline-1"
-                            : "bg-blue-100 text-blue-700 outline-1"
-                        }`}
-                      >
-                        {item.client.careLevel}
-                      </span>
+                    <div className="mt-1 grid grid-cols-1 gap-2">
+                    <span
+  className={`px-1.5 py-0.5 rounded text-[11px] font-bold ${
+    item.client.careLevel === "High Care"
+      ? "bg-red-50 text-red-700 outline-1"
+      : item.client.careLevel === "Standard Care"
+      ? "bg-blue-50 text-blue-700 outline-1"
+      : item.client.careLevel === "Low Care"
+      ? "bg-emerald-50 text-emerald-800 outline-1"
+      : "bg-teal-50 text-teal-800 outline-1"
+  }`}
+>
+  {item.client.careLevel}
+</span>
+
                       <span
                         className={`px-1.5 py-0.5 rounded text-[12px] font-bold ${
                           item.client.isFixedTime
-                            ? "bg-amber-100 text-amber-800 outline-1"
-                            : "bg-purple-100 text-purple-800 outline-1 "
+                            ? "bg-red-50/60   text-red-500 outline-1"
+                            : "bg-cyan-50 text-cyan-700 outline-1"
                         }`}
                       >
-                        {item.client.isFixedTime ? "Fixed Time" : "Flexible"}
+                        {item.client.isFixedTime ? "Fixed Time" : " Flexible Time"}
                       </span>
+                    
                     </div>
                   </td>
 
                   {/* Shift Time Slots */}
-                  <td className="p-3 align-top space-y-1.5 ">
+                  <td className="p-3 align-middle space-y-1.5">
                     {item.tasks.length > 0 ? (
                       item.tasks.map((task, idx) => (
-                        <div key={task.id} className="flex items-center gap-2">
-                          <span className="bg-teal-600 text-white font-mono text-[11px] px-2.5 py-1 rounded-r-2xl font-bold shadow-xs">
-                            Shift {idx + 1}: {task.start} - {task.end}
+                        <div key={task.id} className="grid grid-cols-1 items-center gap-2 bg-teal-700  text-white text-[11px] p-2 rounded-2xl">
+                          <span className="rounded-r-2xl font-bold underline shadow-xs">
+                          Shift {idx + 1}:
                           </span>
-                          <span className="text-[11px] bg-stone-100 outline-1 text-stone-600 px-1.5 py-0.5 rounded font-bold">
-                            {(task.durationMinutes / 60).toFixed(1)}h
+                            <span>
+                              Time: {task.start} - {task.end}
+                            </span>
+                          <span>
+                          Total hours: {(task.durationMinutes / 60).toFixed(1)}h
                           </span>
                         </div>
                       ))
                     ) : (
-                      <span className="bg-rose-100 text-rose-700 font-bold text-xs px-2.5 py-1 rounded-md inline-block">
+                      <span className="bg-red-50 text-red-700 font-bold text-xs px-2.5 py-1 rounded-md inline-block">
                         No Slot Available
                       </span>
                     )}
                   </td>
 
                   {/* Assigned Staff */}
-                  <td className="p-3 align-top space-y-2">
+                  <td className="p-3 align-middle space-y-2">
                     {item.tasks.length > 0 ? (
                       item.tasks.map((task, idx) => (
                         <div key={task.id} className="bg-stone-50 p-1.5 rounded border border-stone-200 outline-1">
-                          <div className="text-[11px] font-bold text-teal-900 ">
+                          <div className="text-[11px] font-bold text-emerald-950">
                             {idx + 1}. {task.assignedStaffName}
                           </div>
                           <div className="text-[11px] text-stone-500">
@@ -383,20 +506,20 @@ export default function RosterView() {
                   </td>
 
                   {/* Hours */}
-                  <td className="p-3 text-center align-top font-bold font-mono text-sm ">
+                  <td className="p-3 text-center align-middle font-bold font-mono text-sm">
                     {item.client.requiredHours}h
                   </td>
 
                   {/* Status & Manual Action Button */}
-                  <td className="p-3 text-center align-top space-y-2 ">
+                  <td className="p-3 text-center align-middle space-y-2">
                     <div>
                       <span
-                        className={`px-0.5 py-0.5 rounded-full text-[11px]  font-bold ${
+                        className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${
                           item.status === "Fully Assigned"
-                            ? "bg-emerald-100 text-emerald-800  outline-1 p-3"
+                            ? "bg-emerald-100 text-emerald-800 outline-1"
                             : item.status === "Partially Assigned"
-                            ? "bg-amber-100 text-amber-800  outline-1 p-3"
-                            : "bg-rose-100 text-rose-800 outline-1 p-3"
+                            ? "bg-amber-100 text-amber-900 outline-1"
+                            : "bg-red-50 text-red-700 outline-1"
                         }`}
                       >
                         {item.status}
@@ -409,7 +532,7 @@ export default function RosterView() {
                           setSelectedClientItem(item);
                           setSelectedEmployeeId("");
                         }}
-                        className="bg-rose-700 hover:bg-rose-400 text-white font-bold text-[11px] px-2.5 py-1.5 rounded-md shadow-xs transition cursor-pointer inline-block"
+                        className="bg-red-700 hover:bg-red-800 text-white font-bold text-[11px] px-2.5 py-1.5 rounded-md shadow-xs transition cursor-pointer inline-block"
                       >
                         + Assign Manually
                       </button>
@@ -423,14 +546,15 @@ export default function RosterView() {
       </div>
 
       {/* Staff Workloads */}
-      <div className="bg-stone-100 p-4 rounded-xl border border-stone-200">
-        <h3 className="text-xs font-bold uppercase text-stone-600 mb-2">
-          Calculated Staff Workload Summary (Week {selectedWeek})
-        </h3>
+      <div className="bg-teal-50/60 shadow-md p-4  justify-between rounded-xl border border-stone-200">
+        <h2 className="text-lg text-teal-700 text-left px-2 font-bold">
+          Calculated Staff Workload Summary ({selectedDateLabel})</h2>
+          <p className="text-sm p-3 text-stone-900 text-left">{employeesList.length} Staff Members working today...</p>
+        
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
           {Object.entries(workloads).map(([name, hours]) => (
             <div key={name} className="bg-white p-2.5 rounded border border-stone-200 shadow-sm">
-              <div className="text-stone-500 text-[11px] font-semibold">{name}</div>
+              <div className="text-stone-500 text-[11px] font-semibold"><span className="font-bold text-teal-700 underline pb-2">{name}</span></div>
               <div className="font-bold text-stone-800">{hours} / 8.0 hrs allocated</div>
             </div>
           ))}
@@ -443,7 +567,7 @@ export default function RosterView() {
           <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-5 space-y-4 border border-stone-200">
             <div className="flex justify-between items-center border-b border-stone-100 pb-3">
               <h3 className="font-bold text-stone-800 text-sm">
-                Manual Staff Assignment (Week {selectedWeek})
+                Manual Staff Assignment ({selectedDateLabel})
               </h3>
               <button
                 onClick={() => setSelectedClientItem(null)}
@@ -459,7 +583,7 @@ export default function RosterView() {
               </div>
               <div>
                 <strong>Care Level:</strong>{" "}
-                <span className="font-semibold text-rose-700">
+                <span className="font-semibold text-red-700">
                   {selectedClientItem.client.careLevel}
                 </span>
               </div>
@@ -480,33 +604,35 @@ export default function RosterView() {
               <select
                 value={selectedEmployeeId}
                 onChange={(e) => setSelectedEmployeeId(e.target.value)}
-                className="w-full border border-stone-300 rounded-lg p-2 text-xs focus:ring-2 focus:ring-indigo-500 outline-none"
+                className="w-full border border-slate-200 rounded-lg p-2 text-xs focus:ring-2 focus:ring-teal-600 outline-none"
               >
                 <option value="">-- Choose Staff Member --</option>
                 {employeesList.map((emp) => {
                   const currentAllocated = workloads[emp.name] || 0;
-                  const isHighCare = selectedClientItem.client.careLevel === "High Care";
+                  const careLevel = selectedClientItem.client.careLevel;
                   const empRole = (emp.role || "").toLowerCase();
                   const empQual = (emp.qualification || "").toLowerCase();
-                  const isNurse =
-                    empRole.includes("nurse") ||
-                    empRole.includes("rn") ||
-                    empQual.includes("rn");
+
+                  let roleMismatch = false;
+                  if (careLevel === "High Care") {
+                    const isNurse = empRole.includes("nurse") || empRole.includes("rn") || empQual.includes("rn");
+                    if (!isNurse) roleMismatch = true;
+                  }
 
                   return (
                     <option key={emp.id} value={emp.id}>
                       {emp.name} ({emp.role}) - Current: {currentAllocated}h/8h
-                      {isHighCare && !isNurse ? " ⚠️ [Not RN]" : ""}
+                      {roleMismatch ? " ⚠️ [Role Mismatch]" : ""}
                     </option>
                   );
                 })}
               </select>
             </div>
 
-            <div className="flex justify-end gap-2 pt-2 border-t border-stone-100">
+            <div className="block pt-2 border-t border-stone-100 text-right">
               <button
                 onClick={() => setSelectedClientItem(null)}
-                className="px-3 py-1.5 rounded-lg border border-stone-300 text-stone-600 font-bold text-xs hover:bg-stone-50 cursor-pointer"
+                className="px-3 py-1.5 mr-2 rounded-lg border border-stone-300 text-stone-600 font-bold text-xs hover:bg-stone-50 cursor-pointer"
               >
                 Cancel
               </button>
@@ -515,8 +641,8 @@ export default function RosterView() {
                 disabled={!selectedEmployeeId}
                 className={`px-4 py-1.5 rounded-lg text-white font-bold text-xs transition cursor-pointer ${
                   selectedEmployeeId
-                    ? "bg-indigo-600 hover:bg-indigo-700"
-                    : "bg-stone-300 cursor-not-allowed"
+                    ? "bg-teal-600 hover:bg-teal-700"
+                    : "bg-slate-200 cursor-not-allowed"
                 }`}
               >
                 Confirm Assignment

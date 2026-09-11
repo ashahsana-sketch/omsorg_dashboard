@@ -124,22 +124,22 @@ export default function ClientsPage() {
           <button
             type="button"
             onClick={() => router.push("/")}
-            className="bg-stone-200 hover:bg-stone-300 text-stone-800 font-bold px-3 py-1.5 rounded-lg text-xs transition-colors cursor-pointer flex items-center gap-1.5 shadow-sm"
+            className="bg-white hover:bg-slate-50 text-slate-800 font-bold px-3 py-1.5 rounded-lg text-xs transition-colors cursor-pointer flex items-center gap-1.5 shadow-sm border border-slate-200"
           >
             ← Go to Main Page
           </button>
 
           <form
             onSubmit={handleSaveClient}
-            className="bg-gray-100 p-6 rounded-xl border border-teal-100 shadow-sm space-y-4"
+            className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4"
           >
-            <h3 className="text-base font-bold text-stone-800 border-b border-teal-800 rounded-2xl bg-teal-400 p-2.5 text-center">
+            <h3 className="text-base font-bold text-teal-700 border-b border-slate-200 rounded-2xl bg-slate-50 p-2.5 text-center">
               Add New Care Client
             </h3>
 
             {/* Client Name */}
             <div className="text-left space-y-2">
-              <label className="block text-xs font-bold text-stone-700 uppercase mb-1">
+              <label className="block text-xs font-bold text-emerald-950 uppercase mb-1">
                 Client Name
               </label>
               <input
@@ -147,20 +147,20 @@ export default function ClientsPage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="e.g. Lars Olsson"
-                className="w-full p-2 border border-stone-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
+                className="w-full p-2 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-600 bg-white"
                 required
               />
             </div>
 
             {/* Care Level */}
             <div className="text-left space-y-2">
-              <label className="block text-xs font-bold text-stone-700 uppercase mb-1">
+              <label className="block text-xs font-bold text-emerald-950 uppercase mb-1">
                 Care Need Level
               </label>
               <select
                 value={careLevel}
                 onChange={(e) => setCareLevel(e.target.value)}
-                className="w-full p-2 border border-stone-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
+                className="w-full p-2 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-600 bg-white"
               >
                 <option value="Basic Assistance">Basic Assistance</option>
                 <option value="Standard Care">Standard Care</option>
@@ -170,13 +170,13 @@ export default function ClientsPage() {
 
             {/* Location */}
             <div className="text-left space-y-2">
-              <label className="block text-xs font-bold text-stone-700 uppercase mb-1">
+              <label className="block text-xs font-bold text-emerald-950 uppercase mb-1">
                 Location
               </label>
               <select
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
-                className="w-full p-2 border border-stone-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
+                className="w-full p-2 border border-emerald-100 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-emerald-700 bg-white"
               >
                 <option value="Stockholm">Stockholm</option>
                 <option value="Solna">Solna</option>
@@ -187,13 +187,13 @@ export default function ClientsPage() {
 
             {/* Schedule Type Selection */}
             <div className="text-left space-y-2">
-              <label className="block text-xs font-bold text-stone-700 uppercase mb-1">
+              <label className="block text-xs font-bold text-emerald-950 uppercase mb-1">
                 Schedule Type
               </label>
               <select
                 value={scheduleType}
                 onChange={(e) => setScheduleType(e.target.value as "fixed" | "flexible")}
-                className="w-full p-2 border border-stone-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
+                className="w-full p-2 border border-emerald-100 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-emerald-700 bg-white"
               >
                 <option value="fixed">Fixed Time Window (Specific Start & End Time)</option>
                 <option value="flexible">Flexible Visit Hours</option>
@@ -211,7 +211,7 @@ export default function ClientsPage() {
                     type="time"
                     value={preferredStart}
                     onChange={(e) => setPreferredStart(e.target.value)}
-                    className="w-full p-2 border border-stone-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
+                    className="w-full p-2 border border-emerald-100 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-emerald-700 bg-white"
                   />
                 </div>
                 <div>
@@ -222,7 +222,7 @@ export default function ClientsPage() {
                     type="time"
                     value={preferredEnd}
                     onChange={(e) => setPreferredEnd(e.target.value)}
-                    className="w-full p-2 border border-stone-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
+                    className="w-full p-2 border border-emerald-100 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-emerald-700 bg-white"
                   />
                 </div>
               </div>
@@ -241,7 +241,7 @@ export default function ClientsPage() {
                 type="number"
                 value={requiredHours}
                 onChange={(e) => setRequiredHours(Number(e.target.value))}
-                className="w-full p-2 border border-stone-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
+                className="w-full p-2 border border-emerald-100 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-emerald-700 bg-white"
               />
             </div>
 
@@ -271,21 +271,21 @@ export default function ClientsPage() {
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-teal-600 text-white p-5 rounded-xl shadow-md gap-4">
             <div>
               <h2 className="text-lg font-bold">Clients Directory</h2>
-              <p className="text-xs text-teal-100 mt-0.5">Manage registered care clients</p>
+              <p className="text-xs text-slate-50 mt-0.5">Manage registered care clients</p>
             </div>
             
             <div className="flex items-center gap-2">
               <button
                 type="button"
                 onClick={() => router.push("/")}
-                className="bg-teal-700 hover:bg-teal-800 text-white font-bold text-xs px-3 py-2 rounded-lg transition cursor-pointer border border-teal-500 shadow-sm"
+                className="bg-emerald-800 hover:bg-emerald-950 text-white font-bold text-xs px-3 py-2 rounded-lg transition cursor-pointer border border-emerald-600 shadow-sm"
               >
                 ← Go to Main Page
               </button>
 
               <button
                 onClick={() => setCurrentView("add")}
-                className="bg-white text-teal-900 font-bold text-xs px-4 py-2 rounded-lg hover:bg-teal-50 transition cursor-pointer shadow-sm"
+                className="bg-white text-teal-700 font-bold text-xs px-4 py-2 rounded-lg hover:bg-slate-50 transition cursor-pointer shadow-sm"
               >
                 + Add New Client
               </button>
@@ -319,7 +319,7 @@ export default function ClientsPage() {
                       const isFixed = client.isFixedTime ?? Boolean(client.preferredStart && client.preferredEnd);
 
                       return (
-                        <tr key={client.id} className="hover:bg-teal-50/40 transition-colors">
+                        <tr key={client.id} className="hover:bg-emerald-50 transition-colors">
                           <td className="p-2 font-mono text-teal-700 font-bold text-center">
                             {client.id}
                           </td>
@@ -327,12 +327,12 @@ export default function ClientsPage() {
                           <td className="p-2">{client.careLevel}</td>
                           <td className="p-2">
                             {isFixed && client.preferredStart && client.preferredEnd ? (
-                              <span className="inline-flex items-center gap-1 bg-amber-50 text-amber-800 border border-amber-200 px-2 py-0.5 rounded-md font-mono text-[11px]">
+                              <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-950 border border-emerald-100 px-2 py-0.5 rounded-md font-mono text-[11px]">
                                 <span className="font-sans font-bold text-[10px] uppercase">Fixed:</span>
                                 {client.preferredStart} - {client.preferredEnd} ({client.requiredHours}h/wk)
                               </span>
                             ) : (
-                              <span className="inline-block bg-teal-50 text-teal-700 border border-teal-200 px-2 py-0.5 rounded-md font-mono text-[11px]">
+                              <span className="inline-block bg-emerald-50 text-emerald-700 border border-emerald-100 px-2 py-0.5 rounded-md font-mono text-[11px]">
                                 Flexible ({client.requiredHours}h/wk)
                               </span>
                             )}
@@ -342,7 +342,7 @@ export default function ClientsPage() {
                             <button
                               type="button"
                               onClick={() => handleDelete(client.id, client.name)}
-                              className="bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 px-2 py-1 rounded-md text-[11px] font-bold transition-colors cursor-pointer"
+                              className="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-100 px-2 py-1 rounded-md text-[11px] font-bold transition-colors cursor-pointer"
                             >
                               Delete
                             </button>

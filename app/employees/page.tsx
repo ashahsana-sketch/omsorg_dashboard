@@ -124,22 +124,22 @@ export default function EmployeesPage() {
           <button
             type="button"
             onClick={() => router.push("/")}
-            className="bg-stone-200 hover:bg-stone-300 text-stone-800 font-bold px-3 py-1.5 rounded-lg text-xs transition-colors cursor-pointer flex items-center gap-1.5 shadow-sm"
+            className="bg-white hover:bg-slate-50 text-slate-800 font-bold px-3 py-1.5 rounded-lg text-xs transition-colors cursor-pointer flex items-center gap-1.5 shadow-sm border border-slate-200"
           >
             ← Go to Main Page
           </button>
 
           <form
             onSubmit={handleSaveEmployee}
-            className="bg-gray-100 p-6 rounded-xl border border-teal-100 shadow-sm space-y-4"
+            className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4"
           >
-            <h3 className="text-base font-bold text-stone-800 border-b border-teal-800 rounded-2xl bg-teal-400 p-2.5 text-center">
+            <h3 className="text-base font-bold text-teal-700 border-b border-slate-200 rounded-2xl bg-slate-50 p-2.5 text-center">
               Add New Employee
             </h3>
 
             {/* Employee Name */}
             <div className="text-left space-y-2">
-              <label className="block text-xs font-bold text-stone-700 uppercase mb-1">
+              <label className="block text-xs font-bold text-emerald-950 uppercase mb-1">
                 Employee Name
               </label>
               <input
@@ -147,20 +147,20 @@ export default function EmployeesPage() {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder="e.g. Anna Lindqvist"
-                className="w-full p-2 border border-stone-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
+                className="w-full p-2 border border-emerald-100 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-emerald-700 bg-white"
                 required
               />
             </div>
 
             {/* Role */}
             <div className="text-left space-y-2">
-              <label className="block text-xs font-bold text-stone-700 uppercase mb-1">
+              <label className="block text-xs font-bold text-emerald-950 uppercase mb-1">
                 Role
               </label>
               <select
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
-                className="w-full p-2 border border-stone-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
+                className="w-full p-2 border border-emerald-100 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-emerald-700 bg-white"
               >
                 <option value="Care Assistant">Care Assistant</option>
                 <option value="Senior Care Worker">Senior Care Worker</option>
@@ -171,13 +171,13 @@ export default function EmployeesPage() {
 
             {/* Location */}
             <div className="text-left space-y-2">
-              <label className="block text-xs font-bold text-stone-700 uppercase mb-1">
+              <label className="block text-xs font-bold text-emerald-950 uppercase mb-1">
                 Location
               </label>
               <select
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
-                className="w-full p-2 border border-stone-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
+                className="w-full p-2 border border-emerald-100 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-emerald-700 bg-white"
               >
                 <option value="Stockholm">Stockholm</option>
                 <option value="Solna">Solna</option>
@@ -188,13 +188,13 @@ export default function EmployeesPage() {
 
             {/* Schedule Type Selection */}
             <div className="text-left space-y-2">
-              <label className="block text-xs font-bold text-stone-700 uppercase mb-1">
+              <label className="block text-xs font-bold text-emerald-950 uppercase mb-1">
                 Schedule Type
               </label>
               <select
                 value={scheduleType}
                 onChange={(e) => setScheduleType(e.target.value as "fixed" | "flexible")}
-                className="w-full p-2 border border-stone-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
+                className="w-full p-2 border border-emerald-100 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-emerald-700 bg-white"
               >
                 <option value="fixed">Fixed Shift (Specific Start & End Time)</option>
                 <option value="flexible">Flexible Hours</option>
@@ -205,44 +205,44 @@ export default function EmployeesPage() {
             {scheduleType === "fixed" ? (
               <div className="grid grid-cols-2 gap-2 text-left bg-stone-50 p-3 rounded-lg border border-stone-200">
                 <div>
-                  <label className="block text-xs font-bold text-stone-700 uppercase mb-1">
+                  <label className="block text-xs font-bold text-emerald-950 uppercase mb-1">
                     Shift Start
                   </label>
                   <input
                     type="time"
                     value={shiftStart}
                     onChange={(e) => setShiftStart(e.target.value)}
-                    className="w-full p-2 border border-stone-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
+                    className="w-full p-2 border border-emerald-100 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-emerald-700 bg-white"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-stone-700 uppercase mb-1">
+                  <label className="block text-xs font-bold text-emerald-950 uppercase mb-1">
                     Shift End
                   </label>
                   <input
                     type="time"
                     value={shiftEnd}
                     onChange={(e) => setShiftEnd(e.target.value)}
-                    className="w-full p-2 border border-stone-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
+                    className="w-full p-2 border border-emerald-100 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-emerald-700 bg-white"
                   />
                 </div>
               </div>
             ) : (
-              <p className="text-[11px] text-stone-500 italic text-left pl-1">
+              <p className="text-[11px] text-emerald-700 italic text-left pl-1">
                 * Employee is set to Flexible Schedule without fixed timing constraint.
               </p>
             )}
 
             {/* Max Weekly Hours */}
             <div className="text-left space-y-2">
-              <label className="block text-xs font-bold text-stone-700 uppercase mb-1">
+              <label className="block text-xs font-bold text-emerald-950 uppercase mb-1">
                 Max Hours / Week
               </label>
               <input
                 type="number"
                 value={maxHours}
                 onChange={(e) => setMaxHours(Number(e.target.value))}
-                className="w-full p-2 border border-stone-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
+                className="w-full p-2 border border-emerald-100 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-emerald-700 bg-white"
               />
             </div>
 
@@ -251,7 +251,7 @@ export default function EmployeesPage() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="flex-1 bg-stone-100 hover:bg-stone-200 text-stone-800 font-bold py-2 rounded-lg text-xs transition-colors border border-stone-300 cursor-pointer disabled:opacity-50"
+                className="flex-1 bg-white hover:bg-slate-50 text-slate-800 font-bold py-2 rounded-lg text-xs transition-colors border border-slate-200 cursor-pointer disabled:opacity-50"
               >
                 {isSubmitting ? "Saving..." : "Save Employee Detail"}
               </button>
@@ -259,7 +259,7 @@ export default function EmployeesPage() {
               <button
                 type="button"
                 onClick={() => setCurrentView("directory")}
-                className="flex-1 bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 rounded-lg text-xs transition-colors shadow-sm cursor-pointer"
+                className="flex-1 bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-2 rounded-lg text-xs transition-colors shadow-sm cursor-pointer"
               >
                 Go to Employees
               </button>
@@ -272,21 +272,21 @@ export default function EmployeesPage() {
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-teal-600 text-white p-5 rounded-xl shadow-md gap-4">
             <div>
               <h2 className="text-lg font-bold">Staff Directory</h2>
-              <p className="text-xs text-teal-100 mt-0.5">Manage registered care workers</p>
+              <p className="text-xs text-slate-50 mt-0.5">Manage registered care workers</p>
             </div>
             
             <div className="flex items-center gap-2">
               <button
                 type="button"
                 onClick={() => router.push("/")}
-                className="bg-teal-700 hover:bg-teal-800 text-white font-bold text-xs px-3 py-2 rounded-lg transition cursor-pointer border border-teal-500 shadow-sm"
+                className="bg-teal-700 hover:bg-teal-700 text-white font-bold text-xs px-3 py-2 rounded-lg transition cursor-pointer border border-teal-700 shadow-sm"
               >
                 ← Go to Main Page
               </button>
 
               <button
                 onClick={() => setCurrentView("add")}
-                className="bg-white text-teal-900 font-bold text-xs px-4 py-2 rounded-lg hover:bg-teal-50 transition cursor-pointer shadow-sm"
+                className="bg-white text-teal-700 font-bold text-xs px-4 py-2 rounded-lg hover:bg-slate-50 transition cursor-pointer shadow-sm"
               >
                 + Add New Employee
               </button>
@@ -320,7 +320,7 @@ export default function EmployeesPage() {
                       const isFixed = emp.isFixedTime ?? Boolean(emp.shiftStart && emp.shiftEnd);
 
                       return (
-                        <tr key={emp.id} className="hover:bg-teal-50/40 transition-colors">
+                        <tr key={emp.id} className="hover:bg-emerald-50 transition-colors">
                           <td className="p-2 font-mono text-teal-700 font-bold text-center">
                             {emp.id}
                           </td>
@@ -328,12 +328,12 @@ export default function EmployeesPage() {
                           <td className="p-2">{emp.role}</td>
                           <td className="p-2">
                             {isFixed && emp.shiftStart && emp.shiftEnd ? (
-                              <span className="inline-flex items-center gap-1 bg-amber-50 text-amber-800 border border-amber-200 px-2 py-0.5 rounded-md font-mono text-[11px]">
+                              <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-950 border border-emerald-100 px-2 py-0.5 rounded-md font-mono text-[11px]">
                                 <span className="font-sans font-bold text-[10px] uppercase">Fixed:</span>
                                 {emp.shiftStart} - {emp.shiftEnd}
                               </span>
                             ) : (
-                              <span className="inline-block bg-teal-50 text-teal-700 border border-teal-200 px-2 py-0.5 rounded-md font-mono text-[11px]">
+                              <span className="inline-block bg-emerald-50 text-emerald-700 border border-emerald-100 px-2 py-0.5 rounded-md font-mono text-[11px]">
                                 Flexible
                               </span>
                             )}
@@ -343,7 +343,7 @@ export default function EmployeesPage() {
                             <button
                               type="button"
                               onClick={() => handleDelete(emp.id, emp.name)}
-                              className="bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 px-2 py-1 rounded-md text-[11px] font-bold transition-colors cursor-pointer"
+                              className="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-100 px-2 py-1 rounded-md text-[11px] font-bold transition-colors cursor-pointer"
                             >
                               Delete
                             </button>

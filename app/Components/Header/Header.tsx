@@ -9,7 +9,7 @@ export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <header className="bg-white border-b border-amber-100 px-3 sm:px-4 md:px-6 py-2 shadow-sm relative z-50">
+    <header className="bg-white border-b border-slate-200 px-3 sm:px-4 md:px-6 py-2 shadow-sm relative z-50">
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-2">
         
         {/* Left: Brand Identity */}
@@ -25,25 +25,25 @@ export default function Header() {
             priority
             className="w-16 sm:w-20 md:w-24 h-auto"
           />
-          <h1 className="text-xs sm:text-sm font-extrabold uppercase tracking-wide leading-tight border-l pl-2 border-stone-200 flex flex-col md:block">
-            <span className="bg-linear-to-tr from-teal-700 to-amber-600 bg-clip-text text-transparent">
+          <h1 className="text-xs sm:text-sm font-extrabold uppercase tracking-wide leading-tight border-l pl-2 border-slate-200 flex flex-col md:block">
+            <span className="bg-linear-30 from-teal-700 to-amber-600 bg-clip-text text-transparent">
               Elderly Care Dashboard
             </span>
           </h1>
         </Link>
 
         {/* Center: Desktop Navigation */}
-        <nav className="hidden lg:flex items-center gap-2">
-          <div className="bg-teal-500 border border-teal-900 rounded-lg p-0.5 hover:border-teal-400 transition-colors shadow-sm">
+        <nav className="hidden lg:flex items-center gap-1 rounded-xl bg-slate-50 p-1 ">
+          <div className="bg-slate-50 p-1 rounded-lg border border-slate-200  transition-colors shadow-sm">
             <NavLink href="/employees">Employees List</NavLink>
           </div>
-          <div className="bg-teal-500 border border-teal-900 rounded-lg p-0.5 hover:border-teal-400 transition-colors shadow-sm text-white">
+          <div className="bg-slate-50 p-1 rounded-lg border border-slate-200  transition-colors shadow-sm hover:shadow-md hover:text-white">
             <NavLink href="/clients">Clients List</NavLink>
           </div>
-          <div className="bg-teal-500 border border-teal-900 rounded-lg p-0.5 hover:border-teal-400 transition-colors shadow-sm text-white">
+          <div className="bg-slate-50 p-1 rounded-lg border border-slate-200 transition-colors shadow-sm">
             <NavLink href="/BillingReports">Billing Report</NavLink>
           </div>
-          <div className="bg-teal-500 border border-teal-900 rounded-lg p-0.5 hover:border-teal-400 transition-colors shadow-sm text-white">
+          <div className="bg-slate-50 p-1 rounded-lg border border-slate-200 transition-colors shadow-sm">
             <NavLink href="/shifts">Shifts/Roaster</NavLink>
           </div>
         </nav>
@@ -52,7 +52,7 @@ export default function Header() {
         <div className="flex items-center gap-2 shrink-0">
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="lg:hidden p-1.5 rounded-lg text-stone-700 hover:bg-amber-50 focus:outline-none border border-stone-200 cursor-pointer"
+            className="lg:hidden p-1.5 rounded-lg text-teal-700 hover:bg-slate-50 focus:outline-none border border-slate-200 cursor-pointer"
             aria-label="Toggle Navigation Menu"
           >
             <svg
@@ -83,17 +83,17 @@ export default function Header() {
 
       {/* Mobile/Tablet Dropdown */}
       {isMenuOpen && (
-        <nav className="lg:hidden absolute top-full left-0 w-full bg-white border-b border-amber-100 shadow-lg p-3 flex flex-col gap-2 z-50">
-          <div onClick={() => setIsMenuOpen(false)} className="bg-amber-50/60 p-1 rounded-lg border border-amber-100">
+        <nav className="lg:hidden absolute top-full left-0 w-full bg-white border-b border-slate-200 shadow-lg p-3 flex flex-col gap-2 z-50">
+          <div onClick={() => setIsMenuOpen(false)} className="bg-slate-50 p-1 rounded-lg border border-slate-200">
             <NavLink href="/employees">Employees</NavLink>
           </div>
-          <div onClick={() => setIsMenuOpen(false)} className="bg-amber-50/60 p-1 rounded-lg border border-amber-100">
+          <div onClick={() => setIsMenuOpen(false)} className="bg-slate-50 p-1 rounded-lg border border-slate-200">
             <NavLink href="/clients">Clients</NavLink>
           </div>
-          <div onClick={() => setIsMenuOpen(false)} className="bg-amber-50/60 p-1 rounded-lg border border-amber-100">
+          <div onClick={() => setIsMenuOpen(false)} className="bg-slate-50 p-1 rounded-lg border border-slate-200">
             <NavLink href="/BillingReports">Billing Reports</NavLink>
           </div>
-          <div onClick={() => setIsMenuOpen(false)} className="bg-amber-50/60 p-1 rounded-lg border border-amber-100">
+          <div onClick={() => setIsMenuOpen(false)} className="bg-slate-50 p-1 rounded-lg border border-slate-200">
             <NavLink href="/shifts">Shifts/Roaster</NavLink>
           </div>
         </nav>

@@ -18,13 +18,13 @@ export default function Button({
 }: ButtonProps) {
   // Base styling for all buttons
   const baseStyles =
-    "font-semibold rounded-lg transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-1 inline-flex items-center justify-center";
+    "font-semibold rounded-lg transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-1 inline-flex items-center justify-center";
 
   // Color variants matching your Elderly Care Hub palette
   const variants = {
-    primary: "bg-amber-400 hover:bg-amber-500 text-stone-900",
+    primary: "bg-teal-600 hover:bg-teal-700 text-white",
     secondary: "bg-teal-600 hover:bg-teal-700 text-white",
-    outline: "border border-stone-300 hover:bg-amber-100/50 text-stone-800",
+    outline: "border border-slate-200 hover:bg-slate-50 text-slate-800",
   };
 
   // Size variations

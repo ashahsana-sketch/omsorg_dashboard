@@ -171,12 +171,12 @@ export default function ReportsPage() {
   return (
     <div className="max-w-6xl mx-auto p-4 md:p-6 space-y-6">
       {/* Header & Export Action */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-xl border border-teal-100 shadow-sm">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
         <div>
-          <h1 className="text-xl font-bold text-stone-800">
-            Billing & Hours Summary For The Day
+          <h1 className="text-xl font-bold text-teal-700">
+            Billing & Hours Summary For The Daycd
                       </h1>
-          <p className="text-xs text-stone-500 mt-1">
+          <p className="text-xs text-slate-500 mt-1">
             Manage Client Invoicing and Staff Payroll metrics in one place.
           </p>
         </div>
@@ -191,25 +191,25 @@ export default function ReportsPage() {
 
       {/* Overview Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white p-4 rounded-xl border border-teal-100 shadow-sm">
+        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
           <span className="text-xs font-bold text-stone-500 uppercase">Est. Client Billing</span>
           <p className="text-xl font-bold text-teal-700 mt-1">{totalClientBillable.toLocaleString()} SEK</p>
           <span className="text-[10px] text-stone-400">Total for {totalDeliveredHours.toFixed(1)} delivered hours</span>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-teal-100 shadow-sm">
+        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
           <span className="text-xs font-bold text-stone-500 uppercase">Est. Staff Payroll</span>
           <p className="text-xl font-bold text-stone-800 mt-1">{totalPayrollCost.toLocaleString()} SEK</p>
           <span className="text-[10px] text-stone-400">Total for {totalStaffHours.toFixed(1)} worked hours</span>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-teal-100 shadow-sm">
+        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
           <span className="text-xs font-bold text-stone-500 uppercase">Active Care Clients</span>
           <p className="text-xl font-bold text-stone-800 mt-1">{clients.length}</p>
           <span className="text-[10px] text-stone-400">Invoicing active this cycle</span>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-teal-100 shadow-sm">
+        <div className="bg-white p-4 rounded-xl border border-emerald-100 shadow-sm">
           <span className="text-xs font-bold text-stone-500 uppercase">Active Caregivers</span>
           <p className="text-xl font-bold text-stone-800 mt-1">{staff.length}</p>
           <span className="text-[10px] text-stone-400">Payroll active this cycle</span>
@@ -222,7 +222,7 @@ export default function ReportsPage() {
           onClick={() => setActiveTab("clients")}
           className={`pb-2 px-4 text-xs font-bold transition-colors cursor-pointer border-b-2 ${
             activeTab === "clients"
-              ? "border-teal-600 text-teal-700"
+              ? "border-emerald-700 text-emerald-700"
               : "border-transparent text-stone-500 hover:text-stone-700"
           }`}
         >
@@ -232,7 +232,7 @@ export default function ReportsPage() {
           onClick={() => setActiveTab("staff")}
           className={`pb-2 px-4 text-xs font-bold transition-colors cursor-pointer border-b-2 ${
             activeTab === "staff"
-              ? "border-teal-600 text-teal-700"
+              ? "border-emerald-700 text-emerald-700"
               : "border-transparent text-stone-500 hover:text-stone-700"
           }`}
         >
@@ -242,9 +242,9 @@ export default function ReportsPage() {
 
       {/* Client Invoicing Table */}
       {activeTab === "clients" && (
-        <div className="bg-white rounded-xl border border-teal-100 shadow-sm overflow-x-auto">
+        <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-teal-50 border-b border-teal-100 text-stone-700 uppercase font-bold">
+            <thead className="bg-slate-50 border-b border-slate-200 text-slate-800 uppercase font-bold">
               <tr>
                 <th className="p-3">Client</th>
                 <th className="p-3">Location</th>
@@ -263,12 +263,12 @@ export default function ReportsPage() {
                     <td className="p-3 font-bold">{c.name}</td>
                     <td className="p-3">{c.location}</td>
                     <td className="p-3">
-                      <span className="bg-teal-100 text-teal-800 text-[10px] px-2 py-0.5 rounded-full font-bold">
+                      <span className="bg-emerald-100 text-emerald-950 text-[10px] px-2 py-0.5 rounded-full font-bold">
                         {c.careLevel}
                       </span>
                     </td>
                     <td className="p-3 text-center font-mono">{c.contractHours}h</td>
-                    <td className="p-3 text-center font-mono font-bold text-teal-700">{c.deliveredHours}h</td>
+                    <td className="p-3 text-center font-mono font-bold text-emerald-700">{c.deliveredHours}h</td>
                     <td className="p-3 text-right font-mono">{c.hourlyRate} SEK</td>
                     <td className="p-3 text-right font-mono font-bold text-stone-900">{total.toLocaleString()} SEK</td>
                   </tr>
@@ -281,9 +281,9 @@ export default function ReportsPage() {
 
       {/* Staff Payroll Table */}
       {activeTab === "staff" && (
-        <div className="bg-white rounded-xl border border-teal-100 shadow-sm overflow-x-auto">
+        <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-teal-50 border-b border-teal-100 text-stone-700 uppercase font-bold">
+            <thead className="bg-slate-50 border-b border-slate-200 text-slate-800 uppercase font-bold">
               <tr>
                 <th className="p-3">Employee Name</th>
                 <th className="p-3">Role</th>
@@ -302,7 +302,7 @@ export default function ReportsPage() {
                     <td className="p-3 text-stone-500">{s.role}</td>
                     <td className="p-3 text-right font-mono">{s.hourlyPay} SEK</td>
                     <td className="p-3 text-center font-mono">{s.assignedHours.toFixed(1)}h</td>
-                    <td className="p-3 text-center font-mono text-amber-600 font-bold">{s.overtimeHours.toFixed(1)}h</td>
+                    <td className="p-3 text-center font-mono text-emerald-700 font-bold">{s.overtimeHours.toFixed(1)}h</td>
                     <td className="p-3 text-right font-mono font-bold text-stone-900">{totalPay.toLocaleString()} SEK</td>
                   </tr>
                 );

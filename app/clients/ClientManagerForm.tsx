@@ -139,15 +139,15 @@ export default function ClientManagerForm() {
       {/* 1. Add Client Form */}
       <form
         onSubmit={(e) => saveClientData(e, false)}
-        className="bg-gray-100 p-6 rounded-xl border border-teal-100 shadow-sm space-y-4 max-w-2xl mx-auto"
+        className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4 max-w-2xl mx-auto"
       >
-        <h3 className="text-base font-bold text-stone-800 border-b border-teal-800 rounded-2xl bg-teal-400 p-2.5 text-center">
+        <h3 className="text-base font-bold text-teal-700 border-b border-slate-200 rounded-2xl bg-slate-50 p-2.5 text-center">
           Add New Care Client
         </h3>
 
         {/* Client Name */}
         <div className="text-left space-y-2">
-          <label className="block text-xs font-bold text-stone-700 uppercase mb-1">
+          <label className="block text-xs font-bold text-slate-800 uppercase mb-1">
             Client Name
           </label>
           <input
@@ -155,36 +155,36 @@ export default function ClientManagerForm() {
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="e.g. Lars Olsson"
-            className="w-full p-2 border border-stone-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
+            className="w-full p-2 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-600 bg-white"
             required
           />
         </div>
 
         {/* Care Level */}
         <div className="text-left space-y-2">
-          <label className="block text-xs font-bold text-stone-700 uppercase mb-1">
+          <label className="block text-xs font-bold text-slate-800 uppercase mb-1">
             Care Need Level
           </label>
           <select
             value={careLevel}
             onChange={(e) => setCareLevel(e.target.value)}
-            className="w-full p-2 border border-stone-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
+            className="w-full p-2 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-600 bg-white"
           >
-            <option value="Basic Assistance">Basic Assistance</option>
+            <option value="Basic care">Basic care</option>
             <option value="Standard Care">Standard Care</option>
-            <option value="High Dependency">High Dependency</option>
+            <option value="High Care">High Care</option>
           </select>
         </div>
 
         {/* Location */}
         <div className="text-left space-y-2">
-          <label className="block text-xs font-bold text-stone-700 uppercase mb-1">
+          <label className="block text-xs font-bold text-slate-800 uppercase mb-1">
             Location
           </label>
           <select
             value={location}
             onChange={(e) => setLocation(e.target.value)}
-            className="w-full p-2 border border-stone-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
+            className="w-full p-2 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-600 bg-white"
           >
             <option value="Stockholm">Stockholm</option>
             <option value="Solna">Solna</option>
@@ -195,13 +195,13 @@ export default function ClientManagerForm() {
 
         {/* Schedule Type Selection */}
         <div className="text-left space-y-2">
-          <label className="block text-xs font-bold text-stone-700 uppercase mb-1">
+          <label className="block text-xs font-bold text-slate-800 uppercase mb-1">
             Visit Schedule Type
           </label>
           <select
             value={scheduleType}
             onChange={(e) => setScheduleType(e.target.value as "fixed" | "flexible")}
-            className="w-full p-2 border border-stone-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
+            className="w-full p-2 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-600 bg-white"
           >
             <option value="fixed">Fixed Time Window (Specific Start & End Time)</option>
             <option value="flexible">Flexible Visit Time</option>
@@ -212,45 +212,45 @@ export default function ClientManagerForm() {
         {scheduleType === "fixed" ? (
           <div className="grid grid-cols-2 gap-2 text-left bg-stone-50 p-3 rounded-lg border border-stone-200">
             <div>
-              <label className="block text-xs font-bold text-stone-700 uppercase mb-1">
+              <label className="block text-xs font-bold text-slate-800 uppercase mb-1">
                 Preferred Start
               </label>
               <input
                 type="time"
                 value={preferredStart}
                 onChange={(e) => setPreferredStart(e.target.value)}
-                className="w-full p-2 border border-stone-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
+                className="w-full p-2 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-600 bg-white"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-stone-700 uppercase mb-1">
+              <label className="block text-xs font-bold text-slate-800 uppercase mb-1">
                 Preferred End
               </label>
               <input
                 type="time"
                 value={preferredEnd}
                 onChange={(e) => setPreferredEnd(e.target.value)}
-                className="w-full p-2 border border-stone-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
+                className="w-full p-2 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-600 bg-white"
               />
             </div>
           </div>
         ) : (
-          <p className="text-[11px] text-stone-500 italic text-left pl-1">
+          <p className="text-[11px] text-slate-500 italic text-left pl-1">
             * Client visit timing is flexible.
           </p>
         )}
 
         {/* Required Hours / Week */}
         <div className="text-left space-y-2">
-          <label className="block text-xs font-bold text-stone-700 uppercase mb-1">
+          <label className="block text-xs font-bold text-slate-800 uppercase mb-1">
             Required Hours / Week
           </label>
           <input
             type="number"
             value={requiredHours}
             onChange={(e) => setRequiredHours(Number(e.target.value))}
-            className="w-full p-2 border border-stone-300 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 bg-white"
+            className="w-full p-2 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-600 bg-white"
           />
         </div>
 

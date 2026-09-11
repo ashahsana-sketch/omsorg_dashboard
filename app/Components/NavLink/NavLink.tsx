@@ -20,10 +20,10 @@ export default function NavLink({ href, children, active }: NavLinkProps) {
   return (
     <Link
       href={href}
-      className={`px-4 py-2 rounded-lg font-medium text-sm transition-colors ${
+      className={`px-3 py-2 rounded-lg font-semibold text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-1 ${
         isActive
-          ? "bg-amber-200 text-stone-900 shadow-sm"
-          : "text-stone-600 hover:text-stone-900 hover:bg-amber-200"
+          ? "bg-teal-600 text-white border border-teal-700"
+          : "text-teal-700 hover:text-teal-700 hover:bg-white hover:border-slate-200"
       }`}
     >
       {children}
