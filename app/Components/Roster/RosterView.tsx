@@ -343,8 +343,8 @@ export default function RosterView() {
                     key={idx}
                     className="bg-white border border-slate-200 p-4 rounded-xl shadow-xs space-y-2.5 hover:shadow-md transition"
                   >
-                    <div className="flex justify-between items-center underline">
-                      <h2 className={`text-md font-bold p-2 rounded-2xl ${
+                    <div className="flex justify-between items-center ">
+                      <h2 className={`text-md font-bold p-2 rounded-2xl underline ${
                         req.careLevel === "High Care"
                           ? "text-red-800"
                           : req.careLevel === "Basic Care"
@@ -438,7 +438,7 @@ export default function RosterView() {
                     </div>
                     <div className="mt-1 grid grid-cols-1 gap-2">
                     <span
-  className={`px-1.5 py-0.5 rounded text-[11px] font-bold ${
+  className={`px-1.5 py-0.5 block-inline rounded text-[11px] font-bold ${
     item.client.careLevel === "High Care"
       ? "bg-red-50 text-red-700 outline-1"
       : item.client.careLevel === "Standard Care"
@@ -468,17 +468,22 @@ export default function RosterView() {
                   <td className="p-3 align-middle space-y-1.5">
                     {item.tasks.length > 0 ? (
                       item.tasks.map((task, idx) => (
-                        <div key={task.id} className="grid grid-cols-1 items-center gap-2 bg-teal-700  text-white text-[11px] p-2 rounded-2xl">
-                          <span className="rounded-r-2xl font-bold underline shadow-xs">
-                          Shift {idx + 1}:
-                          </span>
-                            <span>
-                              Time: {task.start} - {task.end}
-                            </span>
-                          <span>
-                          Total hours: {(task.durationMinutes / 60).toFixed(1)}h
-                          </span>
-                        </div>
+  <div
+  key={task.id}
+  className="grid grid-cols-1 items-center gap-2 bg-teal-700 text-white text-[11px] p-2 rounded-2xl"
+>
+  <span className="w-fit rounded-md bg-teal-50 px-2 py-0.5 font-bold text-teal-800">
+    Shift {idx + 1}:
+  </span>
+
+  <span>
+    Time: {task.start} - {task.end}
+  </span>
+
+  <span>
+    Total hours: {(task.durationMinutes / 60).toFixed(1)}h
+  </span>
+</div>
                       ))
                     ) : (
                       <span className="bg-red-50 text-red-700 font-bold text-xs px-2.5 py-1 rounded-md inline-block">
@@ -514,16 +519,16 @@ export default function RosterView() {
                   <td className="p-3 text-center align-middle space-y-2">
                     <div>
                       <span
-                        className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${
-                          item.status === "Fully Assigned"
-                            ? "bg-emerald-100 text-emerald-800 outline-1"
-                            : item.status === "Partially Assigned"
-                            ? "bg-amber-100 text-amber-900 outline-1"
-                            : "bg-red-50 text-red-700 outline-1"
-                        }`}
-                      >
-                        {item.status}
-                      </span>
+  className={`px-1.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-bold whitespace-nowrap ${
+    item.status === "Fully Assigned"
+      ? "bg-emerald-100 text-emerald-800"
+      : item.status === "Partially Assigned"
+      ? "bg-amber-100 text-amber-900"
+      : "bg-red-50 text-red-700"
+  }`}
+>
+  {item.status}
+</span>
                     </div>
 
                     {item.status !== "Fully Assigned" && (
