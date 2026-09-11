@@ -128,10 +128,30 @@
     "shiftEnd": null
   },
   {
-    "id": "EMP-1016",
-    "name": "Christine stenberg",
+    "id": "EMP-1017",
+    "name": "Annie",
     "role": "Registered Nurse (RN)",
-    "maxHours": 40,
+    "maxHours": 6,
+    "location": "Stockholm",
+    "isFixedTime": true,
+    "shiftStart": "09:00",
+    "shiftEnd": "15:00"
+  },
+  {
+    "id": "EMP-1018",
+    "name": "Aish Nordström",
+    "role": "Registered Nurse (RN)",
+    "maxHours": 15,
+    "location": "Stockholm",
+    "isFixedTime": false,
+    "shiftStart": null,
+    "shiftEnd": null
+  },
+  {
+    "id": "EMP-1019",
+    "name": "Dada bhai",
+    "role": "Registered Nurse (RN)",
+    "maxHours": 20,
     "location": "Stockholm",
     "isFixedTime": false,
     "shiftStart": null,
