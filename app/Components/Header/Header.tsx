@@ -33,7 +33,7 @@ export default function Header() {
         </Link>
 
         {/* Center: Desktop Navigation */}
-        <nav className="hidden lg:flex items-center gap-1 rounded-xl bg-slate-50 p-1 ">
+        <nav className="hidden lg:flex ml-auto gap-1 rounded-xl bg-slate-50 p-1 ">
           <div className="bg-slate-50 p-1 rounded-lg border border-slate-200  transition-colors shadow-sm">
             <NavLink href="/employees">Employees List</NavLink>
           </div>

@@ -7,35 +7,37 @@ import ClientModal from "./clients/ClientModal";
 import RosterView from "./Components/Roster/RosterView";
 export default function Home() {
   return (
-    <div className="min-h-screen flex flex-col justify-between bg-slate-50">
-      {/* Main Content Area: Responsive Padding & Margins */}
-      <main className="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 md:px-8 py-6 sm:py-10 md:py-12 space-y-6 sm:space-y-8 text-center">
-        
-        {/* Header Text Section */}
-        <div className="text-center space-y-2 max-w-2xl mx-auto">
+    <div className="min-h-screen flex flex-col bg-slate-50">
+
+      <main className="py-6 space-y-6">
+
+        {/* Header */}
+        <div className="w-full text-center space-y-2">
           <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-teal-700 tracking-tight">
             Care Dashboard Records
           </h2>
+
           <p className="text-xs sm:text-sm text-slate-500 leading-relaxed">
             Manage your employee directory, client care profiles, and shift matrix in one place.
           </p>
         </div>
 
-        {/* Modal Action Triggers: Mobile par Full Width / Column View */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4 w-full max-w-md sm:max-w-none mx-auto">
-          <div className="w-full sm:w-auto">
-            <EmployeeModal />
-          </div>
-          <div className="w-full sm:w-auto">
-            <ClientModal />
-          </div>
+        {/* Buttons */}
+        <div className="w-full flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
+          <EmployeeModal />
+          <ClientModal />
         </div>
-      <div className="min-h-screen bg-slate-50 py-8">
-      <RosterView />
-    </div>
+
+        {/* Roster */}
+        <div className="w-full">
+          <RosterView />
+        </div>
+
       </main>
 
-      <Footer />
+      {/* <Footer /> */}
+
     </div>
+    // <footer/>
   );
 }
