@@ -344,7 +344,7 @@ export default function RosterView() {
                     className="bg-white border border-slate-200 p-4 rounded-xl shadow-xs space-y-2.5 hover:shadow-md transition"
                   >
                     <div className="flex justify-between items-center ">
-                      <h2 className={`text-md font-bold p-2 rounded-2xl underline ${
+                      <h2 className={`text-md font-bold p-2 rounded-2xl  ${
                         req.careLevel === "High Care"
                           ? "text-red-800"
                           : req.careLevel === "Basic Care"
@@ -374,7 +374,7 @@ export default function RosterView() {
                         Need:<span className="font-extrabold text-slate-900">{req.estimatedStaffCount}</span> Staff Member(s)
                       </div>
                     </div>
-                    <span className={`text-[12px] px-2 py-0.5 rounded font-bold underline ${
+                    <span className={`text-lg px-2 py-0.5 rounded font-bold  ${
                         req.unassignedClientsCount > 3
                           ? "text-red-700"
                           : req.unassignedClientsCount >= 1
@@ -432,7 +432,7 @@ export default function RosterView() {
 
                   {/* Client Details */}
                   <td className="p-3 align-middle space-y-1.5">
-                    <h2 className="underline font-bold text-[15px] text-stone-900">{item.client.name}</h2>
+                    <h2 className=" font-bold text-[15px] text-stone-900">{item.client.name}</h2>
                     <div className="text-[12px] text-stone-700 font-mono">
                      ID:{item.client.id} | {item.client.location}
                     </div>
@@ -559,7 +559,7 @@ export default function RosterView() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
           {Object.entries(workloads).map(([name, hours]) => (
             <div key={name} className="bg-white p-2.5 rounded border border-stone-200 shadow-sm">
-              <div className="text-stone-500 text-[11px] font-semibold"><span className="font-bold text-teal-700 underline pb-2">{name}</span></div>
+              <div className="text-stone-500 text-[11px] font-semibold"><span className="font-bold text-teal-700  pb-2">{name}</span></div>
               <div className="font-bold text-stone-800">{hours} / 8.0 hrs allocated</div>
             </div>
           ))}
