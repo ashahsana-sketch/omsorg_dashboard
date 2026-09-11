@@ -284,7 +284,7 @@ export default function RosterView() {
             className={`font-bold text-xs px-3 py-2 rounded-lg border transition cursor-pointer ${
               isToday
                 ? "bg-teal-600 text-white border-teal-700 shadow-sm"
-                : "bg-teal-50 hover:bg-slate-50 text-slate-700 border-slate-200"
+                : "bg-teal-50 hover:bg-teal-100 text-slate-700 border-slate-200"
             }`}
           >
             Today
@@ -425,7 +425,7 @@ export default function RosterView() {
             </thead>
             <tbody className="divide-y divide-stone-100 text-stone-700">
               {rosterData.map((item, index) => (
-                <tr key={`${item.client.id}-${selectedWeek}`} className="hover:bg-stone-100 border-2 border-stone-200 transition-colors">
+                <tr key={`${item.client.id}-${selectedWeek}`} className="hover:bg-teal-50 border-2 border-stone-200 transition-colors">
                   <td className="p-3  font-bold text-stone-400 text-center">
                     {index + 1}
                   </td>
