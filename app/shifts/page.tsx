@@ -17,17 +17,17 @@ export default function ShiftsPage() {
   return (
     <div className="max-w-6xl mx-auto p-4 sm:p-6 space-y-6">
       {/* Header */}
-      <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="bg-teal-50 p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-xl font-bold text-teal-700">Daily Shift Roster</h1>
-          <p className="text-xs text-slate-500">Active carer allocations and task schedules generated from system data.</p>
+          <h1 className="text-xl font-bold  text-teal-700">Daily Shift Roster</h1>
+          <p className="text-sm text-slate-700">Active carer allocations and task schedules generated from system data.</p>
         </div>
       </div>
 
       {/* Rota List Table */}
-      <div className="bg-white rounded-xl border border-stone-200 shadow-sm overflow-x-auto">
-        <table className="w-full text-left text-xs">
-          <thead className="bg-slate-50 text-slate-800 font-bold uppercase border-b border-slate-200">
+      <div className=" rounded-xl border border-stone-300 shadow-sm overflow-x-auto">
+        <table className="w-full  text-left text-xs">
+          <thead className="bg-teal-50 text-slate-800 font-bold uppercase border-b border-slate-200">
             <tr>
               <th className="p-3">Carer / Employee</th>
               <th className="p-3">Client</th>
@@ -39,7 +39,7 @@ export default function ShiftsPage() {
           <tbody className="divide-y divide-stone-100 text-stone-700">
             {roster.length === 0 ? (
               <tr>
-                <td colSpan={5} className="p-6 text-center text-stone-400">
+                <td colSpan={5} className="p-6 text-center text-stone-700">
                   No shift allocations found.
                 </td>
               </tr>
@@ -49,7 +49,7 @@ export default function ShiftsPage() {
                 const totalHours = (totalMinutes / 60).toFixed(1);
 
                 return (
-                  <tr key={index} className="hover:bg-slate-50">
+                  <tr key={index} className="hover:bg-teal-50">
                     <td className="p-3 font-bold text-stone-900">
                       {r.primaryEmployeeName !== "Unassigned" ? (
                         <div>
@@ -62,16 +62,16 @@ export default function ShiftsPage() {
                           )}
                         </div>
                       ) : (
-                        <span className="text-emerald-700">Unassigned</span>
+                        <span className="text-red-700">Unassigned</span>
                       )}
                     </td>
                     <td className="p-3 font-semibold">{r.client.name}</td>
                     <td className="p-3">{r.client.location || "Stockholm"}</td>
                     <td className="p-3">
-                      <div className="space-y-1">
+                      <div className="space-y-1  p-2">
                         {r.tasks.map((task, idx) => (
-                          <div key={idx} className="text-stone-600">
-                            • {task.name} <span className="text-[10px] text-stone-400">({task.start} - {task.end}, {task.durationMinutes} mins)</span>
+                          <div key={idx} className="text-stone-700">
+                            • {task.name} <span className="text-[12px] text-stone-600">({task.start} - {task.end}, {task.durationMinutes} mins)</span>
                           </div>
                         ))}
                         <div className="font-bold text-teal-700 mt-1">
@@ -80,12 +80,12 @@ export default function ShiftsPage() {
                       </div>
                     </td>
                     <td className="p-3 text-right">
-                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                      <span className={`px-4 border-emerald-600 py-2 rounded-full text-[12px] font-bold ${
                         r.status === "Fully Assigned" 
-                          ? "bg-emerald-100 text-emerald-950" 
+                          ? "bg-teal-100 text-teal-700 border border-teal-800" 
                           : r.status === "Partially Assigned" 
-                          ? "bg-emerald-50 text-emerald-700" 
-                          : "bg-emerald-100 text-emerald-950"
+                          ? "bg-red-50 text-red-700 border border-red-800" 
+                          : "bg-blue-100 text-blue-950 border border-blue-800"
                       }`}>
                         {r.status}
                       </span>
