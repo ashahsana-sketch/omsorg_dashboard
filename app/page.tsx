@@ -1,5 +1,5 @@
 import Header from "./Components/Header/Header";
-import Footer from "./Components/Footer/footer";
+import Footer from "./Components/Footer/Footer";
 import EmployeeModal from "./employees/EmployerModal";
 import EmployeeManagerForm from "./employees/EmployeeManagerForm";
 import ClientManagerForm from "./clients/ClientManagerForm";
@@ -21,23 +21,17 @@ export default function Home() {
             Manage your employee directory, client care profiles, and shift matrix in one place.
           </p>
         </div>
-
-        {/* Buttons */}
-        <div className="w-full flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
+        <div className="grid grid-cols-1 gap-3">
           <EmployeeModal />
           <ClientModal />
         </div>
-
-        {/* Roster */}
-        <div className="w-full">
+          
           <RosterView />
-        </div>
+          <Footer/>
 
       </main>
 
-      {/* <Footer /> */}
 
     </div>
-    // <footer/>
   );
 }
