@@ -44,7 +44,7 @@ export default function Header() {
             <NavLink href="/BillingReports">Billing Report</NavLink>
           </div>
           <div className="bg-slate-50 p-1 rounded-lg border border-slate-200 transition-colors shadow-sm">
-            <NavLink href="/shifts">Shifts/Roaster</NavLink>
+            <NavLink href="/shifts">Shifts/Roster</NavLink>
           </div>
         </nav>
 

@@ -7,9 +7,9 @@ export default function Footer() {
         
         {/* Column 1: Brand & Emergency Contact */}
         <div className="space-y-3">
-          <h2 className="text-base font-extrabold uppercase tracking-wider text-teal-700 border-b border-teal-600 pb-1">
-            Elderly Care Dashboard
-          </h2>
+        <h2 className="text-base font-extrabold uppercase tracking-wider bg-linear-to-r from-teal-700 to-amber-700 bg-clip-text text-transparent border-b border-teal-600 pb-1">
+  Elderly Care Dashboard
+</h2>
           <p className="text-xs text-slate-500 leading-relaxed">
             Providing compassionate, reliable, and scheduled care management for seniors.
           </p>
@@ -21,11 +21,11 @@ export default function Footer() {
           <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800 mb-3 border-b border-teal-600 pb-1">
             Quick Navigation
           </h3>
-          <ul className="space-y-2 text-xs font-medium">
-            <li><Link href="/roster" className="text-teal-700 hover:text-teal-700 transition-colors">Roster Matrix</Link></li>
+          <ul className="space-y-2 text-sm font-medium">
+            <li><Link href="/shifts" className="text-teal-700 hover:text-teal-700 transition-colors">Roster Matrix</Link></li>
             <li><Link href="/employees" className="text-teal-700 hover:text-teal-700 transition-colors">Staff Directory</Link></li>
-            <li><Link href="/customers" className="text-teal-700 hover:text-teal-700 transition-colors">Care Recipients</Link></li>
-            <li><Link href="/locations" className="text-teal-700 hover:text-teal-700 transition-colors">Service Locations</Link></li>
+            <li><Link href="/clients" className="text-teal-700 hover:text-teal-700 transition-colors">Care Recipients</Link></li>
+            <li><Link href="/BillingReports" className="text-teal-700 hover:text-teal-700 transition-colors">Billing Report</Link></li>
           </ul>
         </div>
 
@@ -43,22 +43,20 @@ export default function Footer() {
         </div>
 
         {/* Column 4: Service Areas */}
-        <div>
+        <div >
           <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800 mb-3 border-b border-teal-600 pb-1">
             Active Regions
           </h3>
-          <div className="flex flex-wrap gap-1.75 pt-1 text-3xl ">
-            <span className="px-2 py-1 bg-slate-50 text-slate-800 border border-slate-200 rounded text-[11px] font-medium">Stockholm</span>
-            <span className="px-2 py-1 bg-slate-50 text-slate-800 border border-slate-200 rounded text-[11px] font-medium">Södertälje</span>
-            </div>
-            <div>
-            <span className="px-2 py-1 bg-slate-50 text-slate-800 border border-slate-200 rounded text-[11px] font-medium">Kista</span>
-            <span className="px-2 py-1 bg-slate-50 text-slate-800 border border-slate-200 rounded text-[11px] font-medium">Täby</span>
-            <span className="px-2 py-1 bg-slate-50 text-slate-800 border border-slate-200 rounded text-[11px] font-medium">Solna</span>
-          </div>
-          <div>
-            <span className="px-2 py-1 bg-slate-50 text-slate-800 border border-slate-200 rounded text-[11px] font-medium">Bandhagan</span>
-            <span className="px-2 py-1 bg-slate-50 text-slate-800 border border-slate-200 rounded text-[11px] font-medium">Hanninge</span>
+          <div className="grid grid-cols-2 gap-1.75 pt-1 text-3xl ">
+            <span className="px-2 py-1  bg-amber-50 text-border-800 border border-amber-600 rounded text-[11px] font-medium">Stockholm</span>
+            <span className="px-2 py-1  bg-amber-50 text-border-800 border border-amber-600 rounded text-[11px] font-medium">Solna</span>
+            
+            <span className="px-2 py-1  bg-amber-50 text-border-800 border border-amber-600 rounded text-[11px] font-medium">Kista</span>
+            <span className="px-2 py-1  bg-amber-50 text-border-800 border border-amber-600 rounded text-[11px] font-medium">Täby</span>
+            <span className="px-2 py-1  bg-amber-50 text-border-800 border border-amber-600 rounded text-[11px] font-medium">Haninge</span>
+         
+            <span className="px-2 py-1  bg-amber-50 text-border-800 border border-amber-600 rounded text-[11px] font-medium">Bandhagan</span>
+            <span className="px-2 py-1  bg-amber-50 text-border-800 border border-amber-600 rounded text-[11px] font-medium">Hanninge</span>
           </div>
         </div>
 

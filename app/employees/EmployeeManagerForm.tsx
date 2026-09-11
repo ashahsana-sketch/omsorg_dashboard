@@ -64,18 +64,18 @@ export default function EmployeeManagerForm() {
       }
     } catch (error) {
       console.error("Error submitting form:", error);
-      alert("Network Error: API connect nahi ho saki.");
+      alert("Network Error: Can't connect to API.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="max-w-xl mx-auto space-y-6">
+    <div className="max-w-xl mx-auto space-y-6 bg-stone-50">
       {/* 1. Add Employee Form */}
       <form
         onSubmit={(e) => e.preventDefault()}
-        className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4"
+        className="bg-teal-50/60 p-6 rounded-xl border text-stnoe-700 border-slate-300 shadow-sm space-y-4"
       >
         <h3 className="text-base font-bold text-teal-700 border-b border-slate-200 rounded-2xl bg-slate-50 p-2.5 text-center">
           Add New Employee
@@ -207,7 +207,7 @@ export default function EmployeeManagerForm() {
             onClick={() => router.push("/employees")}
             className="flex-1 bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 rounded-lg text-xs transition-colors shadow-sm cursor-pointer"
           >
-            Cancel / Go to Employees
+            Go to Employees List
           </button>
         </div>
       </form>

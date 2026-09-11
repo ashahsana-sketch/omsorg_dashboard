@@ -426,14 +426,14 @@ export default function RosterView() {
             <tbody className="divide-y divide-stone-100 text-stone-700">
               {rosterData.map((item, index) => (
                 <tr key={`${item.client.id}-${selectedWeek}`} className="hover:bg-stone-100 border-2 border-stone-200 transition-colors">
-                  <td className="p-3 font-mono font-bold text-stone-400 text-center">
+                  <td className="p-3  font-bold text-stone-400 text-center">
                     {index + 1}
                   </td>
 
                   {/* Client Details */}
                   <td className="p-3 align-middle space-y-1.5">
                     <h2 className=" font-bold text-[15px] text-stone-900">{item.client.name}</h2>
-                    <div className="text-[12px] text-stone-700 font-mono">
+                    <div className="text-[12px] text-stone-700">
                      ID:{item.client.id} | {item.client.location}
                     </div>
                     <div className="mt-1 grid grid-cols-1 gap-2">
@@ -511,7 +511,7 @@ export default function RosterView() {
                   </td>
 
                   {/* Hours */}
-                  <td className="p-3 text-center align-middle font-bold font-mono text-sm">
+                  <td className="p-3 text-center align-middle font-bold text-sm">
                     {item.client.requiredHours}h
                   </td>
 
