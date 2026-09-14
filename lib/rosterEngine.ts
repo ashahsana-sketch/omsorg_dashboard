@@ -13,11 +13,13 @@ export interface Task {
 export interface Client {
   id: string;
   name: string;
-  careLevel: "High Care" | "Standard Care" | "Low Care";
+  careLevel: "High Care" | "Standard Care" | "Basic Care" | "Basic care" | "Low Care" | string;
   isFixedTime: boolean;
   preferredStart?: string;
+  preferredEnd?: string;
   requiredHours: number;
   location: string;
+  services?: string[];
   tasks?: Task[];
 }
 
@@ -26,7 +28,10 @@ export interface Employee {
   name: string;
   role: string;
   qualification?: string;
-  maxHoursPerDay: number;
+  location?: string;
+  isFixedTime?: boolean;
+  maxHours?: number;
+  maxHoursPerDay?: number;
   shiftStart?: string;
   shiftEnd?: string;
 }
@@ -51,7 +56,56 @@ export interface MissingStaffRequirement {
   estimatedStaffCount: number;
 }
 
-function timeToMinutes(timeStr?: string, defaultTime: string = "08:00"): number {
+export function normalizeCareLevel(level?: string): "High Care" | "Standard Care" | "Basic Care" {
+  if (!level) return "Standard Care";
+  const l = level.toLowerCase().trim();
+  if (l.includes("high")) return "High Care";
+  if (l.includes("basic") || l.includes("low")) return "Basic Care";
+  return "Standard Care";
+}
+
+export function getRoleNeededForCareLevel(careLevel: string): string {
+  const norm = normalizeCareLevel(careLevel);
+  if (norm === "High Care") return "Registered Nurse (RN) / Senior Care Worker";
+  if (norm === "Standard Care") return "Care Assistant";
+  return "Support Worker";
+}
+
+/**
+ * Priority Rule 1: Role-to-Care-Level Matching
+ * - Registered Nurses and Senior Care Workers exclusively -> High Care
+ * - Care Assistants exclusively -> Standard Care
+ * - Support Workers exclusively -> Basic Care
+ */
+export function matchesRoleForCareLevel(roleName?: string, careLevelName?: string): boolean {
+  if (!roleName) return false;
+  const role = roleName.toLowerCase().trim();
+  const careLevel = normalizeCareLevel(careLevelName);
+
+  const isHighCareRole =
+    role.includes("nurse") ||
+    role.includes("rn") ||
+    role.includes("senior care");
+
+  const isStandardCareRole =
+    role.includes("care assistant") && !role.includes("senior");
+
+  const isBasicCareRole =
+    role.includes("support") ||
+    role.includes("home care") ||
+    (!isHighCareRole && !isStandardCareRole);
+
+  if (careLevel === "High Care") {
+    return isHighCareRole;
+  } else if (careLevel === "Standard Care") {
+    return isStandardCareRole;
+  } else {
+    // Basic Care / Low Care
+    return isBasicCareRole;
+  }
+}
+
+export function timeToMinutes(timeStr?: string, defaultTime: string = "08:00"): number {
   const safeTime =
     timeStr && typeof timeStr === "string" && timeStr.includes(":")
       ? timeStr
@@ -61,9 +115,10 @@ function timeToMinutes(timeStr?: string, defaultTime: string = "08:00"): number 
   return (isNaN(h) ? 8 : h) * 60 + (isNaN(m) ? 0 : m);
 }
 
-function minutesToTime(mins: number): string {
-  const h = Math.floor(mins / 60);
-  const m = mins % 60;
+export function minutesToTime(mins: number): string {
+  const safeMins = Math.max(0, Math.min(23 * 60 + 59, Math.round(mins)));
+  const h = Math.floor(safeMins / 60);
+  const m = safeMins % 60;
   return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
 }
 
@@ -93,18 +148,28 @@ export function computeRoster(
     employeeSchedules[emp.id] = [];
   });
 
+  // Sort clients: Fixed time first, then High Care -> Standard Care -> Basic Care
+  const careLevelPriority: Record<string, number> = {
+    "High Care": 3,
+    "Standard Care": 2,
+    "Basic Care": 1,
+  };
+
   const sortedClients = [...clients].sort((a, b) => {
     if (a.isFixedTime && !b.isFixedTime) return -1;
     if (!a.isFixedTime && b.isFixedTime) return 1;
-    return 0;
+
+    const prioA = careLevelPriority[normalizeCareLevel(a.careLevel)] || 0;
+    const prioB = careLevelPriority[normalizeCareLevel(b.careLevel)] || 0;
+    return prioB - prioA;
   });
 
   const roster: FinalRosterItem[] = [];
 
   for (const client of sortedClients) {
-    const totalRequiredHours = client.requiredHours || 1;
+    const totalRequiredHours = Number(client.requiredHours) || 1;
     const totalRequiredMins = totalRequiredHours * 60;
-    const travelMarginMins = 30;
+    const travelMarginMins = 15; // 15 mins buffer between visits
 
     let remainingMinsToAssign = totalRequiredMins;
     let baseStartMins = timeToMinutes(client.preferredStart, "08:00");
@@ -112,38 +177,83 @@ export function computeRoster(
     const assignedTasks: Task[] = [];
     const assignedStaffMembers: Employee[] = [];
 
+    /**
+     * Attempts to find and assign an employee according to the 3-Tier Priority Rules:
+     * 1. Role-to-Care-Level Matching (exclusive match)
+     * 2. Location Matching & Fallback (same location first, then cross-location)
+     * 3. Working Hours & Shift Constraints (max 8h/day flexible, strict window for fixed)
+     */
     const tryAssignStaff = (
       reqMins: number,
-      startMins: number
+      targetStartMins: number
     ): { emp: Employee; start: number; end: number } | null => {
-      for (const emp of employees) {
-        if (assignedStaffMembers.some((s) => s.id === emp.id)) continue;
+      // Filter candidates that match the exact role for this care level
+      const eligibleCandidates = employees.filter((emp) => {
+        if (assignedStaffMembers.some((s) => s.id === emp.id)) return false;
+        return matchesRoleForCareLevel(emp.role, client.careLevel);
+      });
 
-        const empRole = (emp.role || "").toLowerCase();
-        const empQual = (emp.qualification || "").toLowerCase();
-        const isNurse =
-          empRole.includes("nurse") ||
-          empRole.includes("rn") ||
-          empQual.includes("rn") ||
-          empQual.includes("nurse");
+      // Priority 2: Sort candidates: Same location first, then cross-location
+      const sortedCandidates = [...eligibleCandidates].sort((a, b) => {
+        const aSameLoc = (a.location || "").toLowerCase().trim() === (client.location || "").toLowerCase().trim();
+        const bSameLoc = (b.location || "").toLowerCase().trim() === (client.location || "").toLowerCase().trim();
 
-        if (client.careLevel === "High Care" && !isNurse) continue;
+        if (aSameLoc && !bSameLoc) return -1;
+        if (!aSameLoc && bSameLoc) return 1;
 
-        const empShiftStart = timeToMinutes(emp.shiftStart, "08:00");
-        const empShiftEnd = timeToMinutes(emp.shiftEnd, "22:00"); 
-        const maxDailyMins = (emp.maxHoursPerDay || 8) * 60;
+        // Balance workload among same-priority candidates
+        return (employeeWorkloads[a.name] || 0) - (employeeWorkloads[b.name] || 0);
+      });
+
+      for (const emp of sortedCandidates) {
+        const isFixedEmp = Boolean(emp.isFixedTime);
+        const empShiftStart = isFixedEmp ? timeToMinutes(emp.shiftStart, "08:00") : 8 * 60; // 08:00
+        const empShiftEnd = isFixedEmp ? timeToMinutes(emp.shiftEnd, "17:00") : 20 * 60; // 20:00
+
+        // Priority 3: Maximum 8 hours per day for flexible staff (or defined maxHours)
+        const dailyMaxHours = isFixedEmp
+          ? Math.max(1, (empShiftEnd - empShiftStart) / 60)
+          : Math.min(8, emp.maxHoursPerDay || (emp.maxHours ? Math.min(8, emp.maxHours) : 8));
+        
+        const maxDailyMins = dailyMaxHours * 60;
         const currentWorkloadMins = (employeeWorkloads[emp.name] || 0) * 60;
-
         const availableCapacity = maxDailyMins - currentWorkloadMins;
+
         if (availableCapacity <= 0) continue;
 
         const assignableMins = Math.min(reqMins, availableCapacity);
-        let candidateStart = Math.max(startMins, empShiftStart);
-        let candidateEnd = candidateStart + assignableMins;
+        if (assignableMins <= 0) continue;
 
         const existingSlots = (employeeSchedules[emp.id] || []).sort(
           (a, b) => a.startMins - b.startMins
         );
+
+        // If client has fixed time, strictly try that specific window
+        if (client.isFixedTime) {
+          const clientStart = timeToMinutes(client.preferredStart, "09:00");
+          const clientEnd = clientStart + assignableMins;
+
+          // Check if employee's shift bounds contain the client time
+          if (clientStart < empShiftStart || clientEnd > empShiftEnd) {
+            continue;
+          }
+
+          // Check overlap with existing employee slots
+          const hasOverlap = existingSlots.some((slot) => {
+            const slotStartWithMargin = slot.startMins - travelMarginMins;
+            const slotEndWithMargin = slot.endMins + travelMarginMins;
+            return clientStart < slotEndWithMargin && clientEnd > slotStartWithMargin;
+          });
+
+          if (!hasOverlap) {
+            return { emp, start: clientStart, end: clientEnd };
+          }
+          continue;
+        }
+
+        // Flexible client: Find earliest available non-overlapping slot within employee shift bounds
+        let candidateStart = Math.max(targetStartMins, empShiftStart);
+        let candidateEnd = candidateStart + assignableMins;
 
         let slotFound = false;
         while (candidateEnd <= empShiftEnd) {
@@ -176,10 +286,11 @@ export function computeRoster(
           return { emp, start: candidateStart, end: candidateEnd };
         }
       }
+
       return null;
     };
 
-    // 1st Shift Assignment
+    // Primary Shift Assignment
     let currentStart = baseStartMins;
     let firstAssignment = tryAssignStaff(remainingMinsToAssign, currentStart);
 
@@ -209,10 +320,10 @@ export function computeRoster(
       });
 
       remainingMinsToAssign -= assignedMins;
-      currentStart = end; 
+      currentStart = end + travelMarginMins;
     }
 
-    // 2nd Shift Assignment
+    // Secondary Shift Assignment (if client required more hours than 1 staff could cover)
     if (remainingMinsToAssign > 0) {
       let secondAssignment = tryAssignStaff(remainingMinsToAssign, currentStart);
 
@@ -268,21 +379,24 @@ export function computeRoster(
     });
   }
 
-  // Gap Analysis
+  // Gap Analysis Calculation
   const unassignedOrPartial = roster.filter((item) => item.status !== "Fully Assigned");
   const missingSummary: Record<string, { totalHours: number; count: number; roleNeeded: string }> = {};
 
+  // Standardize 3 tiers
+  ["High Care", "Standard Care", "Basic Care"].forEach((level) => {
+    missingSummary[level] = {
+      totalHours: 0,
+      count: 0,
+      roleNeeded: getRoleNeededForCareLevel(level),
+    };
+  });
+
   unassignedOrPartial.forEach((item) => {
-    const level = item.client.careLevel || "Standard Care";
-    const totalHours = item.client.requiredHours || 1;
+    const level = normalizeCareLevel(item.client.careLevel);
+    const totalHours = Number(item.client.requiredHours) || 1;
     const assignedHours = item.tasks.reduce((sum, t) => sum + t.durationMinutes / 60, 0);
-    const unassignedHours = totalHours - assignedHours;
-
-    const roleNeeded = level === "High Care" ? "Registered Nurse (RN)" : "Care Assistant / Carer";
-
-    if (!missingSummary[level]) {
-      missingSummary[level] = { totalHours: 0, count: 0, roleNeeded };
-    }
+    const unassignedHours = Math.max(0, totalHours - assignedHours);
 
     missingSummary[level].totalHours += unassignedHours;
     missingSummary[level].count += 1;
@@ -318,7 +432,7 @@ export function assignStaffManually(
 
   const updatedRoster = currentRoster.map((item) => {
     if (item.client.id === clientId) {
-      const totalRequiredHours = item.client.requiredHours || 1;
+      const totalRequiredHours = Number(item.client.requiredHours) || 1;
       const existingTasks = item.tasks || [];
       const alreadyAssignedHours = existingTasks.reduce(
         (sum, t) => sum + t.durationMinutes / 60,
@@ -329,7 +443,8 @@ export function assignStaffManually(
       addedHours = remainingHours > 0 ? remainingHours : totalRequiredHours;
       const reqMins = addedHours * 60;
 
-      const startHour = chosenEmployee.shiftStart || "08:00";
+      const isFixed = Boolean(chosenEmployee.isFixedTime);
+      const startHour = isFixed && chosenEmployee.shiftStart ? chosenEmployee.shiftStart : "08:00";
       const [sHour, sMin] = startHour.split(":").map(Number);
       const calculatedEndHour = Math.min(22, sHour + Math.ceil(addedHours));
       const endHourStr = `${String(calculatedEndHour).padStart(2, "0")}:${String(sMin || 0).padStart(2, "0")}`;
@@ -381,21 +496,23 @@ export function assignStaffManually(
     );
   }
 
-  // Recalculate Missing Requirements (Gap Analysis)
+  // Recalculate Gap Analysis
   const unassignedOrPartial = updatedRoster.filter((item) => item.status !== "Fully Assigned");
   const missingSummary: Record<string, { totalHours: number; count: number; roleNeeded: string }> = {};
 
+  ["High Care", "Standard Care", "Basic Care"].forEach((level) => {
+    missingSummary[level] = {
+      totalHours: 0,
+      count: 0,
+      roleNeeded: getRoleNeededForCareLevel(level),
+    };
+  });
+
   unassignedOrPartial.forEach((item) => {
-    const level = item.client.careLevel || "Standard Care";
-    const totalH = item.client.requiredHours || 1;
+    const level = normalizeCareLevel(item.client.careLevel);
+    const totalH = Number(item.client.requiredHours) || 1;
     const assignedH = item.tasks.reduce((sum, t) => sum + t.durationMinutes / 60, 0);
     const unassignedH = Math.max(0, totalH - assignedH);
-
-    const roleNeeded = level === "High Care" ? "Registered Nurse (RN)" : "Care Assistant / Carer";
-
-    if (!missingSummary[level]) {
-      missingSummary[level] = { totalHours: 0, count: 0, roleNeeded };
-    }
 
     missingSummary[level].totalHours += unassignedH;
     missingSummary[level].count += 1;

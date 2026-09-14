@@ -2,6 +2,10 @@
 import { useState, useEffect, useMemo } from "react";
 import {
   computeRoster,
+  assignStaffManually,
+  matchesRoleForCareLevel,
+  getRoleNeededForCareLevel,
+  normalizeCareLevel,
   FinalRosterItem,
   MissingStaffRequirement,
   Client,
@@ -174,97 +178,14 @@ export default function RosterView() {
     const chosenStaff = employeesList.find((e) => e.id === selectedEmployeeId);
     if (!chosenStaff) return;
 
-    const client = selectedClientItem.client;
-    const totalRequiredHours = client.requiredHours || 1;
-    
-    const existingTasks = selectedClientItem.tasks || [];
-    const alreadyAssignedHours = existingTasks.reduce(
-      (sum, t) => sum + t.durationMinutes / 60,
-      0
+    const { updatedRoster, updatedWorkloads, missingRequirements: newMissingReqs } = assignStaffManually(
+      rosterData,
+      workloads,
+      selectedClientItem.client.id,
+      chosenStaff
     );
 
-    const remainingHours = Math.max(0, totalRequiredHours - alreadyAssignedHours);
-    const addedHours = remainingHours > 0 ? remainingHours : totalRequiredHours;
-    const reqMins = addedHours * 60;
-
-    const startHour = chosenStaff.shiftStart || "08:00";
-    const [sHour, sMin] = startHour.split(":").map(Number);
-    const calculatedEndHour = Math.min(22, sHour + Math.ceil(addedHours));
-    const endHourStr = `${String(calculatedEndHour).padStart(2, "0")}:${String(sMin || 0).padStart(2, "0")}`;
-
-    const newManualTask: Task = {
-      id: `task-${client.id}-manual-${Date.now()}`,
-      name: `Manual Shift (${client.careLevel})`,
-      durationMinutes: reqMins,
-      start: startHour,
-      end: endHourStr,
-      assignedStaffId: chosenStaff.id,
-      assignedStaffName: chosenStaff.name,
-    };
-
-    const updatedTasks = [...existingTasks, newManualTask];
-    const totalAssignedMins = updatedTasks.reduce((sum, t) => sum + t.durationMinutes, 0);
-    const totalAssignedHours = totalAssignedMins / 60;
-
-    const newStatus =
-      totalAssignedHours >= totalRequiredHours
-        ? ("Fully Assigned" as const)
-        : ("Partially Assigned" as const);
-
-    const updatedRoster = rosterData.map((item) => {
-      if (item.client.id === client.id) {
-        return {
-          ...item,
-          tasks: updatedTasks,
-          primaryEmployeeId: chosenStaff.id,
-          primaryEmployeeName: chosenStaff.name,
-          primaryEmployeeRole: chosenStaff.role,
-          status: newStatus,
-        };
-      }
-      return item;
-    });
-
-    const updatedWorkloads = { ...workloads };
-    updatedWorkloads[chosenStaff.name] = Number(
-      ((updatedWorkloads[chosenStaff.name] || 0) + addedHours).toFixed(1)
-    );
-
-    const unassignedOrPartial = updatedRoster.filter((item) => item.status !== "Fully Assigned");
-    const missingSummary: Record<string, { totalHours: number; count: number; roleNeeded: string }> = {};
-
-    unassignedOrPartial.forEach((item) => {
-      const level = item.client.careLevel || "Standard Care";
-      const totalH = item.client.requiredHours || 1;
-      const assignedH = item.tasks.reduce((sum, t) => sum + t.durationMinutes / 60, 0);
-      const unassignedH = Math.max(0, totalH - assignedH);
-
-      let roleNeeded = "Support worker";
-      if (level === "High Care") {
-        roleNeeded = "Registered Nurse (RN)/ Senior Care Worker";
-      } else if (level === "Standard Care") {
-        roleNeeded = "Care Assistant / Support Worker";
-      }
-
-      if (!missingSummary[level]) {
-        missingSummary[level] = { totalHours: 0, count: 0, roleNeeded };
-      }
-
-      missingSummary[level].totalHours += unassignedH;
-      missingSummary[level].count += 1;
-    });
-
-    const updatedMissingReqs: MissingStaffRequirement[] = Object.entries(missingSummary).map(
-      ([careLevel, data]) => ({
-        careLevel,
-        roleNeeded: data.roleNeeded,
-        unassignedClientsCount: data.count,
-        totalHoursNeeded: Number(data.totalHours.toFixed(1)),
-        estimatedStaffCount: Math.ceil(data.totalHours / 8),
-      })
-    );
-
-    persistAndSetState(updatedRoster, updatedWorkloads, updatedMissingReqs);
+    persistAndSetState(updatedRoster, updatedWorkloads, newMissingReqs);
 
     setSelectedClientItem(null);
     setSelectedEmployeeId("");
@@ -349,15 +270,15 @@ export default function RosterView() {
 
         {(() => {
           const allCareLevels = [
-            { careLevel: "High Care", roleNeeded: "Registered Nurse (RN)/ Senior Care Worker" },
-            { careLevel: "Standard Care", roleNeeded: "Care Assistant / Support Worker" },
-            { careLevel: "Basic Care", roleNeeded: "Support worker" }
+            { careLevel: "High Care", roleNeeded: "Registered Nurse (RN) / Senior Care Worker" },
+            { careLevel: "Standard Care", roleNeeded: "Care Assistant" },
+            { careLevel: "Basic Care", roleNeeded: "Support Worker" }
           ];
 
           return (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2">
               {allCareLevels.map((levelMeta, idx) => {
-                const req = missingReqs.find((r) => r.careLevel === levelMeta.careLevel) || {
+                const req = missingReqs.find((r) => normalizeCareLevel(r.careLevel) === levelMeta.careLevel) || {
                   careLevel: levelMeta.careLevel,
                   roleNeeded: levelMeta.roleNeeded,
                   unassignedClientsCount: 0,
@@ -611,9 +532,15 @@ export default function RosterView() {
                 <strong>Client:</strong> {selectedClientItem.client.name}
               </div>
               <div>
+                <strong>Location:</strong> 📍 {selectedClientItem.client.location || "Stockholm"}
+              </div>
+              <div>
                 <strong>Care Level:</strong>{" "}
                 <span className="font-semibold text-red-700">
                   {selectedClientItem.client.careLevel}
+                </span>{" "}
+                <span className="text-[11px] text-teal-700 font-medium">
+                  (Required: {getRoleNeededForCareLevel(selectedClientItem.client.careLevel)})
                 </span>
               </div>
               <div>
@@ -633,25 +560,31 @@ export default function RosterView() {
               <select
                 value={selectedEmployeeId}
                 onChange={(e) => setSelectedEmployeeId(e.target.value)}
-                className="w-full border border-slate-200 rounded-lg p-2 text-xs focus:ring-2 focus:ring-teal-600 outline-none"
+                className="w-full border border-slate-200 rounded-lg p-2 text-xs focus:ring-2 focus:ring-teal-600 outline-none bg-white text-stone-900"
               >
                 <option value="">-- Choose Staff Member --</option>
                 {employeesList.map((emp) => {
                   const currentAllocated = workloads[emp.name] || 0;
-                  const careLevel = selectedClientItem.client.careLevel;
-                  const empRole = (emp.role || "").toLowerCase();
-                  const empQual = (emp.qualification || "").toLowerCase();
+                  const clientCareLevel = selectedClientItem.client.careLevel;
+                  const isRoleMatched = matchesRoleForCareLevel(emp.role, clientCareLevel);
 
-                  let roleMismatch = false;
-                  if (careLevel === "High Care") {
-                    const isNurse = empRole.includes("nurse") || empRole.includes("rn") || empQual.includes("rn");
-                    if (!isNurse) roleMismatch = true;
-                  }
+                  const clientLoc = (selectedClientItem.client.location || "").toLowerCase().trim();
+                  const empLoc = (emp.location || "").toLowerCase().trim();
+                  const isSameLocation = clientLoc === empLoc;
+
+                  const isFixed = Boolean(emp.isFixedTime);
+                  const shiftConstraint = isFixed && emp.shiftStart && emp.shiftEnd
+                    ? `[Fixed: ${emp.shiftStart}-${emp.shiftEnd}]`
+                    : `[Flexible: max 8h/day]`;
+
+                  const roleWarning = !isRoleMatched ? ` ⚠️ [Role Mismatch]` : ``;
+                  const locInfo = !isSameLocation
+                    ? ` 📍 [Cross-Location: ${emp.location || "Other"} -> ${selectedClientItem.client.location || "Local"}]`
+                    : ` 📍 [Same Area]`;
 
                   return (
                     <option key={emp.id} value={emp.id}>
-                      {emp.name} ({emp.role}) - Current: {currentAllocated}h/8h
-                      {roleMismatch ? " ⚠️ [Role Mismatch]" : ""}
+                      {emp.name} ({emp.role}) | {currentAllocated}h allocated | {shiftConstraint}{locInfo}{roleWarning}
                     </option>
                   );
                 })}
