@@ -58,7 +58,7 @@ export default function RosterView() {
   const [selectedClientItem, setSelectedClientItem] = useState<FinalRosterItem | null>(null);
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<string>("");
 
-  const employeesList = rawEmployees as unknown as Employee[];
+  const [employeesList, setEmployeesList] = useState<Employee[]>(rawEmployees as unknown as Employee[]);
 
   // Helper function to update state and persist to localStorage simultaneously
   const persistAndSetState = (
@@ -80,28 +80,46 @@ export default function RosterView() {
     );
   };
 
-  const runCalculationAndRender = () => {
+  const runCalculationAndRender = async (forceRecalculate = false) => {
     setLoading(true);
     setErrorMsg("");
 
     try {
-      // Check if saved manual state exists for this specific date in localStorage
-      const savedState = localStorage.getItem(storageKey);
-      if (savedState) {
-        const parsed = JSON.parse(savedState);
-        setRosterData(parsed.roster);
-        setWorkloads(parsed.workloads);
-        setMissingReqs(parsed.missingReqs);
-        setLoading(false);
-        return;
+      let clients = rawClients as unknown as Client[];
+      let employees = rawEmployees as unknown as Employee[];
+
+      try {
+        const [cRes, eRes] = await Promise.all([
+          fetch("/api/clients", { cache: "no-store" }),
+          fetch("/api/employees", { cache: "no-store" }),
+        ]);
+        if (cRes.ok) clients = await cRes.json();
+        if (eRes.ok) {
+          employees = await eRes.json();
+          setEmployeesList(employees);
+        }
+      } catch (fetchErr) {
+        console.warn("Using fallback static client/employee data:", fetchErr);
       }
 
-      const clients = rawClients as unknown as Client[];
+      // Check if saved manual state exists for this specific date in localStorage
+      if (!forceRecalculate) {
+        const savedState = localStorage.getItem(storageKey);
+        if (savedState) {
+          const parsed = JSON.parse(savedState);
+          setRosterData(parsed.roster);
+          setWorkloads(parsed.workloads);
+          setMissingReqs(parsed.missingReqs);
+          setLoading(false);
+          return;
+        }
+      }
+
       const shuffledClients = [...clients].sort(() => Math.random() - 0.5);
 
       const { roster, employeeWorkloads, missingRequirements } = computeRoster(
         shuffledClients,
-        employeesList
+        employees
       );
 
       setRosterData(roster);
@@ -118,7 +136,17 @@ export default function RosterView() {
 
   useEffect(() => {
     runCalculationAndRender();
-  }, [selectedDate, selectedWeek]);
+
+    const handleDataUpdate = () => {
+      localStorage.removeItem(storageKey);
+      runCalculationAndRender(true);
+    };
+
+    window.addEventListener("roster-data-updated", handleDataUpdate);
+    return () => {
+      window.removeEventListener("roster-data-updated", handleDataUpdate);
+    };
+  }, [selectedDate, selectedWeek, storageKey]);
 
   const handlePrevDay = () =>
     setSelectedDate((previous) => {
@@ -134,18 +162,9 @@ export default function RosterView() {
     });
   const handleToday = () => setSelectedDate(today);
 
-  const handleResetAndRecalculate = () => {
+  const handleResetAndRecalculate = async () => {
     localStorage.removeItem(storageKey);
-    
-    const clients = rawClients as unknown as Client[];
-    const shuffledClients = [...clients].sort(() => Math.random() - 0.5);
-
-    const { roster, employeeWorkloads, missingRequirements } = computeRoster(
-      shuffledClients,
-      employeesList
-    );
-
-    persistAndSetState(roster, employeeWorkloads, missingRequirements);
+    await runCalculationAndRender(true);
   };
 
   // Updated Manual Assignment Handling with Remaining Slot Allocation & Persistence

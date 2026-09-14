@@ -100,6 +100,11 @@ export default function ClientManagerForm() {
         setPreferredStart("09:00");
         setPreferredEnd("12:00");
 
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new Event("roster-data-updated"));
+        }
+        router.refresh();
+
         if (shouldRedirect) {
           router.push("/clients");
         }
@@ -125,6 +130,10 @@ export default function ClientManagerForm() {
 
       if (res.ok) {
         setClients((prev) => prev.filter((client) => client.id !== id));
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new Event("roster-data-updated"));
+        }
+        router.refresh();
       } else {
         alert("Failed to delete client.");
       }

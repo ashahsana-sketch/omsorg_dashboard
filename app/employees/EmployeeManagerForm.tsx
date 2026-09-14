@@ -56,6 +56,11 @@ export default function EmployeeManagerForm() {
         setShiftEnd("15:00");
         setMaxHours(40);
 
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new Event("roster-data-updated"));
+        }
+        router.refresh();
+
         if (shouldRedirect) {
           router.push("/employees");
         }
