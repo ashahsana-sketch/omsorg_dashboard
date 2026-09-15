@@ -259,5 +259,15 @@
     "isFixedTime": false,
     "preferredStart": null,
     "preferredEnd": null
+  },
+  {
+    "id": "CL-1021",
+    "name": "Sana",
+    "careLevel": "Standard Care",
+    "requiredHours": 5,
+    "location": "Solna",
+    "isFixedTime": false,
+    "preferredStart": null,
+    "preferredEnd": null
   }
 ]

@@ -108,5 +108,35 @@
     "isFixedTime": false,
     "shiftStart": null,
     "shiftEnd": null
+  },
+  {
+    "id": "EMP-1020",
+    "name": "Ani",
+    "role": "Senior Care Worker",
+    "maxHours": 40,
+    "location": "Stockholm",
+    "isFixedTime": false,
+    "shiftStart": null,
+    "shiftEnd": null
+  },
+  {
+    "id": "EMP-1021",
+    "name": "Huda",
+    "role": "Care Assistant",
+    "maxHours": 20,
+    "location": "Stockholm",
+    "isFixedTime": false,
+    "shiftStart": null,
+    "shiftEnd": null
+  },
+  {
+    "id": "EMP-1022",
+    "name": "Atal",
+    "role": "Care Assistant",
+    "maxHours": 40,
+    "location": "Solna",
+    "isFixedTime": false,
+    "shiftStart": null,
+    "shiftEnd": null
   }
 ]
