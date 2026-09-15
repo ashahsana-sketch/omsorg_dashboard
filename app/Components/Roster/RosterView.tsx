@@ -6,6 +6,7 @@ import {
   matchesRoleForCareLevel,
   getRoleNeededForCareLevel,
   normalizeCareLevel,
+  rosterToShifts,
   FinalRosterItem,
   MissingStaffRequirement,
   Client,
@@ -64,8 +65,8 @@ export default function RosterView() {
 
   const [employeesList, setEmployeesList] = useState<Employee[]>(rawEmployees as unknown as Employee[]);
 
-  // Helper function to update state and persist to localStorage simultaneously
-  const persistAndSetState = (
+  // Helper function to update state and persist to localStorage & backend shifts.json simultaneously
+  const persistAndSetState = async (
     newRoster: FinalRosterItem[],
     newWorkloads: Record<string, number>,
     newMissingReqs: MissingStaffRequirement[]
@@ -82,6 +83,26 @@ export default function RosterView() {
         missingReqs: newMissingReqs,
       })
     );
+
+    // Sync to backend JSON storage (/api/shifts -> data/shifts.json)
+    try {
+      const generatedShifts = rosterToShifts(newRoster, dateKey);
+      await fetch("/api/shifts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "sync_roster",
+          date: dateKey,
+          shifts: generatedShifts,
+        }),
+      });
+
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new Event("shift-data-updated"));
+      }
+    } catch (syncErr) {
+      console.error("Failed to sync shifts to backend JSON:", syncErr);
+    }
   };
 
   const runCalculationAndRender = async (forceRecalculate = false) => {
@@ -114,6 +135,21 @@ export default function RosterView() {
           setRosterData(parsed.roster);
           setWorkloads(parsed.workloads);
           setMissingReqs(parsed.missingReqs);
+
+          // Ensure backend shifts.json is in sync with saved state
+          try {
+            const generatedShifts = rosterToShifts(parsed.roster, dateKey);
+            fetch("/api/shifts", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                action: "sync_roster",
+                date: dateKey,
+                shifts: generatedShifts,
+              }),
+            }).catch(() => {});
+          } catch {}
+
           setLoading(false);
           return;
         }
@@ -126,9 +162,7 @@ export default function RosterView() {
         employees
       );
 
-      setRosterData(roster);
-      setWorkloads(employeeWorkloads);
-      setMissingReqs(missingRequirements);
+      await persistAndSetState(roster, employeeWorkloads, missingRequirements);
     } catch (err: unknown) {
       console.error("Calculation Error:", err);
       const message = err instanceof Error ? err.message : "Unknown error occurred";
@@ -172,20 +206,25 @@ export default function RosterView() {
   };
 
   // Updated Manual Assignment Handling with Remaining Slot Allocation & Persistence
-  const handleManualAssign = () => {
+  const handleManualAssign = async () => {
     if (!selectedClientItem || !selectedEmployeeId) return;
 
     const chosenStaff = employeesList.find((e) => e.id === selectedEmployeeId);
     if (!chosenStaff) return;
 
-    const { updatedRoster, updatedWorkloads, missingRequirements: newMissingReqs } = assignStaffManually(
+    const result = assignStaffManually(
       rosterData,
       workloads,
       selectedClientItem.client.id,
       chosenStaff
     );
 
-    persistAndSetState(updatedRoster, updatedWorkloads, newMissingReqs);
+    if (result.error) {
+      alert(result.error);
+      return;
+    }
+
+    await persistAndSetState(result.updatedRoster, result.updatedWorkloads, result.missingRequirements);
 
     setSelectedClientItem(null);
     setSelectedEmployeeId("");
