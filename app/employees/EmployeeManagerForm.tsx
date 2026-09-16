@@ -111,10 +111,10 @@ export default function EmployeeManagerForm() {
             onChange={(e) => setRole(e.target.value)}
             className="w-full p-2 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-600 bg-white"
           >
-            <option value="Care Assistant">Care Assistant</option>
-            <option value="Senior Care Worker">Senior Care Worker</option>
-            <option value="Registered Nurse (RN)">Registered Nurse (RN)</option>
-            <option value="Support Worker">Support Worker</option>
+            <option value="JuniorCareAssistant">Junior Care Assistant</option>
+            <option value="SeniorCareAssistant">Senior Care Assistant</option>
+            <option value="RegisteredNurse">Registered Nurse</option>
+            <option value="SupportAssistant">Support Assistant</option>
           </select>
         </div>
 

@@ -107,9 +107,9 @@ export default function AddClientPage() {
             onChange={(e) => setCareLevel(e.target.value)}
             className="w-full p-2 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-600 bg-white text-stone-900"
           >
-            <option value="Basic care">Basic care</option>
-            <option value="Standard Care">Standard Care</option>
-            <option value="High Care">High Care</option>
+            <option value="BasicCare">Basic care</option>
+            <option value="StandardCare">Standard Care</option>
+            <option value="HighCare">High Care</option>
           </select>
         </div>
 

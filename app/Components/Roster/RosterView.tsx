@@ -309,9 +309,9 @@ export default function RosterView() {
 
         {(() => {
           const allCareLevels = [
-            { careLevel: "High Care", roleNeeded: "Registered Nurse (RN) / Senior Care Worker" },
-            { careLevel: "Standard Care", roleNeeded: "Care Assistant" },
-            { careLevel: "Basic Care", roleNeeded: "Support Worker" }
+            { careLevel: "HighCare", roleNeeded: "RegisteredNurse / SeniorCareAssistant" },
+            { careLevel: "StandardCare", roleNeeded: "SeniorCareAssistant / JuniorCareAssistant" },
+            { careLevel: "BasicCare", roleNeeded: "JuniorCareAssistant / SupportAssistant" }
           ];
 
           return (
@@ -332,9 +332,9 @@ export default function RosterView() {
                   >
                     <div className="flex justify-between items-center ">
                       <h2 className={`text-md font-bold p-2 rounded-2xl  ${
-                        req.careLevel === "High Care"
+                        req.careLevel === "HighCare"
                           ? "text-red-800"
-                          : req.careLevel === "Basic Care"
+                          : req.careLevel === "BasicCare"
                           ? "text-emerald-800"
                           : "text-amber-800"
                       }`}>
@@ -426,11 +426,11 @@ export default function RosterView() {
                     <div className="mt-1 grid grid-cols-1 gap-2">
                     <span
                       className={`px-1.5 py-0.5 block-inline rounded text-[11px] font-bold ${
-                        item.client.careLevel === "High Care"
+                        item.client.careLevel === "HighCare"
                           ? "bg-red-50 text-red-700 outline-1"
-                          : item.client.careLevel === "Standard Care"
+                          : item.client.careLevel === "StandardCare"
                           ? "bg-blue-50 text-blue-700 outline-1"
-                          : item.client.careLevel === "Low Care"
+                          : item.client.careLevel === "BasicCare"
                           ? "bg-emerald-50 text-emerald-800 outline-1"
                           : "bg-teal-50 text-teal-800 outline-1"
                       }`}
@@ -597,37 +597,47 @@ export default function RosterView() {
                 Select Available Employee:
               </label>
               <select
-                value={selectedEmployeeId}
-                onChange={(e) => setSelectedEmployeeId(e.target.value)}
-                className="w-full border border-slate-200 rounded-lg p-2 text-xs focus:ring-2 focus:ring-teal-600 outline-none bg-white text-stone-900"
-              >
-                <option value="">-- Choose Staff Member --</option>
-                {employeesList.map((emp) => {
-                  const currentAllocated = workloads[emp.name] || 0;
-                  const clientCareLevel = selectedClientItem.client.careLevel;
-                  const isRoleMatched = matchesRoleForCareLevel(emp.role, clientCareLevel);
+  value={selectedEmployeeId}
+  onChange={(e) => setSelectedEmployeeId(e.target.value)}
+  className="w-full border border-slate-200 rounded-lg p-2 text-xs focus:ring-2 focus:ring-teal-600 outline-none bg-white text-stone-900"
+>
+  <option value="">-- Choose Staff Member --</option>
+  {employeesList
+    .filter((emp) => {
+      const currentAllocated = workloads[emp.name] || 0;
+      // Divide maxHours by 5 to get the daily limit, defaulting to 8 if not defined
+      const maxAllowedHours = Number(emp.maxHours ? emp.maxHours / 5 : 8);
+      // Only show employees who still have unassigned hours available
+      return currentAllocated < maxAllowedHours;
+    })
+    .map((emp) => {
+      const currentAllocated = workloads[emp.name] || 0;
+      const maxAllowedHours = Number(emp.maxHours ? emp.maxHours / 5 : 8);
+      
+      const clientCareLevel = selectedClientItem.client.careLevel;
+      const isRoleMatched = matchesRoleForCareLevel(emp.role, clientCareLevel);
 
-                  const clientLoc = (selectedClientItem.client.location || "").toLowerCase().trim();
-                  const empLoc = (emp.location || "").toLowerCase().trim();
-                  const isSameLocation = clientLoc === empLoc;
+      const clientLoc = (selectedClientItem.client.location || "").toLowerCase().trim();
+      const empLoc = (emp.location || "").toLowerCase().trim();
+      const isSameLocation = clientLoc === empLoc;
 
-                  const isFixed = Boolean(emp.isFixedTime);
-                  const shiftConstraint = isFixed && emp.shiftStart && emp.shiftEnd
-                    ? `[Fixed: ${emp.shiftStart}-${emp.shiftEnd}]`
-                    : `[Flexible: max 8h/day]`;
+      const isFixed = Boolean(emp.isFixedTime);
+      const shiftConstraint = isFixed && emp.shiftStart && emp.shiftEnd
+        ? `[Fixed: ${emp.shiftStart}-${emp.shiftEnd}]`
+        : `[Flexible: max ${maxAllowedHours}h]`;
 
-                  const roleWarning = !isRoleMatched ? ` ⚠️ [Role Mismatch]` : ``;
-                  const locInfo = !isSameLocation
-                    ? ` 📍 [Cross-Location: ${emp.location || "Other"} -> ${selectedClientItem.client.location || "Local"}]`
-                    : ` 📍 [Same Area]`;
+      const roleWarning = !isRoleMatched ? ` ⚠️ [Role Mismatch]` : ``;
+      const locInfo = !isSameLocation
+        ? ` 📍 [Cross-Location: ${emp.location || "Other"} -> ${selectedClientItem.client.location || "Local"}]`
+        : ` 📍 [Same Area]`;
 
-                  return (
-                    <option key={emp.id} value={emp.id}>
-                      {emp.name} ({emp.role}) | {currentAllocated}h allocated | {shiftConstraint}{locInfo}{roleWarning}
-                    </option>
-                  );
-                })}
-              </select>
+      return (
+        <option key={emp.id} value={emp.id}>
+          {emp.name} ({emp.role}) | {currentAllocated}h / {maxAllowedHours}h allocated | {shiftConstraint}{locInfo}{roleWarning}
+        </option>
+      );
+    })}
+</select>
             </div>
 
             <div className="block pt-2 border-t border-stone-100 text-right">

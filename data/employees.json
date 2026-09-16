@@ -2,7 +2,7 @@
   {
     "id": "EMP-1002",
     "name": "Daniel Walker",
-    "role": "Registered Nurse (RN)",
+    "role": "RegisteredNurse",
     "maxHours": 40,
     "location": "Stockholm",
     "isFixedTime": false
@@ -10,7 +10,7 @@
   {
     "id": "EMP-1003",
     "name": "Sophie Bennett",
-    "role": "Care Assistant",
+    "role": "SeniorCareAssistant",
     "maxHours": 40,
     "location": "Stockholm",
     "isFixedTime": false
@@ -18,7 +18,7 @@
   {
     "id": "EMP-1004",
     "name": "James Cooper",
-    "role": "Care Assistant",
+    "role": "SeniorCareAssistant",
     "maxHours": 40,
     "location": "Stockholm",
     "isFixedTime": false
@@ -26,7 +26,7 @@
   {
     "id": "EMP-1005",
     "name": "Olivia Harris",
-    "role": "Home Care Worker",
+    "role": "JuniorCareAssistant",
     "maxHours": 40,
     "location": "Stockholm",
     "isFixedTime": false
@@ -34,7 +34,7 @@
   {
     "id": "EMP-1006",
     "name": "George Evans",
-    "role": "Home Care Worker",
+    "role": "SupportAssistant",
     "maxHours": 35,
     "location": "Solna",
     "isFixedTime": false
@@ -42,7 +42,7 @@
   {
     "id": "EMP-1007",
     "name": "Charlotte Morgan",
-    "role": "Support Worker",
+    "role": "SupportAssistant",
     "maxHours": 40,
     "location": "Stockholm",
     "isFixedTime": true,
@@ -52,7 +52,7 @@
   {
     "id": "EMP-1008",
     "name": "William Turner",
-    "role": "Support Worker",
+    "role": "SupportAssistant",
     "maxHours": 30,
     "location": "Stockholm",
     "isFixedTime": true,
@@ -62,7 +62,7 @@
   {
     "id": "EMP-1012",
     "name": "Rida Ramp",
-    "role": "Registered Nurse (RN)",
+    "role": "RegisteredNurse",
     "maxHours": 40,
     "location": "Stockholm",
     "isFixedTime": true,
@@ -72,7 +72,7 @@
   {
     "id": "EMP-1013",
     "name": "Kuli bula",
-    "role": "Registered Nurse (RN)",
+    "role": "RegisteredNurse",
     "maxHours": 40,
     "location": "Stockholm",
     "isFixedTime": true,
@@ -82,7 +82,7 @@
   {
     "id": "EMP-1015",
     "name": "Christer",
-    "role": "Senior Care Worker",
+    "role": "SeniorCareAssistant",
     "maxHours": 40,
     "location": "Stockholm",
     "isFixedTime": false,
@@ -92,7 +92,7 @@
   {
     "id": "EMP-1018",
     "name": "Aish Nordström",
-    "role": "Registered Nurse (RN)",
+    "role": "RegisteredNurse",
     "maxHours": 15,
     "location": "Stockholm",
     "isFixedTime": false,
@@ -102,7 +102,7 @@
   {
     "id": "EMP-1019",
     "name": "Dada bhai",
-    "role": "Registered Nurse (RN)",
+    "role": "RegisteredNurse",
     "maxHours": 20,
     "location": "Stockholm",
     "isFixedTime": false,
@@ -112,7 +112,7 @@
   {
     "id": "EMP-1020",
     "name": "Ani",
-    "role": "Senior Care Worker",
+    "role": "SeniorCareAssistant",
     "maxHours": 40,
     "location": "Stockholm",
     "isFixedTime": false,
@@ -122,7 +122,7 @@
   {
     "id": "EMP-1021",
     "name": "Huda",
-    "role": "Care Assistant",
+    "role": "JuniorCareAssistant",
     "maxHours": 20,
     "location": "Stockholm",
     "isFixedTime": false,
@@ -132,11 +132,31 @@
   {
     "id": "EMP-1022",
     "name": "Atal",
-    "role": "Care Assistant",
+    "role": "JuniorCareAssistant",
     "maxHours": 20,
     "location": "Solna",
     "isFixedTime": false,
     "shiftStart": null,
     "shiftEnd": null
+  },
+  {
+    "id": "EMP-1023",
+    "name": "Tooba",
+    "role": "SeniorCareAssistant",
+    "maxHours": 40,
+    "location": "Stockholm",
+    "isFixedTime": false,
+    "shiftStart": null,
+    "shiftEnd": null
+  },
+  {
+    "id": "EMP-1024",
+    "name": "summer",
+    "role": "SeniorCareAssistant",
+    "maxHours": 40,
+    "location": "Stockholm",
+    "isFixedTime": true,
+    "shiftStart": "09:00",
+    "shiftEnd": "15:00"
   }
 ]

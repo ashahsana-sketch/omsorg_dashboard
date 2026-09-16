@@ -13,7 +13,7 @@ export interface Task {
 export interface Client {
   id: string;
   name: string;
-  careLevel: "High Care" | "Standard Care" | "Basic Care" | "Basic care" | "Low Care" | string;
+  careLevel: "HighCare" | "StandardCare" | "BasicCare" | string;
   isFixedTime: boolean;
   preferredStart?: string;
   preferredEnd?: string;
@@ -72,52 +72,45 @@ export interface ShiftRecord {
   status: "Scheduled" | "Completed" | "In-Progress";
 }
 
-export function normalizeCareLevel(level?: string): "High Care" | "Standard Care" | "Basic Care" {
-  if (!level) return "Standard Care";
-  const l = level.toLowerCase().trim();
-  if (l.includes("high")) return "High Care";
-  if (l.includes("basic") || l.includes("low")) return "Basic Care";
-  return "Standard Care";
+export function normalizeCareLevel(level?: string): "HighCare" | "StandardCare" | "BasicCare" {
+  if (!level) return "StandardCare";
+  const l = level.replace(/\s+/g, "");
+  if (l.includes("High")) return "HighCare";
+  if (l.includes("Basic")) return "BasicCare";
+  return "StandardCare";
 }
 
 export function getRoleNeededForCareLevel(careLevel: string): string {
   const norm = normalizeCareLevel(careLevel);
-  if (norm === "High Care") return "Registered Nurse (RN) / Senior Care Worker";
-  if (norm === "Standard Care") return "Care Assistant";
-  return "Support Worker";
+  if (norm === "HighCare") return "RegisteredNurse / SeniorCareAssistant (Primary)";
+  if (norm === "StandardCare") return "SeniorCareAssistant -> JuniorCareAssistant (Primary)";
+  return "JuniorCareAssistant (Primary)";
 }
 
-/**
- * Priority Rule 1: Role-to-Care-Level Matching
- * - Registered Nurses and Senior Care Workers exclusively -> High Care
- * - Care Assistants exclusively -> Standard Care
- * - Support Workers exclusively -> Basic Care
- */
-export function matchesRoleForCareLevel(roleName?: string, careLevelName?: string): boolean {
+export function matchesRoleForCareLevel(roleName?: string, careLevelName?: string, tier: "primary" | "secondary" = "primary"): boolean {
   if (!roleName) return false;
-  const role = roleName.toLowerCase().trim();
+  const role = roleName.replace(/\s+/g, "").toLowerCase();
   const careLevel = normalizeCareLevel(careLevelName);
 
-  const isHighCareRole =
-    role.includes("nurse") ||
-    role.includes("rn") ||
-    role.includes("senior care");
-
-  const isStandardCareRole =
-    role.includes("care assistant") && !role.includes("senior");
-
-  const isBasicCareRole =
-    role.includes("support") ||
-    role.includes("home care") ||
-    (!isHighCareRole && !isStandardCareRole);
-
-  if (careLevel === "High Care") {
-    return isHighCareRole;
-  } else if (careLevel === "Standard Care") {
-    return isStandardCareRole;
-  } else {
-    // Basic Care / Low Care
-    return isBasicCareRole;
+  if (careLevel === "HighCare") {
+    if (tier === "primary") {
+      return role.includes("registerednurse") || role.includes("seniorcareassistant") || role.includes("nurse");
+    }
+    return role.includes("assistant") || role.includes("worker") || role.includes("carer") || role.includes("junior");
+  } 
+  else if (careLevel === "StandardCare") {
+    if (tier === "primary") {
+      // StandardCare ke primary tier mein sirf Senior allow hain taake pehle senior assign ho
+      return role.includes("seniorcareassistant") || role.includes("senior");
+    }
+    // Secondary tier mein Junior allow hain taake senior na milne par junior assign ho sake
+    return role.includes("juniorcareassistant") || role.includes("junior") || role.includes("assistant") || role.includes("carer");
+  } 
+  else { // BasicCare
+    if (tier === "primary") {
+      return role.includes("juniorcareassistant") || role.includes("junior") || role.includes("assistant");
+    }
+    return role.includes("assistant") || role.includes("staff") || role.includes("carer") || role.includes("worker");
   }
 }
 
@@ -138,19 +131,12 @@ export function minutesToTime(mins: number): string {
   return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
 }
 
-/**
- * Enforces Registered Maximum Working Hours for each employee:
- * - If maxHoursPerDay is explicitly given, uses that limit.
- * - For fixed shifts, uses (shiftEnd - shiftStart).
- * - For weekly maxHours (e.g., 40h/week or 35h/week), computes standard daily max = maxHours / 5.
- * - Caps flexible daily limit at 8.0 hours.
- */
 export function getEmployeeDailyMaxHours(emp: Employee): number {
   if (emp.maxHoursPerDay && emp.maxHoursPerDay > 0) {
     return emp.maxHoursPerDay;
   }
   if (emp.isFixedTime && emp.shiftStart && emp.shiftEnd) {
-    const start = timeToMinutes(emp.shiftStart, "08:00");
+    const start = timeToMinutes(emp.shiftStart, "09:00");
     const end = timeToMinutes(emp.shiftEnd, "17:00");
     const fixedHours = Math.max(0, (end - start) / 60);
     if (emp.maxHours && emp.maxHours > 0) {
@@ -166,9 +152,6 @@ export function getEmployeeDailyMaxHours(emp: Employee): number {
   return 8.0;
 }
 
-/**
- * Checks if two time intervals overlap (with an optional travel buffer).
- */
 export function hasTimeOverlap(
   start1: number,
   end1: number,
@@ -210,17 +193,13 @@ export function computeRoster(
     clientSchedules[client.id] = [];
   });
 
-  // Sort clients: Fixed time first, then High Care -> Standard Care -> Basic Care
   const careLevelPriority: Record<string, number> = {
-    "High Care": 3,
-    "Standard Care": 2,
-    "Basic Care": 1,
+    "HighCare": 3,
+    "StandardCare": 2,
+    "BasicCare": 1,
   };
 
   const sortedClients = [...clients].sort((a, b) => {
-    if (a.isFixedTime && !b.isFixedTime) return -1;
-    if (!a.isFixedTime && b.isFixedTime) return 1;
-
     const prioA = careLevelPriority[normalizeCareLevel(a.careLevel)] || 0;
     const prioB = careLevelPriority[normalizeCareLevel(b.careLevel)] || 0;
     return prioB - prioA;
@@ -231,49 +210,79 @@ export function computeRoster(
   for (const client of sortedClients) {
     const totalRequiredHours = Number(client.requiredHours) || 1;
     const totalRequiredMins = totalRequiredHours * 60;
-    const travelMarginMins = 15; // 15 mins buffer between consecutive visits
+    const travelMarginMins = 30;
 
     let remainingMinsToAssign = totalRequiredMins;
-    let baseStartMins = timeToMinutes(client.preferredStart, "08:00");
+    let baseStartMins = timeToMinutes(client.preferredStart, "09:00");
 
     const assignedTasks: Task[] = [];
     const assignedStaffMembers: Employee[] = [];
 
-    /**
-     * Attempts to find and assign an employee according to all constraints:
-     * 1. Role-to-Care-Level Matching (exclusive match)
-     * 2. Location Matching & Fallback (same location first, then cross-location)
-     * 3. Working Hours & Shift Constraints (strictly enforces daily registered max hours)
-     * 4. Double-Booking Prevention (strictly verifies no overlap for employee OR client)
-     */
     const tryAssignStaff = (
       reqMins: number,
       targetStartMins: number
     ): { emp: Employee; start: number; end: number } | null => {
-      // 1. Role matching
-      const eligibleCandidates = employees.filter((emp) => {
-        if (assignedStaffMembers.some((s) => s.id === emp.id)) return false;
-        return matchesRoleForCareLevel(emp.role, client.careLevel);
-      });
+      
+      const findCandidateForTier = (tier: "primary" | "secondary") => {
+        const eligibleCandidates = employees.filter((emp) => {
+          if (assignedStaffMembers.some((s) => s.id === emp.id)) return false;
+          return matchesRoleForCareLevel(emp.role, client.careLevel, tier);
+        });
 
-      // 2. Location matching priority
-      const sortedCandidates = [...eligibleCandidates].sort((a, b) => {
-        const aSameLoc = (a.location || "").toLowerCase().trim() === (client.location || "").toLowerCase().trim();
-        const bSameLoc = (b.location || "").toLowerCase().trim() === (client.location || "").toLowerCase().trim();
+        return [...eligibleCandidates].sort((a, b) => {
+          const careLevel = normalizeCareLevel(client.careLevel);
+          const aRole = a.role.replace(/\s+/g, "").toLowerCase();
+          const bRole = b.role.replace(/\s+/g, "").toLowerCase();
+          
+          if (careLevel === "HighCare" && tier === "primary") {
+            const aIsRN = aRole.includes("registerednurse") ? 1 : 0;
+            const bIsRN = bRole.includes("registerednurse") ? 1 : 0;
+            if (aIsRN !== bIsRN) {
+              return bIsRN - aIsRN; 
+            }
+          }
 
-        if (aSameLoc && !bSameLoc) return -1;
-        if (!aSameLoc && bSameLoc) return 1;
+          if (careLevel === "BasicCare" && tier === "primary") {
+            const aIsJunior = aRole.includes("junior") ? 1 : 0;
+            const bIsJunior = bRole.includes("junior") ? 1 : 0;
+            if (aIsJunior !== bIsJunior) {
+              return bIsJunior - aIsJunior; 
+            }
+          }
 
-        // Workload balancing
-        return (employeeWorkloads[a.name] || 0) - (employeeWorkloads[b.name] || 0);
-      });
+          const aCap = (getEmployeeDailyMaxHours(a) - (employeeWorkloads[a.name] || 0)) * 60;
+          const bCap = (getEmployeeDailyMaxHours(b) - (employeeWorkloads[b.name] || 0)) * 60;
+          
+          const aCanCoverFull = aCap >= reqMins ? 1 : 0;
+          const bCanCoverFull = bCap >= reqMins ? 1 : 0;
+
+          if (aCanCoverFull !== bCanCoverFull) {
+            return bCanCoverFull - aCanCoverFull;
+          }
+
+          const aSameLoc = (a.location || "").trim() === (client.location || "").trim();
+          const bSameLoc = (b.location || "").trim() === (client.location || "").trim();
+
+          if (aSameLoc && !bSameLoc) return -1;
+          if (!aSameLoc && bSameLoc) return 1;
+
+          return (employeeWorkloads[a.name] || 0) - (employeeWorkloads[b.name] || 0);
+        });
+      };
+
+      // 1. Sab se pehle primary tier (StandardCare ke liye Senior) check karega
+      let sortedCandidates = findCandidateForTier("primary");
+
+      // 2. Agar primary tier mein koi senior available na ho, tab secondary tier (Junior) par move karega
+      if (sortedCandidates.length === 0) {
+        sortedCandidates = findCandidateForTier("secondary");
+      }
 
       for (const emp of sortedCandidates) {
         const isFixedEmp = Boolean(emp.isFixedTime);
-        const empShiftStart = isFixedEmp ? timeToMinutes(emp.shiftStart, "08:00") : 8 * 60; // 08:00
-        const empShiftEnd = isFixedEmp ? timeToMinutes(emp.shiftEnd, "17:00") : 20 * 60; // 20:00
+        const empShiftStart = isFixedEmp ? timeToMinutes(emp.shiftStart, "09:00") : 9 * 60;
+        const empShiftEnd = isFixedEmp ? timeToMinutes(emp.shiftEnd, "17:00") : 20 * 60;
 
-        // 3. Strictly enforce registered max working hours
         const dailyMaxHours = getEmployeeDailyMaxHours(emp);
         const maxDailyMins = dailyMaxHours * 60;
         const currentWorkloadMins = (employeeWorkloads[emp.name] || 0) * 60;
@@ -291,23 +300,17 @@ export function computeRoster(
           (a, b) => a.startMins - b.startMins
         );
 
-        // Fixed-time client: strictly check the exact requested window
         if (client.isFixedTime) {
           const clientStart = timeToMinutes(client.preferredStart, "09:00");
           const clientEnd = clientStart + assignableMins;
 
-          // Must be within employee shift bounds
-          if (clientStart < empShiftStart || clientEnd > empShiftEnd) {
-            continue;
-          }
+          if (clientStart < empShiftStart || clientEnd > empShiftEnd) continue;
 
-          // Double-booking check: No overlap with employee's existing slots
           const empHasOverlap = existingEmpSlots.some((slot) =>
             hasTimeOverlap(clientStart, clientEnd, slot.startMins, slot.endMins, travelMarginMins)
           );
           if (empHasOverlap) continue;
 
-          // Double-booking check: No overlap with client's existing slots
           const clientHasOverlap = existingClientSlots.some((slot) =>
             hasTimeOverlap(clientStart, clientEnd, slot.startMins, slot.endMins, 0)
           );
@@ -316,7 +319,6 @@ export function computeRoster(
           return { emp, start: clientStart, end: clientEnd };
         }
 
-        // Flexible client: Find earliest valid non-overlapping slot
         let candidateStart = Math.max(targetStartMins, empShiftStart);
         let candidateEnd = candidateStart + assignableMins;
 
@@ -324,7 +326,6 @@ export function computeRoster(
         while (candidateEnd <= empShiftEnd) {
           let hasOverlap = false;
 
-          // Check employee existing slots (with travel buffer)
           for (const slot of existingEmpSlots) {
             if (hasTimeOverlap(candidateStart, candidateEnd, slot.startMins, slot.endMins, travelMarginMins)) {
               hasOverlap = true;
@@ -336,7 +337,6 @@ export function computeRoster(
 
           if (hasOverlap) continue;
 
-          // Check client existing slots
           for (const slot of existingClientSlots) {
             if (hasTimeOverlap(candidateStart, candidateEnd, slot.startMins, slot.endMins, 0)) {
               hasOverlap = true;
@@ -362,7 +362,6 @@ export function computeRoster(
       return null;
     };
 
-    // Primary Shift Assignment
     let currentStart = baseStartMins;
     let firstAssignment = tryAssignStaff(remainingMinsToAssign, currentStart);
 
@@ -399,7 +398,6 @@ export function computeRoster(
       currentStart = end + travelMarginMins;
     }
 
-    // Secondary Shift Assignment (if client required more hours than 1 staff could cover)
     if (remainingMinsToAssign > 0) {
       let secondAssignment = tryAssignStaff(remainingMinsToAssign, currentStart);
 
@@ -459,11 +457,10 @@ export function computeRoster(
     });
   }
 
-  // Gap Analysis Calculation
   const unassignedOrPartial = roster.filter((item) => item.status !== "Fully Assigned");
   const missingSummary: Record<string, { totalHours: number; count: number; roleNeeded: string }> = {};
 
-  ["High Care", "Standard Care", "Basic Care"].forEach((level) => {
+  ["HighCare", "StandardCare", "BasicCare"].forEach((level) => {
     missingSummary[level] = {
       totalHours: 0,
       count: 0,
@@ -494,12 +491,6 @@ export function computeRoster(
   return { roster, employeeWorkloads, missingRequirements };
 }
 
-/**
- * Helper function to handle manual staff assignment:
- * - Validates and strictly prevents exceeding the employee's registered maximum working hours.
- * - Validates and strictly prevents double-booking time slot overlaps.
- * - Dynamically calculates non-overlapping shift times and updates workloads.
- */
 export function assignStaffManually(
   currentRoster: FinalRosterItem[],
   currentWorkloads: Record<string, number>,
@@ -538,7 +529,6 @@ export function assignStaffManually(
     };
   }
 
-  // 1. Check employee maximum registered working hours
   const dailyMax = getEmployeeDailyMaxHours(chosenEmployee);
   const currentEmpWorkload = currentWorkloads[chosenEmployee.name] || 0;
   const availableEmpCapacity = Math.max(0, Number((dailyMax - currentEmpWorkload).toFixed(1)));
@@ -555,8 +545,6 @@ export function assignStaffManually(
   const addedHours = Math.min(remainingHoursNeeded, availableEmpCapacity);
   const reqMins = Math.round(addedHours * 60);
 
-  // 2. Prevent Double-Booking / Time Overlaps:
-  // Gather all existing tasks across all clients assigned to chosenEmployee
   const empExistingSlots: ScheduleSlot[] = [];
   currentRoster.forEach((item) => {
     item.tasks.forEach((t) => {
@@ -569,7 +557,6 @@ export function assignStaffManually(
     });
   });
 
-  // Gather existing tasks for this client
   const clientExistingSlots: ScheduleSlot[] = existingClientTasks.map((t) => ({
     startMins: timeToMinutes(t.start),
     endMins: timeToMinutes(t.end),
@@ -584,7 +571,6 @@ export function assignStaffManually(
   if (targetItem.client.preferredStart && targetItem.client.isFixedTime) {
     candidateStart = timeToMinutes(targetItem.client.preferredStart, "08:00");
   } else if (clientExistingSlots.length > 0) {
-    // If client already has a shift, schedule after it
     const lastClientSlot = [...clientExistingSlots].sort((a, b) => b.endMins - a.endMins)[0];
     candidateStart = Math.max(candidateStart, lastClientSlot.endMins + travelBuffer);
   }
@@ -595,7 +581,6 @@ export function assignStaffManually(
   while (candidateEnd <= empShiftEnd) {
     let hasOverlap = false;
 
-    // Check employee existing slots
     for (const slot of empExistingSlots) {
       if (hasTimeOverlap(candidateStart, candidateEnd, slot.startMins, slot.endMins, travelBuffer)) {
         hasOverlap = true;
@@ -607,7 +592,6 @@ export function assignStaffManually(
 
     if (hasOverlap) continue;
 
-    // Check client existing slots
     for (const slot of clientExistingSlots) {
       if (hasTimeOverlap(candidateStart, candidateEnd, slot.startMins, slot.endMins, 0)) {
         hasOverlap = true;
@@ -626,7 +610,6 @@ export function assignStaffManually(
   }
 
   if (!slotFound) {
-    // Fallback search from earliest operating time
     candidateStart = empShiftStart;
     candidateEnd = candidateStart + reqMins;
     while (candidateEnd <= empShiftEnd) {
@@ -705,11 +688,10 @@ export function assignStaffManually(
     ((updatedWorkloads[chosenEmployee.name] || 0) + addedHours).toFixed(1)
   );
 
-  // Recalculate Gap Analysis
   const unassignedOrPartial = updatedRoster.filter((item) => item.status !== "Fully Assigned");
   const missingSummary: Record<string, { totalHours: number; count: number; roleNeeded: string }> = {};
 
-  ["High Care", "Standard Care", "Basic Care"].forEach((level) => {
+  ["HighCare", "StandardCare", "BasicCare"].forEach((level) => {
     missingSummary[level] = {
       totalHours: 0,
       count: 0,
@@ -744,18 +726,15 @@ export function assignStaffManually(
   };
 }
 
-/**
- * Converts a generated/updated roster into persistent Shift records for backend storage.
- */
 export function rosterToShifts(roster: FinalRosterItem[], dateStr: string): ShiftRecord[] {
   const shifts: ShiftRecord[] = [];
   roster.forEach((item) => {
     item.tasks.forEach((task, idx) => {
       const durationHours = Number((task.durationMinutes / 60).toFixed(1));
       shifts.push({
-        id: `shift-${item.client.id}-${task.id || idx}-${dateStr}`,
+        id: `shift-${item.client.id}-${task.id || idx}-${Date.now()}`,
         employeeId: task.assignedStaffId || item.primaryEmployeeId,
-        employeeName: task.assignedStaffName || item.primaryEmployeeName,
+        employeeName: task.assignedStaffId ? task.assignedStaffName : item.primaryEmployeeName,
         employeeRole: item.primaryEmployeeRole,
         clientId: item.client.id,
         clientName: item.client.name,

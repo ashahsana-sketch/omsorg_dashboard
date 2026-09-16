@@ -108,10 +108,10 @@ export default function AddEmployeePage() {
               onChange={(e) => setRole(e.target.value)}
               className="w-full p-2 border border-emerald-100 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-emerald-700 bg-white text-stone-900"
             >
-              <option value="Care Assistant">Care Assistant</option>
-              <option value="Senior Care Worker">Senior Care Worker</option>
-              <option value="Registered Nurse (RN)">Registered Nurse (RN)</option>
-              <option value="Support Worker">Support Worker</option>
+             <option value="JuniorCareAssistant">Junior Care Assistant</option>
+            <option value="SeniorCareAssistant">Senior Care Assistant</option>
+            <option value="RegisteredNurse">Registered Nurse</option>
+            <option value="SupportAssistant">Support Assistant</option>
             </select>
           </div>
 
