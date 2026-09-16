@@ -186,9 +186,9 @@ The form will open
 ### Client Invoicing Rates
 | Care Level | Hourly Rate (SEK) |
 | :--- | :--- |
-| **High Care** | 160 SEK |
+| **High Care** | 170 SEK |
 | **Standard Care** | 150 SEK |
-| **Basic Care** | 130 SEK |
+| **Basic Care** | 140 SEK |
 **Client Report:** Includes Client ID, Name, Location, Care Level, Contract Hours, Delivered Hours, Hourly Rate, and Total Billable amount.
 <div align="center">
 
@@ -199,10 +199,10 @@ The form will open
 ### Staff Payroll Rates
 | Employee Role | Hourly Pay (SEK) |
 | :--- | :--- |
-| **Registered Nurse (RN)** | 180 SEK |
-| **Senior Care Worker** | 170 SEK |
-| **Support Worker** | 165 SEK |
-| **Care Assistant** | 200 SEK |
+| **Registered Nurse** | 150 SEK |
+| **Senior Care Assistan** | 140 SEK |
+| **Junior Care Assistant** | 130 SEK |
+| **Support Assistant** | 120 SEK |
  **Staff Report:** Includes Employee ID, Name, Role, Hourly Pay, Regular Hours, Overtime Hours, and Total Payable amount.
 ---
 <div align="center">
