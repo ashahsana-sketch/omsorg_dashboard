@@ -34,6 +34,9 @@ export default function Header() {
 
         {/* Center: Desktop Navigation */}
         <nav className="hidden lg:flex ml-auto gap-1 rounded-xl bg-slate-50 p-1 ">
+           <div className="bg-slate-50 p-1 rounded-lg border border-slate-200 transition-colors shadow-sm">
+            <NavLink href="/Roster">Roster</NavLink>
+          </div>
           <div className="bg-slate-50 p-1 rounded-lg border border-slate-200  transition-colors shadow-sm">
             <NavLink href="/employees">Employees List</NavLink>
           </div>
@@ -46,6 +49,7 @@ export default function Header() {
           <div className="bg-slate-50 p-1 rounded-lg border border-slate-200 transition-colors shadow-sm">
             <NavLink href="/shifts">Shifts</NavLink>
           </div>
+         
         </nav>
 
         {/* Right Actions & Mobile Toggle */}
@@ -84,6 +88,10 @@ export default function Header() {
       {/* Mobile/Tablet Dropdown */}
       {isMenuOpen && (
         <nav className="lg:hidden absolute top-full left-0 w-full bg-white border-b border-slate-200 shadow-lg p-3 flex flex-col gap-2 z-50">
+          
+           <div onClick={() => setIsMenuOpen(false)} className="bg-slate-50 p-1 rounded-lg border border-slate-200">
+            <NavLink href="/Roster">Roster</NavLink>
+          </div>
           <div onClick={() => setIsMenuOpen(false)} className="bg-slate-50 p-1 rounded-lg border border-slate-200">
             <NavLink href="/employees">Employees</NavLink>
           </div>
@@ -96,6 +104,7 @@ export default function Header() {
           <div onClick={() => setIsMenuOpen(false)} className="bg-slate-50 p-1 rounded-lg border border-slate-200">
             <NavLink href="/shifts">Shifts</NavLink>
           </div>
+          
         </nav>
       )}
     </header>

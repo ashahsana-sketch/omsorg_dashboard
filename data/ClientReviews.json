@@ -1,0 +1,42 @@
+[
+  {
+    "id": "1",
+    "clientName": "Anna Lindh",
+    "careLevel": "HighCare",
+    "rating": 5,
+    "comment": "The care service provided has been exceptional. The assigned nurse is extremely professional and caring.",
+    "date": "12 Sep 2026"
+  },
+  {
+    "id": "2",
+    "clientName": "Lars Erikson",
+    "careLevel": "StandardCare",
+    "rating": 4,
+    "comment": "Very punctual and polite staff. Always on time for the scheduled shifts and helps with daily routines.",
+    "date": "13 Sep 2026"
+  },
+  {
+    "id": "3",
+    "clientName": "Astrid Lindgren",
+    "careLevel": "BasicCare",
+    "rating": 5,
+    "comment": "Wonderful assistance! The junior care assistant is extremely helpful and brings a positive vibe every day.",
+    "date": "14 Sep 2026"
+  },
+  {
+    "id": "4",
+    "clientName": "Björn Borg",
+    "careLevel": "HighCare",
+    "rating": 4,
+    "comment": "High level of medical attention and reliable scheduling. Very satisfied with the overall support.",
+    "date": "15 Sep 2026"
+  },
+  {
+    "id": "5",
+    "clientName": "Karin Månsdotter",
+    "careLevel": "StandardCare",
+    "rating": 5,
+    "comment": "The staff members are very well-trained and communicate smoothly regarding shift timings.",
+    "date": "16 Sep 2026"
+  }
+]
