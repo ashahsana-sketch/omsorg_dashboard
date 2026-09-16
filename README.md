@@ -1,4 +1,4 @@
-# 🏥 CareStaff & Client Scheduler
+#  Elderly Care DashBoard
 
 > **A full-stack scheduling platform for home-care agencies to manage care staff, clients, availability, and intelligent shift assignments with the help of AI.**
 
@@ -12,16 +12,16 @@
 
 </div>
 
-This is a [Next.js](https://nextjs.org) project built with Tailwind CSS and the help of AI (Antigravity), bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+This is a [Next.js](https://nextjs.org) project built with Tailwind CSS and the help of AI (Antigravity), Tailwind with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ---
-## 📄 Project Link
+##  Project Link on Github
 
 [ Project link ](https://github.com/ashahsana-sketch/omsorg_dashboard)
 
 ## 📖 About the Project
 
-**CareStaff & Client Scheduler** is a full-stack web application designed to help **home-care agencies and care coordinators** efficiently manage staff rosters, client care requirements, and shift scheduling.
+**Elderly Care Dashboard** is a full-stack web application designed to help **home-care agencies and care coordinators** efficiently manage staff rosters, client care requirements, shift scheduling and Billing Etc.
 
 The application aims to simplify the complex process of matching:
 
@@ -39,7 +39,7 @@ The project was developed using **Next.js, TypeScript, and Tailwind CSS**, with 
 ---
 <div align="center">
 
-<img src="./public/main_page.png" alt="CareStaff Dashboard" width="500"/>
+<img src="./public/main_page.png" alt="Elderly Care Dashboard" width="500"/>
 
 </div>
 
@@ -62,7 +62,7 @@ This can become:
 
 | User | Purpose |
 | :--- | :--- |
-| 👤 **Care Coordinators** | Plan weekly schedules, assign staff, and manage workloads |
+| 👤 **Care Coordinators** | Plan daily schedules, assign staff, and manage workloads |
 | 🏢 **Home-Care Agencies** | Manage staff and clients from one centralized platform |
 | 👩‍⚕️ **Care Administrators** | Maintain staff information and client care requirements |
 
