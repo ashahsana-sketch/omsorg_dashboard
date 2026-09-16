@@ -48,15 +48,15 @@ export default function Footer() {
             Active Regions
           </h3>
           <div className="grid grid-cols-2 gap-1.75 pt-1 text-3xl ">
-            <span className="px-2 py-1  bg-amber-50 text-border-800 border border-amber-600 rounded text-[11px] font-medium">Stockholm</span>
-            <span className="px-2 py-1  bg-amber-50 text-border-800 border border-amber-600 rounded text-[11px] font-medium">Solna</span>
+            <span className="px-2 py-1  bg-teal-50 text-border-800 border border-teal-600 rounded text-[11px] font-medium">Stockholm</span>
+            <span className="px-2 py-1  bg-teal-50 text-border-800 border border-teal-600 rounded text-[11px] font-medium">Solna</span>
             
-            <span className="px-2 py-1  bg-amber-50 text-border-800 border border-amber-600 rounded text-[11px] font-medium">Kista</span>
-            <span className="px-2 py-1  bg-amber-50 text-border-800 border border-amber-600 rounded text-[11px] font-medium">Täby</span>
-            <span className="px-2 py-1  bg-amber-50 text-border-800 border border-amber-600 rounded text-[11px] font-medium">Haninge</span>
+            <span className="px-2 py-1  bg-teal-50 text-border-800 border border-teal-600 rounded text-[11px] font-medium">Kista</span>
+            <span className="px-2 py-1  bg-teal-50 text-border-800 border border-teal-600 rounded text-[11px] font-medium">Täby</span>
+            <span className="px-2 py-1  bg-teal-50 text-border-800 border border-teal-600 rounded text-[11px] font-medium">Haninge</span>
          
-            <span className="px-2 py-1  bg-amber-50 text-border-800 border border-amber-600 rounded text-[11px] font-medium">Bandhagan</span>
-            <span className="px-2 py-1  bg-amber-50 text-border-800 border border-amber-600 rounded text-[11px] font-medium">Hanninge</span>
+            <span className="px-2 py-1  bg-teal-5050 text-border-800 border border-teal-600 rounded text-[11px] font-medium">Bandhagan</span>
+            <span className="px-2 py-1  bg-teal-50 text-border-800 border border-teal-600 rounded text-[11px] font-medium">Hanninge</span>
           </div>
         </div>
 

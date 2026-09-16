@@ -42,7 +42,7 @@ export default function ClientReviews({ reviews }: ClientReviewsProps) {
             <div className="flex justify-between items-start">
               <div>
                 <h4 className="font-bold text-stone-900 text-sm">{review.clientName}</h4>
-                <span className="inline-block bg-teal-50 text-teal-700 text-[10px] font-bold px-2 py-0.5 rounded-full mt-0.5 border border-teal-200">
+                <span className="inline-block bg-teal-50 text-teal-700 text-[11px] font-bold px-2 py-0.5 rounded-full mt-0.5 border border-teal-200">
                   {review.careLevel}
                 </span>
               </div>

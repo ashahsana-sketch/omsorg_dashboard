@@ -47,13 +47,13 @@ export default function ReportsPage() {
       let payRate = 130; // Default Care Assistant rate
       const roleLower = emp.role?.toLowerCase() || "";
       
-      if (roleLower.includes("registered nurse") || roleLower.includes("rn")) {
+      if (roleLower.includes("RegisteredNurse") || roleLower.includes("rn")) {
         payRate = 160;
-      } else if (roleLower.includes("support worker")) {
+      } else if (roleLower.includes("SeniorCareAssistant")) {
         payRate = 150;
-      } else if (roleLower.includes("senior care")) {
+      } else if (roleLower.includes("JeniorCareAssistant")) {
         payRate = 140;
-      } else if (roleLower.includes("care assistant")) {
+      } else if (roleLower.includes("SupportAssistant")) {
         payRate = 130;
       }
 
@@ -277,11 +277,11 @@ export default function ReportsPage() {
                       <span className="text-[10px] uppercase font-semibold text-stone-400 block">Hourly Rate</span>
                       <span
                         className={`inline-block px-2 py-0.5 rounded-md text-[11px] font-bold border mt-0.5 whitespace-nowrap ${
-                          c.hourlyRate === 170
+                          c.hourlyRate === 160
                             ? "bg-red-50 text-red-700 border-red-200"
-                            : c.hourlyRate === 160
-                            ? "bg-blue-50 text-blue-700 border-blue-200"
                             : c.hourlyRate === 150
+                            ? "bg-blue-50 text-blue-700 border-blue-200"
+                            : c.hourlyRate === 140
                             ? "bg-emerald-50 text-emerald-700 border-emerald-100"
                             : "bg-stone-100 text-stone-700 border-stone-200"
                         }`}
@@ -434,15 +434,15 @@ export default function ReportsPage() {
                       <td className="p-3 text-right">
                         <span
                           className={`inline-block px-2 py-0.5 rounded-md text-[11px] font-bold border whitespace-nowrap ${
-                            s.hourlyPay === 170
+                            s.hourlyPay === 160
                               ? "bg-blue-50 text-blue-700 border-blue-500"
-                              : s.hourlyPay === 160
-                              ? "bg-violet-50 text-violet-700 border-violet-500"
                               : s.hourlyPay === 150
-                              ? "bg-stone-50 text-stone-700 border-stone-400"
+                              ? "bg-violet-50 text-violet-700 border-violet-500"
                               : s.hourlyPay === 140
-                              ? "bg-teal-50 text-teal-700 border-teal-500"
+                              ? "bg-stone-50 text-stone-700 border-stone-400"
                               : s.hourlyPay === 130
+                              ? "bg-teal-50 text-teal-700 border-teal-500"
+                              : s.hourlyPay === 120
                               ? "bg-emerald-50 text-emerald-700 border-emerald-700"
                               : "bg-stone-100 text-stone-700 border-stone-200"
                           }`}
