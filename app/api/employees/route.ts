@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import fs from "fs";
 import path from "path";
 
@@ -59,6 +60,9 @@ export async function POST(request: Request) {
     employees.push(newEmployee);
     fs.writeFileSync(filePath, JSON.stringify(employees, null, 2), "utf8");
 
+    revalidatePath("/");
+    revalidatePath("/employees");
+
     return NextResponse.json({ message: "Employee saved!", employee: newEmployee }, { status: 201 });
   } catch (error) {
     return NextResponse.json({ error: "Failed to write data" }, { status: 500 });
@@ -87,6 +91,9 @@ export async function DELETE(request: Request) {
     employees = employees.filter((emp: any) => emp.id !== id);
 
     fs.writeFileSync(filePath, JSON.stringify(employees, null, 2), "utf8");
+
+    revalidatePath("/");
+    revalidatePath("/employees");
 
     return NextResponse.json({ message: "Employee deleted successfully!" }, { status: 200 });
   } catch (error) {

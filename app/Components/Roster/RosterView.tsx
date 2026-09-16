@@ -2,6 +2,11 @@
 import { useState, useEffect, useMemo } from "react";
 import {
   computeRoster,
+  assignStaffManually,
+  matchesRoleForCareLevel,
+  getRoleNeededForCareLevel,
+  normalizeCareLevel,
+  rosterToShifts,
   FinalRosterItem,
   MissingStaffRequirement,
   Client,
@@ -58,10 +63,10 @@ export default function RosterView() {
   const [selectedClientItem, setSelectedClientItem] = useState<FinalRosterItem | null>(null);
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<string>("");
 
-  const employeesList = rawEmployees as unknown as Employee[];
+  const [employeesList, setEmployeesList] = useState<Employee[]>(rawEmployees as unknown as Employee[]);
 
-  // Helper function to update state and persist to localStorage simultaneously
-  const persistAndSetState = (
+  // Helper function to update state and persist to localStorage & backend shifts.json simultaneously
+  const persistAndSetState = async (
     newRoster: FinalRosterItem[],
     newWorkloads: Record<string, number>,
     newMissingReqs: MissingStaffRequirement[]
@@ -78,35 +83,86 @@ export default function RosterView() {
         missingReqs: newMissingReqs,
       })
     );
+
+    // Sync to backend JSON storage (/api/shifts -> data/shifts.json)
+    try {
+      const generatedShifts = rosterToShifts(newRoster, dateKey);
+      await fetch("/api/shifts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "sync_roster",
+          date: dateKey,
+          shifts: generatedShifts,
+        }),
+      });
+
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new Event("shift-data-updated"));
+      }
+    } catch (syncErr) {
+      console.error("Failed to sync shifts to backend JSON:", syncErr);
+    }
   };
 
-  const runCalculationAndRender = () => {
+  const runCalculationAndRender = async (forceRecalculate = false) => {
     setLoading(true);
     setErrorMsg("");
 
     try {
-      // Check if saved manual state exists for this specific date in localStorage
-      const savedState = localStorage.getItem(storageKey);
-      if (savedState) {
-        const parsed = JSON.parse(savedState);
-        setRosterData(parsed.roster);
-        setWorkloads(parsed.workloads);
-        setMissingReqs(parsed.missingReqs);
-        setLoading(false);
-        return;
+      let clients = rawClients as unknown as Client[];
+      let employees = rawEmployees as unknown as Employee[];
+
+      try {
+        const [cRes, eRes] = await Promise.all([
+          fetch("/api/clients", { cache: "no-store" }),
+          fetch("/api/employees", { cache: "no-store" }),
+        ]);
+        if (cRes.ok) clients = await cRes.json();
+        if (eRes.ok) {
+          employees = await eRes.json();
+          setEmployeesList(employees);
+        }
+      } catch (fetchErr) {
+        console.warn("Using fallback static client/employee data:", fetchErr);
       }
 
-      const clients = rawClients as unknown as Client[];
+      // Check if saved manual state exists for this specific date in localStorage
+      if (!forceRecalculate) {
+        const savedState = localStorage.getItem(storageKey);
+        if (savedState) {
+          const parsed = JSON.parse(savedState);
+          setRosterData(parsed.roster);
+          setWorkloads(parsed.workloads);
+          setMissingReqs(parsed.missingReqs);
+
+          // Ensure backend shifts.json is in sync with saved state
+          try {
+            const generatedShifts = rosterToShifts(parsed.roster, dateKey);
+            fetch("/api/shifts", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                action: "sync_roster",
+                date: dateKey,
+                shifts: generatedShifts,
+              }),
+            }).catch(() => {});
+          } catch {}
+
+          setLoading(false);
+          return;
+        }
+      }
+
       const shuffledClients = [...clients].sort(() => Math.random() - 0.5);
 
       const { roster, employeeWorkloads, missingRequirements } = computeRoster(
         shuffledClients,
-        employeesList
+        employees
       );
 
-      setRosterData(roster);
-      setWorkloads(employeeWorkloads);
-      setMissingReqs(missingRequirements);
+      await persistAndSetState(roster, employeeWorkloads, missingRequirements);
     } catch (err: unknown) {
       console.error("Calculation Error:", err);
       const message = err instanceof Error ? err.message : "Unknown error occurred";
@@ -118,7 +174,17 @@ export default function RosterView() {
 
   useEffect(() => {
     runCalculationAndRender();
-  }, [selectedDate, selectedWeek]);
+
+    const handleDataUpdate = () => {
+      localStorage.removeItem(storageKey);
+      runCalculationAndRender(true);
+    };
+
+    window.addEventListener("roster-data-updated", handleDataUpdate);
+    return () => {
+      window.removeEventListener("roster-data-updated", handleDataUpdate);
+    };
+  }, [selectedDate, selectedWeek, storageKey]);
 
   const handlePrevDay = () =>
     setSelectedDate((previous) => {
@@ -134,118 +200,31 @@ export default function RosterView() {
     });
   const handleToday = () => setSelectedDate(today);
 
-  const handleResetAndRecalculate = () => {
+  const handleResetAndRecalculate = async () => {
     localStorage.removeItem(storageKey);
-    
-    const clients = rawClients as unknown as Client[];
-    const shuffledClients = [...clients].sort(() => Math.random() - 0.5);
-
-    const { roster, employeeWorkloads, missingRequirements } = computeRoster(
-      shuffledClients,
-      employeesList
-    );
-
-    persistAndSetState(roster, employeeWorkloads, missingRequirements);
+    await runCalculationAndRender(true);
   };
 
   // Updated Manual Assignment Handling with Remaining Slot Allocation & Persistence
-  const handleManualAssign = () => {
+  const handleManualAssign = async () => {
     if (!selectedClientItem || !selectedEmployeeId) return;
 
     const chosenStaff = employeesList.find((e) => e.id === selectedEmployeeId);
     if (!chosenStaff) return;
 
-    const client = selectedClientItem.client;
-    const totalRequiredHours = client.requiredHours || 1;
-    
-    const existingTasks = selectedClientItem.tasks || [];
-    const alreadyAssignedHours = existingTasks.reduce(
-      (sum, t) => sum + t.durationMinutes / 60,
-      0
+    const result = assignStaffManually(
+      rosterData,
+      workloads,
+      selectedClientItem.client.id,
+      chosenStaff
     );
 
-    const remainingHours = Math.max(0, totalRequiredHours - alreadyAssignedHours);
-    const addedHours = remainingHours > 0 ? remainingHours : totalRequiredHours;
-    const reqMins = addedHours * 60;
+    if (result.error) {
+      alert(result.error);
+      return;
+    }
 
-    const startHour = chosenStaff.shiftStart || "08:00";
-    const [sHour, sMin] = startHour.split(":").map(Number);
-    const calculatedEndHour = Math.min(22, sHour + Math.ceil(addedHours));
-    const endHourStr = `${String(calculatedEndHour).padStart(2, "0")}:${String(sMin || 0).padStart(2, "0")}`;
-
-    const newManualTask: Task = {
-      id: `task-${client.id}-manual-${Date.now()}`,
-      name: `Manual Shift (${client.careLevel})`,
-      durationMinutes: reqMins,
-      start: startHour,
-      end: endHourStr,
-      assignedStaffId: chosenStaff.id,
-      assignedStaffName: chosenStaff.name,
-    };
-
-    const updatedTasks = [...existingTasks, newManualTask];
-    const totalAssignedMins = updatedTasks.reduce((sum, t) => sum + t.durationMinutes, 0);
-    const totalAssignedHours = totalAssignedMins / 60;
-
-    const newStatus =
-      totalAssignedHours >= totalRequiredHours
-        ? ("Fully Assigned" as const)
-        : ("Partially Assigned" as const);
-
-    const updatedRoster = rosterData.map((item) => {
-      if (item.client.id === client.id) {
-        return {
-          ...item,
-          tasks: updatedTasks,
-          primaryEmployeeId: chosenStaff.id,
-          primaryEmployeeName: chosenStaff.name,
-          primaryEmployeeRole: chosenStaff.role,
-          status: newStatus,
-        };
-      }
-      return item;
-    });
-
-    const updatedWorkloads = { ...workloads };
-    updatedWorkloads[chosenStaff.name] = Number(
-      ((updatedWorkloads[chosenStaff.name] || 0) + addedHours).toFixed(1)
-    );
-
-    const unassignedOrPartial = updatedRoster.filter((item) => item.status !== "Fully Assigned");
-    const missingSummary: Record<string, { totalHours: number; count: number; roleNeeded: string }> = {};
-
-    unassignedOrPartial.forEach((item) => {
-      const level = item.client.careLevel || "Standard Care";
-      const totalH = item.client.requiredHours || 1;
-      const assignedH = item.tasks.reduce((sum, t) => sum + t.durationMinutes / 60, 0);
-      const unassignedH = Math.max(0, totalH - assignedH);
-
-      let roleNeeded = "Support worker";
-      if (level === "High Care") {
-        roleNeeded = "Registered Nurse (RN)/ Senior Care Worker";
-      } else if (level === "Standard Care") {
-        roleNeeded = "Care Assistant / Support Worker";
-      }
-
-      if (!missingSummary[level]) {
-        missingSummary[level] = { totalHours: 0, count: 0, roleNeeded };
-      }
-
-      missingSummary[level].totalHours += unassignedH;
-      missingSummary[level].count += 1;
-    });
-
-    const updatedMissingReqs: MissingStaffRequirement[] = Object.entries(missingSummary).map(
-      ([careLevel, data]) => ({
-        careLevel,
-        roleNeeded: data.roleNeeded,
-        unassignedClientsCount: data.count,
-        totalHoursNeeded: Number(data.totalHours.toFixed(1)),
-        estimatedStaffCount: Math.ceil(data.totalHours / 8),
-      })
-    );
-
-    persistAndSetState(updatedRoster, updatedWorkloads, updatedMissingReqs);
+    await persistAndSetState(result.updatedRoster, result.updatedWorkloads, result.missingRequirements);
 
     setSelectedClientItem(null);
     setSelectedEmployeeId("");
@@ -330,15 +309,15 @@ export default function RosterView() {
 
         {(() => {
           const allCareLevels = [
-            { careLevel: "High Care", roleNeeded: "Registered Nurse (RN)/ Senior Care Worker" },
-            { careLevel: "Standard Care", roleNeeded: "Care Assistant / Support Worker" },
-            { careLevel: "Basic Care", roleNeeded: "Support worker" }
+            { careLevel: "HighCare", roleNeeded: "RegisteredNurse / SeniorCareAssistant" },
+            { careLevel: "StandardCare", roleNeeded: "SeniorCareAssistant / JuniorCareAssistant" },
+            { careLevel: "BasicCare", roleNeeded: "JuniorCareAssistant / SupportAssistant" }
           ];
 
           return (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2">
               {allCareLevels.map((levelMeta, idx) => {
-                const req = missingReqs.find((r) => r.careLevel === levelMeta.careLevel) || {
+                const req = missingReqs.find((r) => normalizeCareLevel(r.careLevel) === levelMeta.careLevel) || {
                   careLevel: levelMeta.careLevel,
                   roleNeeded: levelMeta.roleNeeded,
                   unassignedClientsCount: 0,
@@ -353,9 +332,9 @@ export default function RosterView() {
                   >
                     <div className="flex justify-between items-center ">
                       <h2 className={`text-md font-bold p-2 rounded-2xl  ${
-                        req.careLevel === "High Care"
+                        req.careLevel === "HighCare"
                           ? "text-red-800"
-                          : req.careLevel === "Basic Care"
+                          : req.careLevel === "BasicCare"
                           ? "text-emerald-800"
                           : "text-amber-800"
                       }`}>
@@ -447,11 +426,11 @@ export default function RosterView() {
                     <div className="mt-1 grid grid-cols-1 gap-2">
                     <span
                       className={`px-1.5 py-0.5 block-inline rounded text-[11px] font-bold ${
-                        item.client.careLevel === "High Care"
+                        item.client.careLevel === "HighCare"
                           ? "bg-red-50 text-red-700 outline-1"
-                          : item.client.careLevel === "Standard Care"
+                          : item.client.careLevel === "StandardCare"
                           ? "bg-blue-50 text-blue-700 outline-1"
-                          : item.client.careLevel === "Low Care"
+                          : item.client.careLevel === "BasicCare"
                           ? "bg-emerald-50 text-emerald-800 outline-1"
                           : "bg-teal-50 text-teal-800 outline-1"
                       }`}
@@ -592,9 +571,15 @@ export default function RosterView() {
                 <strong>Client:</strong> {selectedClientItem.client.name}
               </div>
               <div>
+                <strong>Location:</strong> 📍 {selectedClientItem.client.location || "Stockholm"}
+              </div>
+              <div>
                 <strong>Care Level:</strong>{" "}
                 <span className="font-semibold text-red-700">
                   {selectedClientItem.client.careLevel}
+                </span>{" "}
+                <span className="text-[11px] text-teal-700 font-medium">
+                  (Required: {getRoleNeededForCareLevel(selectedClientItem.client.careLevel)})
                 </span>
               </div>
               <div>
@@ -612,31 +597,47 @@ export default function RosterView() {
                 Select Available Employee:
               </label>
               <select
-                value={selectedEmployeeId}
-                onChange={(e) => setSelectedEmployeeId(e.target.value)}
-                className="w-full border border-slate-200 rounded-lg p-2 text-xs focus:ring-2 focus:ring-teal-600 outline-none"
-              >
-                <option value="">-- Choose Staff Member --</option>
-                {employeesList.map((emp) => {
-                  const currentAllocated = workloads[emp.name] || 0;
-                  const careLevel = selectedClientItem.client.careLevel;
-                  const empRole = (emp.role || "").toLowerCase();
-                  const empQual = (emp.qualification || "").toLowerCase();
+  value={selectedEmployeeId}
+  onChange={(e) => setSelectedEmployeeId(e.target.value)}
+  className="w-full border border-slate-200 rounded-lg p-2 text-xs focus:ring-2 focus:ring-teal-600 outline-none bg-white text-stone-900"
+>
+  <option value="">-- Choose Staff Member --</option>
+  {employeesList
+    .filter((emp) => {
+      const currentAllocated = workloads[emp.name] || 0;
+      // Divide maxHours by 5 to get the daily limit, defaulting to 8 if not defined
+      const maxAllowedHours = Number(emp.maxHours ? emp.maxHours / 5 : 8);
+      // Only show employees who still have unassigned hours available
+      return currentAllocated < maxAllowedHours;
+    })
+    .map((emp) => {
+      const currentAllocated = workloads[emp.name] || 0;
+      const maxAllowedHours = Number(emp.maxHours ? emp.maxHours / 5 : 8);
+      
+      const clientCareLevel = selectedClientItem.client.careLevel;
+      const isRoleMatched = matchesRoleForCareLevel(emp.role, clientCareLevel);
 
-                  let roleMismatch = false;
-                  if (careLevel === "High Care") {
-                    const isNurse = empRole.includes("nurse") || empRole.includes("rn") || empQual.includes("rn");
-                    if (!isNurse) roleMismatch = true;
-                  }
+      const clientLoc = (selectedClientItem.client.location || "").toLowerCase().trim();
+      const empLoc = (emp.location || "").toLowerCase().trim();
+      const isSameLocation = clientLoc === empLoc;
 
-                  return (
-                    <option key={emp.id} value={emp.id}>
-                      {emp.name} ({emp.role}) - Current: {currentAllocated}h/8h
-                      {roleMismatch ? " ⚠️ [Role Mismatch]" : ""}
-                    </option>
-                  );
-                })}
-              </select>
+      const isFixed = Boolean(emp.isFixedTime);
+      const shiftConstraint = isFixed && emp.shiftStart && emp.shiftEnd
+        ? `[Fixed: ${emp.shiftStart}-${emp.shiftEnd}]`
+        : `[Flexible: max ${maxAllowedHours}h]`;
+
+      const roleWarning = !isRoleMatched ? ` ⚠️ [Role Mismatch]` : ``;
+      const locInfo = !isSameLocation
+        ? ` 📍 [Cross-Location: ${emp.location || "Other"} -> ${selectedClientItem.client.location || "Local"}]`
+        : ` 📍 [Same Area]`;
+
+      return (
+        <option key={emp.id} value={emp.id}>
+          {emp.name} ({emp.role}) | {currentAllocated}h / {maxAllowedHours}h allocated | {shiftConstraint}{locInfo}{roleWarning}
+        </option>
+      );
+    })}
+</select>
             </div>
 
             <div className="block pt-2 border-t border-stone-100 text-right">

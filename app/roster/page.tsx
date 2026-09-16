@@ -18,7 +18,7 @@ export default function RosterPage() {
     computeRoster(clients, employees);
 
   return (
-    <main style={{ padding: '2rem', fontFamily: 'Arial, sans-serif', maxWidth: '1200px', margin: '0 auto' }}>
+    <main className="w-full max-w-7xl mx-auto px-3 sm:px-4 md:px-6 py-6 space-y-6">
       <h1 style={{ color: '#333', borderBottom: '2px solid #eaeaea', paddingBottom: '0.5rem' }}>
         Roster Dashboard
       </h1>

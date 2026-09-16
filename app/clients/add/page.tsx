@@ -44,6 +44,10 @@ export default function AddClientPage() {
       });
 
       if (res.ok) {
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new Event("roster-data-updated"));
+        }
+        router.refresh();
         // Data save hone ke baad seedha clients directory par redirect ho jaye ga
         router.push("/clients");
       } else {
@@ -58,7 +62,7 @@ export default function AddClientPage() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-4 space-y-6 bg-stone-50 min-h-screen">
+    <div className="w-full max-w-7xl mx-auto px-3 sm:px-4 md:px-6 py-6 space-y-6 bg-stone-50 min-h-screen">
       <div className="max-w-xl mx-auto space-y-4">
         <div className="flex justify-end">
           <button
@@ -103,9 +107,9 @@ export default function AddClientPage() {
             onChange={(e) => setCareLevel(e.target.value)}
             className="w-full p-2 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-600 bg-white text-stone-900"
           >
-            <option value="Basic care">Basic care</option>
-            <option value="Standard Care">Standard Care</option>
-            <option value="High Care">High Care</option>
+            <option value="BasicCare">Basic care</option>
+            <option value="StandardCare">Standard Care</option>
+            <option value="HighCare">High Care</option>
           </select>
         </div>
 

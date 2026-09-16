@@ -44,7 +44,7 @@ export default function Header() {
             <NavLink href="/BillingReports">Billing Report</NavLink>
           </div>
           <div className="bg-slate-50 p-1 rounded-lg border border-slate-200 transition-colors shadow-sm">
-            <NavLink href="/shifts">Shifts/Roster</NavLink>
+            <NavLink href="/shifts">Shifts</NavLink>
           </div>
         </nav>
 
@@ -94,7 +94,7 @@ export default function Header() {
             <NavLink href="/BillingReports">Billing Reports</NavLink>
           </div>
           <div onClick={() => setIsMenuOpen(false)} className="bg-slate-50 p-1 rounded-lg border border-slate-200">
-            <NavLink href="/shifts">Shifts/Roaster</NavLink>
+            <NavLink href="/shifts">Shifts</NavLink>
           </div>
         </nav>
       )}

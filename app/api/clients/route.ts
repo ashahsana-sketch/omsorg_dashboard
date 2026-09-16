@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import fs from "fs";
 import path from "path";
 
@@ -63,6 +64,9 @@ export async function POST(request: Request) {
 
     fs.writeFileSync(filePath, JSON.stringify(clients, null, 2), "utf-8");
 
+    revalidatePath("/");
+    revalidatePath("/clients");
+
     return NextResponse.json({ success: true, client: newClient }, { status: 201 });
   } catch (error) {
     console.error("Save error:", error);
@@ -90,6 +94,9 @@ export async function DELETE(request: Request) {
     const filteredClients = clients.filter((c: any) => c.id !== id);
 
     fs.writeFileSync(filePath, JSON.stringify(filteredClients, null, 2), "utf-8");
+
+    revalidatePath("/");
+    revalidatePath("/clients");
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {

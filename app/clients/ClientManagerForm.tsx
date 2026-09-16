@@ -100,6 +100,11 @@ export default function ClientManagerForm() {
         setPreferredStart("09:00");
         setPreferredEnd("12:00");
 
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new Event("roster-data-updated"));
+        }
+        router.refresh();
+
         if (shouldRedirect) {
           router.push("/clients");
         }
@@ -125,6 +130,10 @@ export default function ClientManagerForm() {
 
       if (res.ok) {
         setClients((prev) => prev.filter((client) => client.id !== id));
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new Event("roster-data-updated"));
+        }
+        router.refresh();
       } else {
         alert("Failed to delete client.");
       }
@@ -170,9 +179,9 @@ export default function ClientManagerForm() {
             onChange={(e) => setCareLevel(e.target.value)}
             className="w-full p-2 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-teal-600 bg-white"
           >
-            <option value="Basic care">Basic care</option>
-            <option value="Standard Care">Standard Care</option>
-            <option value="High Care">High Care</option>
+            <option value="BasicCare">Basic Care</option>
+            <option value="StandardCare">Standard Care</option>
+            <option value="HighCare">High Care</option>
           </select>
         </div>
 
