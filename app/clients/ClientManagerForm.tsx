@@ -266,8 +266,9 @@ export default function ClientManagerForm() {
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-2 pt-2">
           <button
-            type="submit"
+            type="button"
             disabled={isSubmitting}
+            onClick={saveClientData}
             className="flex-1 bg-stone-100 hover:bg-stone-200 text-stone-800 font-bold py-2 rounded-lg text-xs transition-colors border border-stone-300 cursor-pointer disabled:opacity-50"
           >
             {isSubmitting ? "Saving..." : "Save Client Detail"}

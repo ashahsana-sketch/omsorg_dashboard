@@ -200,7 +200,7 @@ export default function EmployeeManagerForm() {
         <div className="flex flex-col sm:flex-row gap-2 pt-2">
           <button
             type="button"
-            onClick={(e) => saveEmployeeData(e, true)}
+            onClick={(e) => saveEmployeeData(e, false)}
             disabled={isSubmitting}
             className="flex-1 bg-white hover:bg-slate-50 text-slate-800 font-bold py-2 rounded-lg text-xs transition-colors border border-slate-200 cursor-pointer disabled:opacity-50"
           >

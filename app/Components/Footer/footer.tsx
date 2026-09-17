@@ -10,17 +10,13 @@ export default function Footer() {
         <h2 className="text-base font-extrabold uppercase tracking-wider bg-linear-to-r from-teal-700 to-amber-700 bg-clip-text text-transparent border-b border-teal-600 pb-1">
   Elderly Care Dashboard
 </h2>
-          <p className="text-xs text-slate-500 leading-relaxed">
-            Providing compassionate, reliable, and scheduled care management for seniors.
-          </p>
+          <p className="text-xs text-slate-500 leading-relaxed"> Providing compassionate, reliable, and scheduled care management for seniors.</p>
           
         </div>
 
         {/* Column 2: Quick Links */}
         <div>
-          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800 mb-3 border-b border-teal-600 pb-1">
-            Quick Navigation
-          </h3>
+          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800 mb-3 border-b border-teal-600 pb-1"> Quick Navigation  </h3>
           <ul className="space-y-2 text-sm font-medium">
             <li><Link href="/shifts" className="text-teal-700 hover:text-teal-700 transition-colors">Roster Matrix</Link></li>
             <li><Link href="/employees" className="text-teal-700 hover:text-teal-700 transition-colors">Staff Directory</Link></li>
@@ -31,9 +27,7 @@ export default function Footer() {
 
         {/* Column 3: Contact & Office Details */}
         <div>
-          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800 mb-3 border-b border-teal-600 pb-1">
-            Contact Details
-          </h3>
+          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800 mb-3 border-b border-teal-600 pb-1">Contact Details</h3>
           <ul className="space-y-2 text-xs text-stone-600">
             <li><span className="font-semibold text-stone-800">Email:</span> support@elderlycare.se</li>
             <li><span className="font-semibold text-stone-800">Office:</span> +46 (0)8 000 00 00</li>
@@ -50,12 +44,10 @@ export default function Footer() {
           <div className="grid grid-cols-2 gap-1.75 pt-1 text-3xl ">
             <span className="px-2 py-1  bg-teal-50 text-border-800 border border-teal-600 rounded text-[11px] font-medium">Stockholm</span>
             <span className="px-2 py-1  bg-teal-50 text-border-800 border border-teal-600 rounded text-[11px] font-medium">Solna</span>
-            
             <span className="px-2 py-1  bg-teal-50 text-border-800 border border-teal-600 rounded text-[11px] font-medium">Kista</span>
             <span className="px-2 py-1  bg-teal-50 text-border-800 border border-teal-600 rounded text-[11px] font-medium">Täby</span>
             <span className="px-2 py-1  bg-teal-50 text-border-800 border border-teal-600 rounded text-[11px] font-medium">Haninge</span>
-         
-            <span className="px-2 py-1  bg-teal-5050 text-border-800 border border-teal-600 rounded text-[11px] font-medium">Bandhagan</span>
+            <span className="px-2 py-1  bg-teal-50 text-border-800 border border-teal-600 rounded text-[11px] font-medium">Bandhagan</span>
             <span className="px-2 py-1  bg-teal-50 text-border-800 border border-teal-600 rounded text-[11px] font-medium">Hanninge</span>
           </div>
         </div>
@@ -63,7 +55,7 @@ export default function Footer() {
       </div>
 
       {/* Bottom Bar */}
-      <div className="max-w-7xl mx-auto mt-8 pt-4 border-t border-stone-100 flex flex-col sm:flex-row items-center justify-between text-[11px] text-stone-400 gap-2">
+      <div className="max-w-7xl mx-auto mt-8 pt-4 border-t bg-teal-50 border-stone-100 flex flex-col sm:flex-row items-center justify-between text-[11px] text-stone-400 gap-2">
         <div>
           Elderly Care Dashboard © {new Date().getFullYear()} — All rights reserved.
         </div>

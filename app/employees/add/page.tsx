@@ -7,7 +7,7 @@ export default function AddEmployeePage() {
   const router = useRouter();
 
   const [name, setName] = useState("");
-  const [role, setRole] = useState("Care Assistant");
+  const [role, setRole] = useState("JuniorCareAssistant");
   const [location, setLocation] = useState("Stockholm");
   const [scheduleType, setScheduleType] = useState<"fixed" | "flexible">("fixed");
   const [shiftStart, setShiftStart] = useState("09:00");
@@ -15,9 +15,7 @@ export default function AddEmployeePage() {
   const [maxHours, setMaxHours] = useState(40);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSaveEmployee = async (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const handleSaveEmployee = async () => {
     if (!name.trim()) {
       alert("Please enter Employee Name first!");
       return;
@@ -48,8 +46,10 @@ export default function AddEmployeePage() {
           window.dispatchEvent(new Event("roster-data-updated"));
         }
         router.refresh();
-        // Save hone ke baad seedha employees directory par redirect ho jaye ga
-        router.push("/employees");
+        alert("Employee saved successfully!");
+        
+        // Form clear karna chahein toh yahan kar sakte hain:
+        setName("");
       } else {
         alert("API Error: Data save nahi ho saka.");
       }
@@ -64,27 +64,27 @@ export default function AddEmployeePage() {
   return (
     <div className="w-full max-w-7xl mx-auto px-3 sm:px-4 md:px-6 py-6 space-y-6 bg-stone-50 min-h-screen">
       <div className="max-w-xl mx-auto space-y-4">
-      <div className="flex justify-end">
+        
+        {/* Close / Back Button */}
+        <div className="flex justify-end">
           <button
             type="button"
             onClick={() => router.push("/employees")}
             className="bg-white hover:bg-slate-100 text-slate-500 hover:text-slate-800 p-3 rounded-2xl h-8 flex items-center justify-center transition-colors cursor-pointer shadow-sm border border-slate-200 text-sm font-bold"
             title="Close"
           >
-           Close  ✕
+            Close ✕
           </button>
         </div>
 
-        <form
-          onSubmit={handleSaveEmployee}
-          className="bg-teal-50 p-6 rounded-xl border border-slate-200 shadow-sm space-y-4"
-        >
+        {/* Form Container (Converted to div to prevent default form submits) */}
+        <div className="bg-teal-50 p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
           <h3 className="text-base font-bold bg-teal-50 text-teal-700 border-b border-slate-200 rounded-2xl p-2.5 text-center">
             Add New Employee
           </h3>
 
           {/* Employee Name */}
-          <div className="text-left  space-y-2">
+          <div className="text-left space-y-2">
             <label className="block text-xs font-bold text-emerald-950 uppercase mb-1">
               Employee Name
             </label>
@@ -94,7 +94,6 @@ export default function AddEmployeePage() {
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g. Anna Lindqvist"
               className="w-full p-2 border border-emerald-100 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-emerald-700 bg-white text-stone-900"
-              required
             />
           </div>
 
@@ -108,10 +107,10 @@ export default function AddEmployeePage() {
               onChange={(e) => setRole(e.target.value)}
               className="w-full p-2 border border-emerald-100 rounded-lg text-xs focus:outline-none focus:ring-2 focus:ring-emerald-700 bg-white text-stone-900"
             >
-             <option value="JuniorCareAssistant">Junior Care Assistant</option>
-            <option value="SeniorCareAssistant">Senior Care Assistant</option>
-            <option value="RegisteredNurse">Registered Nurse</option>
-            <option value="SupportAssistant">Support Assistant</option>
+              <option value="JuniorCareAssistant">Junior Care Assistant</option>
+              <option value="SeniorCareAssistant">Senior Care Assistant</option>
+              <option value="RegisteredNurse">Registered Nurse</option>
+              <option value="SupportAssistant">Support Assistant</option>
             </select>
           </div>
 
@@ -195,7 +194,8 @@ export default function AddEmployeePage() {
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-2 pt-2">
             <button
-              type="submit"
+              type="button"
+              onClick={handleSaveEmployee}
               disabled={isSubmitting}
               className="flex-1 bg-white hover:bg-slate-50 text-slate-800 font-bold py-2 rounded-lg text-xs transition-colors border border-slate-200 cursor-pointer disabled:opacity-50"
             >
@@ -210,7 +210,8 @@ export default function AddEmployeePage() {
               Go to Employees
             </button>
           </div>
-        </form>
+        </div>
+
       </div>
     </div>
   );

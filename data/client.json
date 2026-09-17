@@ -221,16 +221,6 @@
     "requiredHours": 5
   },
   {
-    "id": "CL-1016",
-    "name": "abc",
-    "careLevel": "StandardCare",
-    "location": "Stockholm",
-    "isFixedTime": true,
-    "preferredStart": "09:00",
-    "preferredEnd": "12:00",
-    "requiredHours": 5
-  },
-  {
     "id": "CL-1018",
     "name": "Mohammad Nawarikh",
     "careLevel": "BasicCare",
@@ -256,16 +246,6 @@
     "careLevel": "HighCare",
     "requiredHours": 4,
     "location": "Stockholm",
-    "isFixedTime": false,
-    "preferredStart": null,
-    "preferredEnd": null
-  },
-  {
-    "id": "CL-1021",
-    "name": "Sana",
-    "careLevel": "StandardCare",
-    "requiredHours": 5,
-    "location": "Solna",
     "isFixedTime": false,
     "preferredStart": null,
     "preferredEnd": null

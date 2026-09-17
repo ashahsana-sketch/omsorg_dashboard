@@ -43,18 +43,18 @@ export default function ReportsPage() {
       const regularHours = Math.min(assignedHours, 8);
       const overtimeHours = Math.max(0, assignedHours - 8);
 
-      // Role ke mutabiq hourly pay assign karna
+      // Role ke mutabiq hourly pay assign karna (spaces aur case-insensitive check)
       let payRate = 130; // Default Care Assistant rate
-      const roleLower = emp.role?.toLowerCase() || "";
+      const roleNormalized = emp.role ? emp.role.replace(/\s+/g, "").toLowerCase() : "";
       
-      if (roleLower.includes("RegisteredNurse") || roleLower.includes("rn")) {
-        payRate = 160;
-      } else if (roleLower.includes("SeniorCareAssistant")) {
+      if (roleNormalized.includes("registerednurse") || roleNormalized.includes("rn")) {
         payRate = 150;
-      } else if (roleLower.includes("JeniorCareAssistant")) {
+      } else if (roleNormalized.includes("seniorcareassistant")) {
         payRate = 140;
-      } else if (roleLower.includes("SupportAssistant")) {
+      } else if (roleNormalized.includes("juniorcareassistant") || roleNormalized.includes("jeniorcareassistant")) {
         payRate = 130;
+      } else if (roleNormalized.includes("supportassistant")) {
+        payRate = 120;
       }
 
       return {
@@ -196,7 +196,7 @@ export default function ReportsPage() {
         <div className="bg-teal-50 p-4 rounded-xl border border-slate-200 shadow-sm">
           <span className="text-xs font-bold text-stone-500 uppercase">Est. Client Billing</span>
           <p className="text-xl font-bold text-teal-700 mt-1">{totalClientBillable.toLocaleString()} SEK</p>
-          <span className="text-[10px] text-stone-400">Total for {totalDeliveredHours.toFixed(1)} delivered hours</span>
+          <span className="text-[10px] text-stone-400">Total for {totalDeliveredHours.toFixed(1)} Delivered hours</span>
         </div>
 
         <div className="bg-teal-50 p-4 rounded-xl border border-slate-200 shadow-sm">
@@ -277,7 +277,7 @@ export default function ReportsPage() {
                       <span className="text-[10px] uppercase font-semibold text-stone-400 block">Hourly Rate</span>
                       <span
                         className={`inline-block px-2 py-0.5 rounded-md text-[11px] font-bold border mt-0.5 whitespace-nowrap ${
-                          c.hourlyRate === 160
+                          c.hourlyRate === 170
                             ? "bg-red-50 text-red-700 border-red-200"
                             : c.hourlyRate === 150
                             ? "bg-blue-50 text-blue-700 border-blue-200"
@@ -371,16 +371,14 @@ export default function ReportsPage() {
                     </div>
                     <span
                       className={`px-2.5 py-1 rounded-md text-[11px] font-bold border whitespace-nowrap ${
-                        s.hourlyPay === 170
+                        s.hourlyPay === 150
                           ? "bg-blue-50 text-blue-700 border-blue-500"
-                          : s.hourlyPay === 160
-                          ? "bg-violet-50 text-violet-700 border-violet-500"
-                          : s.hourlyPay === 150
-                          ? "bg-stone-50 text-stone-700 border-stone-400"
                           : s.hourlyPay === 140
-                          ? "bg-teal-50 text-teal-700 border-teal-500"
+                          ? "bg-violet-50 text-violet-700 border-violet-500"
                           : s.hourlyPay === 130
-                          ? "bg-emerald-50 text-emerald-700 border-emerald-700"
+                          ? "bg-stone-50 text-stone-700 border-stone-400"
+                          : s.hourlyPay === 120
+                          ? "bg-teal-50 text-teal-700 border-teal-500"
                           : "bg-stone-100 text-stone-700 border-stone-200"
                       }`}
                     >
@@ -434,16 +432,14 @@ export default function ReportsPage() {
                       <td className="p-3 text-right">
                         <span
                           className={`inline-block px-2 py-0.5 rounded-md text-[11px] font-bold border whitespace-nowrap ${
-                            s.hourlyPay === 160
+                            s.hourlyPay === 150
                               ? "bg-blue-50 text-blue-700 border-blue-500"
-                              : s.hourlyPay === 150
-                              ? "bg-violet-50 text-violet-700 border-violet-500"
                               : s.hourlyPay === 140
-                              ? "bg-stone-50 text-stone-700 border-stone-400"
+                              ? "bg-violet-50 text-violet-700 border-violet-500"
                               : s.hourlyPay === 130
-                              ? "bg-teal-50 text-teal-700 border-teal-500"
+                              ? "bg-stone-50 text-stone-700 border-stone-400"
                               : s.hourlyPay === 120
-                              ? "bg-emerald-50 text-emerald-700 border-emerald-700"
+                              ? "bg-teal-50 text-teal-700 border-teal-500"
                               : "bg-stone-100 text-stone-700 border-stone-200"
                           }`}
                         >
