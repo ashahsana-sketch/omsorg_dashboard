@@ -44,17 +44,17 @@ export default function ReportsPage() {
       const overtimeHours = Math.max(0, assignedHours - 8);
 
       // Role ke mutabiq hourly pay assign karna (spaces aur case-insensitive check)
-      let payRate = 130; // Default Care Assistant rate
+      let payRate = 230; // Default Care Assistant rate
       const roleNormalized = emp.role ? emp.role.replace(/\s+/g, "").toLowerCase() : "";
       
       if (roleNormalized.includes("registerednurse") || roleNormalized.includes("rn")) {
-        payRate = 150;
+        payRate = 225;
       } else if (roleNormalized.includes("seniorcareassistant")) {
-        payRate = 140;
+        payRate = 210;
       } else if (roleNormalized.includes("juniorcareassistant") || roleNormalized.includes("jeniorcareassistant")) {
-        payRate = 130;
+        payRate = 200;
       } else if (roleNormalized.includes("supportassistant")) {
-        payRate = 120;
+        payRate = 180;
       }
 
       return {
@@ -76,12 +76,12 @@ export default function ReportsPage() {
         ? rosterItem.tasks.reduce((sum, t) => sum + t.durationMinutes / 60, 0)
         : 0;
 
-      let rate = 150; // Default Standard Care
+      let rate = 250; // Default Standard Care
       const care = client.careLevel?.toLowerCase() || "";
       if (care.includes("high")) {
-        rate = 170;
+        rate = 270;
       } else if (care.includes("basic")) {
-        rate = 140;
+        rate = 240;
       }
 
       return {
@@ -277,11 +277,11 @@ export default function ReportsPage() {
                       <span className="text-[10px] uppercase font-semibold text-stone-400 block">Hourly Rate</span>
                       <span
                         className={`inline-block px-2 py-0.5 rounded-md text-[11px] font-bold border mt-0.5 whitespace-nowrap ${
-                          c.hourlyRate === 170
+                          c.hourlyRate === 270
                             ? "bg-red-50 text-red-700 border-red-200"
-                            : c.hourlyRate === 150
+                            : c.hourlyRate === 250
                             ? "bg-blue-50 text-blue-700 border-blue-200"
-                            : c.hourlyRate === 140
+                            : c.hourlyRate === 240
                             ? "bg-emerald-50 text-emerald-700 border-emerald-100"
                             : "bg-stone-100 text-stone-700 border-stone-200"
                         }`}
@@ -332,11 +332,11 @@ export default function ReportsPage() {
                       <td className="p-3 text-right font-mono">
                         <span
                           className={`inline-block px-2 py-0.5 rounded-md text-[11px] font-bold border whitespace-nowrap ${
-                            c.hourlyRate === 170
+                            c.hourlyRate === 270
                               ? "bg-red-50 text-red-700 border-red-200"
-                              : c.hourlyRate === 160
+                              : c.hourlyRate === 260
                               ? "bg-blue-50 text-blue-700 border-blue-200"
-                              : c.hourlyRate === 150
+                              : c.hourlyRate === 250
                               ? "bg-emerald-50 text-emerald-700 border-emerald-100"
                               : "bg-stone-100 text-stone-700 border-stone-200"
                           }`}
@@ -371,15 +371,15 @@ export default function ReportsPage() {
                     </div>
                     <span
                       className={`px-2.5 py-1 rounded-md text-[11px] font-bold border whitespace-nowrap ${
-                        s.hourlyPay === 150
+                        s.hourlyPay === 225
                           ? "bg-blue-50 text-blue-700 border-blue-500"
-                          : s.hourlyPay === 140
-                          ? "bg-violet-50 text-violet-700 border-violet-500"
-                          : s.hourlyPay === 130
+                          : s.hourlyPay === 210
+                          ? "bg-red-50 text-red-700 border-red-500"
+                          : s.hourlyPay === 200
                           ? "bg-stone-50 text-stone-700 border-stone-400"
-                          : s.hourlyPay === 120
+                          : s.hourlyPay === 180
                           ? "bg-teal-50 text-teal-700 border-teal-500"
-                          : "bg-stone-100 text-stone-700 border-stone-200"
+                          : "bg-violet-100 text-violet-700 border-violet-200"
                       }`}
                     >
                       {s.hourlyPay} SEK/h
@@ -432,15 +432,15 @@ export default function ReportsPage() {
                       <td className="p-3 text-right">
                         <span
                           className={`inline-block px-2 py-0.5 rounded-md text-[11px] font-bold border whitespace-nowrap ${
-                            s.hourlyPay === 150
+                            s.hourlyPay === 225
                               ? "bg-blue-50 text-blue-700 border-blue-500"
-                              : s.hourlyPay === 140
-                              ? "bg-violet-50 text-violet-700 border-violet-500"
-                              : s.hourlyPay === 130
+                              : s.hourlyPay === 210
+                              ? "bg-red-50 text-red-700 border-red-500"
+                              : s.hourlyPay === 200
                               ? "bg-stone-50 text-stone-700 border-stone-400"
-                              : s.hourlyPay === 120
+                              : s.hourlyPay === 180
                               ? "bg-teal-50 text-teal-700 border-teal-500"
-                              : "bg-stone-100 text-stone-700 border-stone-200"
+                              :  "bg-violet-50 text-violet-700 border-violet-500"
                           }`}
                         >
                           {s.hourlyPay} SEK

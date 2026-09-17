@@ -148,15 +148,5 @@
     "isFixedTime": false,
     "shiftStart": null,
     "shiftEnd": null
-  },
-  {
-    "id": "EMP-1024",
-    "name": "summer",
-    "role": "SeniorCareAssistant",
-    "maxHours": 40,
-    "location": "Stockholm",
-    "isFixedTime": true,
-    "shiftStart": "09:00",
-    "shiftEnd": "15:00"
   }
 ]

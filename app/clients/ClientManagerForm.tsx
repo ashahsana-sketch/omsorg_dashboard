@@ -253,7 +253,7 @@ export default function ClientManagerForm() {
         {/* Required Hours / Week */}
         <div className="text-left space-y-2">
           <label className="block text-xs font-bold text-slate-800 uppercase mb-1">
-            Required Hours / Week
+            Required Hours / day
           </label>
           <input
             type="number"
