@@ -186,9 +186,9 @@ The form will open
 ### Client Invoicing Rates
 | Care Level | Hourly Rate (SEK) |
 | :--- | :--- |
-| **High Care** | 170 SEK |
-| **Standard Care** | 150 SEK |
-| **Basic Care** | 140 SEK |
+| **High Care** | 270 SEK |
+| **Standard Care** | 250 SEK |
+| **Basic Care** | 240 SEK |
 **Client Report:** Includes Client ID, Name, Location, Care Level, Contract Hours, Delivered Hours, Hourly Rate, and Total Billable amount.
 <div align="center">
 
@@ -199,10 +199,10 @@ The form will open
 ### Staff Payroll Rates
 | Employee Role | Hourly Pay (SEK) |
 | :--- | :--- |
-| **Registered Nurse** | 150 SEK |
-| **Senior Care Assistan** | 140 SEK |
-| **Junior Care Assistant** | 130 SEK |
-| **Support Assistant** | 120 SEK |
+| **Registered Nurse** | 225 SEK |
+| **Senior Care Assistan** | 210 SEK |
+| **Junior Care Assistant** | 200 SEK |
+| **Support Assistant** | 180 SEK |
  **Staff Report:** Includes Employee ID, Name, Role, Hourly Pay, Regular Hours, Overtime Hours, and Total Payable amount.
 ---
 <div align="center">
@@ -259,6 +259,14 @@ One can download the  billing statement
 * **AI – Antigravity:** Used as a development assistant for code generation, debugging, refactoring, and exploring implementation approaches.
 
 ---
+## 🗺️ Future Roadmap
+
+* [ ] **Drag-and-Drop Scheduling:** Visual calendar grid allowing managers to drag and drop shifts between carers and time slots.
+* [ ] **Automated Compliance & Conflict Alerts:** Real-time warnings for certification mismatches or statutory overtime limits.
+* [ ] **Mobile Geofencing & Check-Ins:** GPS-verified check-ins to transition shift statuses dynamically in the field.
+* [ ] **Payroll & Reporting Exports:** Automated aggregation of working hours and travel time for exportable payroll reports.
+* [ ] **Pagination:** pagination will use if the data is big.
+
 
 ## 🏗️ Project Structure
 
@@ -282,3 +290,4 @@ care-scheduler/
 ├── tsconfig.json
 ├── next.config.ts
 └── README.md
+
