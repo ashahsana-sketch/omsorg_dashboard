@@ -221,16 +221,6 @@
     "requiredHours": 5
   },
   {
-    "id": "CL-1018",
-    "name": "Mohammad Nawarikh",
-    "careLevel": "BasicCare",
-    "requiredHours": 4,
-    "location": "Solna",
-    "isFixedTime": true,
-    "preferredStart": "09:00",
-    "preferredEnd": "12:00"
-  },
-  {
     "id": "CL-1019",
     "name": "Man Amd",
     "careLevel": "BasicCare",

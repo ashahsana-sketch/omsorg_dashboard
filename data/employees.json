@@ -1,13 +1,5 @@
 [
   {
-    "id": "EMP-1002",
-    "name": "Daniel Walker",
-    "role": "RegisteredNurse",
-    "maxHours": 40,
-    "location": "Stockholm",
-    "isFixedTime": false
-  },
-  {
     "id": "EMP-1003",
     "name": "Sophie Bennett",
     "role": "SeniorCareAssistant",
