@@ -259,6 +259,14 @@ One can download the  billing statement
 * **AI – Antigravity:** Used as a development assistant for code generation, debugging, refactoring, and exploring implementation approaches.
 
 ---
+## 🗺️ Future Roadmap
+
+* [ ] **Drag-and-Drop Scheduling:** Visual calendar grid allowing managers to drag and drop shifts between carers and time slots.
+* [ ] **Automated Compliance & Conflict Alerts:** Real-time warnings for certification mismatches or statutory overtime limits.
+* [ ] **Mobile Geofencing & Check-Ins:** GPS-verified check-ins to transition shift statuses dynamically in the field.
+* [ ] **Payroll & Reporting Exports:** Automated aggregation of working hours and travel time for exportable payroll reports.
+* [ ] **Pagination:** pagination will use if the data is big.
+
 
 ## 🏗️ Project Structure
 
@@ -282,11 +290,4 @@ care-scheduler/
 ├── tsconfig.json
 ├── next.config.ts
 └── README.md
-
-## 🗺️ Future Roadmap
-
-* [ ] **Drag-and-Drop Scheduling:** Visual calendar grid allowing managers to drag and drop shifts between carers and time slots.
-* [ ] **Automated Compliance & Conflict Alerts:** Real-time warnings for certification mismatches or statutory overtime limits.
-* [ ] **Mobile Geofencing & Check-Ins:** GPS-verified check-ins to transition shift statuses dynamically in the field.
-* [ ] **Payroll & Reporting Exports:** Automated aggregation of working hours and travel time for exportable payroll reports.
 
